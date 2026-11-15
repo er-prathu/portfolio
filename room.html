@@ -627,6 +627,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="weather.config.js"></script>
 <script src="tv.config.js"></script>
+<script src="festival.config.js"></script>
 <script>
 (() => {
   const root = document.documentElement, body = document.body;
@@ -635,6 +636,24 @@
   const ORDER = ['about', 'work', 'stack', 'timeline', 'contact'];
   const NAMES = { about: 'About', work: 'Work', stack: 'Stack', timeline: 'Timeline', contact: 'Contact' };
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+
+  /* festivals: which theme (if any) the desk wears today, by the date in India (dates in festival.config.js) */
+  const FEST = (() => {
+    const cfg = window.DESK_FESTIVALS || {}, known = ['diwali', 'christmas'];
+    const q = new URLSearchParams(location.search).get('festival');
+    if (q !== null) return known.includes(q) ? q : null;   // ?festival=diwali previews a theme; ?festival=none turns it off
+    if (cfg.enabled === false) return null;
+    if (known.includes(cfg.force)) return cfg.force;
+    let ymd = new Date().toISOString().slice(0, 10);
+    try { ymd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) {}
+    const day = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5, today = day(ymd);
+    const dw = cfg.diwali || {}, before = dw.before == null ? 4 : dw.before, after = dw.after == null ? 2 : dw.after;
+    if ((dw.dates || []).some(s => today >= day(s) - before && today <= day(s) + after)) return 'diwali';
+    const xm = cfg.christmas || {}, y = ymd.slice(0, 4);
+    if (xm.from && xm.to && today >= day(`${y}-${xm.from}`) && today <= day(`${y}-${xm.to}`)) return 'christmas';
+    return null;
+  })();
+  const FEST_NAME = { diwali: 'Diwali', christmas: 'Christmas' }[FEST] || '';
 
   /* ================= UI: sheet, nav, text mode ================= */
   const sheet = $('#sheet'), sheetBody = $('#sheetBody'), chapter = $('#chapter');
@@ -1259,6 +1278,7 @@
       g.fillText('PATIL', 36, 236);
       g.shadowBlur = 0; g.fillStyle = '#E8913C'; g.beginPath(); g.arc(36 + g.measureText('PATIL').width + 14, 228, 8, 0, 7); g.fill();
       g.fillStyle = 'rgba(235,240,255,.85)'; g.font = '500 15px "JetBrains Mono", monospace'; g.fillText('SENIOR SOFTWARE ENGINEER · WEBMD', 38, 278);
+      if (FEST) { g.fillStyle = '#ffb35c'; g.shadowColor = 'rgba(255,170,80,.7)'; g.shadowBlur = 10; g.font = '700 21px Sora, sans-serif'; g.fillText(FEST === 'diwali' ? 'HAPPY DIWALI' : 'MERRY CHRISTMAS', 38, 318); g.shadowBlur = 0; }
       g.textAlign = 'center';
     } else {
       g.fillStyle = 'rgba(235,240,255,.8)'; g.font = '600 16px "JetBrains Mono", monospace'; g.fillText('NOW PLAYING', w / 2, h / 2 - 34);
@@ -2425,6 +2445,230 @@
   const gDusk = glow(0xE8913C, 1.7, .9, 1.02, -2.0);       // the setting sun through the glass
   const gNoon = glow(0xfff2d6, 2.6, 1.25, 2.3, -2.0);
 
+  /* ---------- festival decorations: built only while a festival is on (FEST), so other days cost nothing ---------- */
+  const festTick = [];   // per-frame animators: (t, nightK) => void
+  if (FEST) {
+    const fest = new T.Group(); scene.add(fest);
+    const unlit = hex => new T.MeshBasicMaterial({ color: hex, toneMapped: false });
+    const gl = (hex, size, x, y, z, op = .8) => { const s = glow(hex, size, x, y, z); s.material.opacity = op; fest.add(s); return s; };
+    const flick = (t, ph) => .82 + .1 * Math.sin(t * 11 + ph) + .06 * Math.sin(t * 23.7 + ph * 2.3) + .04 * Math.sin(t * 5.3 + ph * .7);   // candle-like, never fully still
+    const WINZ = WZ + .075;   // just in front of the transom's face
+    // a string draped in shallow swags along the transom, as a curve
+    const swags = (n, y0, sag, z, x0 = -OX + .03, x1 = OX - .03) => new T.CatmullRomCurve3(Array.from({ length: 61 }, (_, i) => {
+      const u = i / 60, k = (u * n) % 1; return new T.Vector3(x0 + u * (x1 - x0), y0 - sag * Math.sin(Math.PI * (i === 60 ? 0 : k)), z);
+    }));
+    // fairy lights on a thin wire: each bulb a bead and a soft glow that twinkles on its own clock
+    function fairyLights(curve, count, colors, wireHex = 0x10140f) {
+      fest.add(new T.Mesh(new T.TubeGeometry(curve, 200, .0011, 5, false), std(wireHex, .6)));
+      const bulbs = [];
+      for (let i = 0; i < count; i++) {
+        const p = curve.getPointAt((i + .5) / count), hex = colors[i % colors.length];
+        fest.add(put(new T.Mesh(new T.SphereGeometry(.0055, 10, 8), unlit(hex)), p.x, p.y - .006, p.z));
+        bulbs.push({ s: gl(hex, .06, p.x, p.y - .006, p.z + .004), ph: Math.random() * 7, sp: .8 + Math.random() * 1.6 });
+      }
+      festTick.push(t => bulbs.forEach(b => { b.s.material.opacity = reduce ? .75 : .45 + .4 * (.5 + .5 * Math.sin(t * b.sp + b.ph)); }));
+    }
+
+    if (FEST === 'diwali') {
+      /* -- diyas: shallow clay lamps with a wick flame -- */
+      const diyaGeo = new T.LatheGeometry([[0, 0], [.02, 0], [.028, .004], [.035, .014], [.037, .02], [.033, .021], [.026, .013], [0, .012]].map(([r, y]) => new T.Vector2(r, y)), 28);
+      const clay = std(0x9a4524, .82), paint = std(0xd99a2b, .5, .2), oil = std(0x5a3a0e, .15, 0, { transparent: true, opacity: .85 });
+      const flameTex = canvasTex(64, 128, g => {
+        g.clearRect(0, 0, 64, 128);
+        const gr = g.createRadialGradient(32, 92, 2, 32, 80, 52); gr.addColorStop(0, 'rgba(255,255,235,1)'); gr.addColorStop(.25, 'rgba(255,220,120,.95)'); gr.addColorStop(.6, 'rgba(255,140,40,.55)'); gr.addColorStop(1, 'rgba(255,90,20,0)');
+        g.fillStyle = gr; g.beginPath(); g.moveTo(32, 4); g.bezierCurveTo(52, 50, 54, 82, 32, 120); g.bezierCurveTo(10, 82, 12, 50, 32, 4); g.fill();
+      });
+      const diyas = [];
+      function diya(x, y, z, ry = 0) {
+        const d = new T.Group(); put(d, x, y, z); d.rotation.y = ry;
+        d.add(mesh(diyaGeo, clay));
+        const rimBand = mesh(new T.TorusGeometry(.0355, .0016, 6, 40), paint); rimBand.rotation.x = Math.PI / 2; d.add(put(rimBand, 0, .0185, 0));
+        const o = new T.Mesh(new T.CircleGeometry(.027, 24), oil); o.rotation.x = -Math.PI / 2; d.add(put(o, 0, .0135, 0));
+        d.add(put(new T.Mesh(new T.CylinderGeometry(.0014, .0014, .012, 6), std(0xf0e6d0, .9)), .02, .018, 0));   // cotton wick at the spout
+        const f = new T.Sprite(new T.SpriteMaterial({ map: flameTex.t, transparent: true, depthWrite: false, blending: T.AdditiveBlending, toneMapped: false }));
+        f.scale.set(.016, .034, 1); f.position.set(.02, .039, 0); d.add(f);
+        fest.add(d); d.updateMatrixWorld(true);
+        const wp = f.getWorldPosition(new T.Vector3());
+        diyas.push({ f, halo: gl(0xff9a3c, .17, wp.x, wp.y, wp.z, .7), ph: Math.random() * 9 });
+        contact(x, z, .1, .1, .5, (y > DY + .05 ? y : DY) + .002);
+      }
+      diya(.27, DY, DZ + .34, .3); diya(.665, DY, DZ + .33, -.4); diya(.745, DY, DZ + .27, 1.2);   // on the desk, front right, in reach
+      diya(-.56, OY0 - .0125, WZ + .105, .2); diya(.56, OY0 - .0125, WZ + .105, -.3);                 // on the sill, framing the window
+      const diyaLight = new T.PointLight(0xff9440, .55, 1.1, 2); diyaLight.position.set(.55, DY + .09, DZ + .3); scene.add(diyaLight);
+      festTick.push(t => {
+        let sum = 0;
+        diyas.forEach(d => { const k = reduce ? .9 : flick(t, d.ph); sum += k; d.f.scale.set(.016 * (.9 + .1 * k), .034 * k, 1); d.f.material.rotation = reduce ? 0 : .08 * Math.sin(t * 3.1 + d.ph); d.halo.material.opacity = .55 * k; });
+        diyaLight.intensity = .55 * sum / diyas.length;
+      });
+
+      /* -- marigold toran across the window: orange and yellow flowers in runs, with drops and mango leaves -- */
+      const mgCurve = swags(3, TRY - .028, .11, WINZ + .006);
+      const drops = [-OX + .03, -OX / 3, OX / 3, OX - .03].map(x => [x, .1 + (Math.abs(x) < .3 ? .03 : 0)]);
+      const flowerPts = [];
+      const L = mgCurve.getLength(), N = Math.round(L / .0155);
+      for (let i = 0; i <= N; i++) flowerPts.push([mgCurve.getPointAt(i / N), Math.floor(i / 7) % 2]);
+      drops.forEach(([x, len]) => { for (let k = 0; k * .0155 < len; k++) flowerPts.push([new T.Vector3(x, TRY - .03 - k * .0155, WINZ + .006), k % 3 === 2 ? 0 : 1]); });
+      const flowerGeo = new T.IcosahedronGeometry(.0105, 1);
+      { const p = flowerGeo.attributes.position; for (let i = 0; i < p.count; i++) { const s = 1 + (Math.random() - .5) * .35; p.setXYZ(i, p.getX(i) * s, p.getY(i) * s, p.getZ(i) * s); } flowerGeo.computeVertexNormals(); }   // ruffled petals, not beads
+      const flowers = new T.InstancedMesh(flowerGeo, std(0xffffff, .85), flowerPts.length);
+      const mtx = new T.Matrix4(), q = new T.Quaternion(), e = new T.Euler(), one = new T.Vector3(1, 1, 1);
+      const ORANGE = new T.Color(0xe8640f), YELLOW = new T.Color(0xf2a91a);
+      flowerPts.forEach(([p, c], i) => {
+        q.setFromEuler(e.set(Math.random() * 6, Math.random() * 6, Math.random() * 6));
+        mtx.compose(p, q, one.clone().multiplyScalar(.9 + Math.random() * .25)); flowers.setMatrixAt(i, mtx);
+        flowers.setColorAt(i, (c ? ORANGE : YELLOW).clone().offsetHSL((Math.random() - .5) * .02, 0, (Math.random() - .5) * .06));
+      });
+      flowers.castShadow = true; fest.add(flowers);
+      const leafG = new T.Shape(); leafG.moveTo(0, 0); leafG.quadraticCurveTo(.016, -.03, 0, -.06); leafG.quadraticCurveTo(-.016, -.03, 0, 0);
+      const leafM = std(0x2f6a28, .7, 0, { side: T.DoubleSide });
+      drops.forEach(([x, len]) => [-.35, .35].forEach(a => { const l = new T.Mesh(new T.ShapeGeometry(leafG, 6), leafM); l.rotation.z = a; fest.add(put(l, x, TRY - .03 - len, WINZ + .004)); }));
+
+      /* -- akash kandil: a paper star lantern hanging in the upper left pane, glowing from inside -- */
+      const star = new T.Shape();
+      for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? .042 : .095; i ? star.lineTo(Math.cos(a) * r, Math.sin(a) * r) : star.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+      const KX = -.47, KY = 1.4;   // hung from the transom into the lower left pane: in the home shot, above the lamp
+      const kandil = new T.Group(); put(kandil, KX, KY, WZ + .16); kandil.scale.setScalar(.72);
+      const paper = new T.MeshStandardMaterial({ color: 0xb8300f, emissive: 0xd0380a, emissiveIntensity: .5, roughness: .95, side: T.DoubleSide });   // deep saffron paper lit from within (brighter washes it out to cream)
+      const body = new T.Mesh(new T.ExtrudeGeometry(star, { depth: .05, bevelEnabled: true, bevelThickness: .012, bevelSize: .01, bevelSegments: 2 }), paper);
+      body.geometry.translate(0, 0, -.025); kandil.add(body);
+      const frill = new T.Mesh(new T.TorusGeometry(.03, .006, 6, 24), std(0xf2c230, .5, .2)); kandil.add(frill);   // the gold rosette at its heart
+      const tassel = std(0xf2b21c, .8, 0, { side: T.DoubleSide });
+      [-.03, -.012, .006, .024].forEach((x, i) => { const tl = new T.Mesh(new T.PlaneGeometry(.008, .1 + (i % 2) * .03), i % 2 ? paper : tassel); kandil.add(put(tl, x, -.14 - (i % 2) * .015, 0)); });   // paper streamers
+      const cordTop = TRY - .025, cordBot = KY + .07;
+      fest.add(put(new T.Mesh(new T.CylinderGeometry(.0009, .0009, cordTop - cordBot, 4), std(0x222222, .8)), KX, (cordTop + cordBot) / 2, WZ + .16));   // the cord, from a hook under the transom
+      fest.add(kandil);
+      const kGlow = gl(0xff7a2a, .42, KX, KY, WZ + .17, .6);
+      festTick.push((t, nk) => {
+        kandil.rotation.y = reduce ? .25 : .25 + .35 * Math.sin(t * .45); kandil.rotation.z = reduce ? 0 : .04 * Math.sin(t * .7);
+        const k = reduce ? .9 : flick(t * .6, 3);
+        paper.emissiveIntensity = (.18 + .32 * nk) * k; kGlow.material.opacity = (.15 + .4 * nk) * k;
+      });
+
+      /* -- warm fairy lights along the transom, above the garland -- */
+      fairyLights(swags(3, TRY - .01, .05, WINZ + .012), 33, [0xffc46b, 0xffb04a, 0xffd99a]);
+
+      /* -- fireworks over the city, at night: rockets climb, burst, drift down and fade (outside, so walls hide them) -- */
+      const FW_N = 110, FW_COLORS = [0xffc24a, 0xff4f7a, 0x6dff8a, 0x63d6ff, 0xff7a2a, 0xfff3d6, 0xc77dff];
+      const sparkTex = canvasTex(64, 64, g => {   // a spark: a hot, solid core with a short halo (the soft glow texture reads as dust)
+        const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.28, 'rgba(255,255,255,.95)'); gr.addColorStop(.55, 'rgba(255,255,255,.3)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+      });
+      const fwSprite = (size, hex) => { const s = new T.Sprite(new T.SpriteMaterial({ map: glowTex.t, color: hex, transparent: true, depthWrite: false, blending: T.AdditiveBlending, toneMapped: false, fog: false, opacity: 0 })); s.scale.set(size, size, 1); scene.add(s); return s; };
+      const bursts = Array.from({ length: 5 }, () => {
+        const geo = new T.BufferGeometry(), pos = new Float32Array(FW_N * 3);
+        geo.setAttribute('position', new T.BufferAttribute(pos, 3));
+        const mat = new T.PointsMaterial({ size: .16, map: sparkTex.t, transparent: true, depthWrite: false, blending: T.AdditiveBlending, toneMapped: false, fog: false, opacity: 0 });
+        const pts = new T.Points(geo, mat); pts.frustumCulled = false; scene.add(pts);
+        return { pts, pos, mat, rocket: fwSprite(.14, 0xffd9a0), flash: fwSprite(2.6, 0xffffff), vel: new Float32Array(FW_N * 3), t0: -99, o: new T.Vector3(), rise: 1 };
+      });
+      let nextFw = 1.5;
+      function launch(b, t) {
+        b.t0 = t; b.rise = .9 + Math.random() * .5;
+        b.o.set((Math.random() - .5) * 5.6, 2.0 + Math.random() * .55, -8.6 - Math.random() * 1);   // the band of open sky between the transom and the tower tops
+        b.mat.color.setHex(FW_COLORS[(Math.random() * FW_COLORS.length) | 0]); b.flash.material.color.copy(b.mat.color);
+        const sp = 1.5 + Math.random() * .8, ring = Math.random() < .3;
+        for (let i = 0; i < FW_N; i++) {
+          const u = ring ? 0 : Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u), s = sp * (ring ? 1 : .55 + .45 * Math.random());
+          b.vel[i * 3] = r * Math.cos(a) * s; b.vel[i * 3 + 1] = (ring ? Math.sin(a) : u) * s; b.vel[i * 3 + 2] = (ring ? 0 : r * Math.sin(a)) * s;
+        }
+      }
+      const DUR = 2.6, GRAV = -.55;
+      festTick.push((t, nk) => {
+        const on = !reduce && nk > .35;
+        if (on && t > nextFw) { const free = bursts.find(b => t - b.t0 > b.rise + DUR); if (free) launch(free, t); nextFw = t + .7 + Math.random() * 2.2; }
+        bursts.forEach(b => {
+          const age = t - b.t0;
+          if (!on || age > b.rise + DUR) { b.mat.opacity = 0; b.rocket.material.opacity = 0; b.flash.material.opacity = 0; return; }
+          if (age < b.rise) {   // the climb: a dim spark rising from the skyline
+            const u = age / b.rise; b.rocket.position.set(b.o.x, b.o.y - 2.2 * (1 - u) * (1 - u), b.o.z); b.rocket.material.opacity = .55 * nk; b.mat.opacity = 0; return;
+          }
+          b.rocket.material.opacity = 0;
+          b.flash.position.copy(b.o); b.flash.material.opacity = .35 * nk * Math.max(0, 1 - (age - b.rise) / .45);   // the sky lights up for a moment
+          const a = age - b.rise, drag = (1 - Math.exp(-2.2 * a)) / 2.2;   // fast out, slowing, then falling
+          for (let i = 0; i < FW_N; i++) {
+            b.pos[i * 3] = b.o.x + b.vel[i * 3] * drag; b.pos[i * 3 + 1] = b.o.y + b.vel[i * 3 + 1] * drag + GRAV * a * a * .5; b.pos[i * 3 + 2] = b.o.z + b.vel[i * 3 + 2] * drag;
+          }
+          b.pts.geometry.attributes.position.needsUpdate = true;
+          b.mat.opacity = nk * Math.pow(1 - a / DUR, 1.05) * (a < .06 ? a / .06 : 1);
+          b.mat.size = .2 * (1 - .4 * a / DUR);
+        });
+      });
+    }
+
+    if (FEST === 'christmas') {
+      /* -- a small tabletop tree in the back-right corner: tiers of needles, baubles, a string of lights and a star -- */
+      const TX = .69, TZ = DZ - .27;
+      const tree = new T.Group(); put(tree, TX, DY, TZ);
+      tree.add(put(mesh(new T.CylinderGeometry(.05, .042, .06, 20), std(0x7a2b22, .55, .05)), 0, .03, 0));        // red pot
+      tree.add(put(mesh(new T.CylinderGeometry(.052, .052, .008, 20), std(0xd9b46a, .35, .6)), 0, .058, 0));       // gold rim
+      tree.add(put(mesh(new T.CylinderGeometry(.009, .011, .05, 8), std(0x4a3020, .9)), 0, .08, 0));               // trunk
+      const needles = std(0x0f2a17, 1, 0, { envMapIntensity: .25 }), tiers = [[.115, .12, .1], [.095, .11, .165], [.072, .1, .225], [.048, .085, .28]];   // radius, height, base y
+      tiers.forEach(([r, h, y], i) => {
+        const geo = new T.ConeGeometry(r, h, 18, 3, true), p = geo.attributes.position;
+        for (let k = 0; k < p.count; k++) { if (p.getY(k) > h / 2 - 1e-4) continue; const j = 1 + (Math.random() - .5) * .22; p.setX(k, p.getX(k) * j); p.setZ(k, p.getZ(k) * j); p.setY(k, p.getY(k) + (Math.random() - .5) * .008); }   // ragged branch tips
+        geo.computeVertexNormals();
+        const c = mesh(geo, needles); c.rotation.y = i * .7; tree.add(put(c, 0, y + h / 2, 0));
+        const under = new T.Mesh(new T.CircleGeometry(r * .98, 18), std(0x15321e, 1)); under.rotation.x = Math.PI / 2; tree.add(put(under, 0, y + .002, 0));   // close the skirt
+      });
+      const bauble = [std(0xb3202a, .22, .55), std(0xd9b046, .2, .8), std(0x2e6b72, .25, .5), std(0xe9e3d6, .3, .3)];
+      tiers.forEach(([r, h, y], i) => { for (let k = 0; k < 5 - i; k++) { const a = k / (5 - i) * Math.PI * 2 + i * .9, rr = r * .93; tree.add(put(mesh(new T.SphereGeometry(.0085, 12, 10), bauble[(k + i) % 4]), Math.cos(a) * rr, y + .012, Math.sin(a) * rr)); } });
+      fest.add(tree); contact(TX, TZ, .17, .17, .55, DY + .002);
+      tree.updateMatrixWorld(true);
+      // a spiral of lights wound round the tree
+      const treeBulbs = [], TB = 30, TCOL = [0xffd27a, 0xff5050, 0x6ad16a, 0x6aa8ff, 0xffd27a];
+      for (let i = 0; i < TB; i++) {
+        const u = i / TB, yy = .11 + u * .24, rr = (.118 * (1 - u) + .03 * u) * 1.02, a = u * Math.PI * 2 * 4.3;
+        const p = new T.Vector3(TX + Math.cos(a) * rr, DY + yy, TZ + Math.sin(a) * rr), hex = TCOL[i % TCOL.length];
+        fest.add(put(new T.Mesh(new T.SphereGeometry(.0045, 8, 6), unlit(hex)), p.x, p.y, p.z));
+        treeBulbs.push({ s: gl(hex, .045, p.x, p.y, p.z), ph: Math.random() * 7, sp: 1 + Math.random() * 2 });
+      }
+      const starS = new T.Shape();
+      for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? .011 : .026; i ? starS.lineTo(Math.cos(a) * r, Math.sin(a) * r) : starS.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+      const starM = new T.MeshStandardMaterial({ color: 0xf2c94c, emissive: 0xffc83a, emissiveIntensity: 1.2, metalness: .5, roughness: .3 });
+      const starMesh = new T.Mesh(new T.ExtrudeGeometry(starS, { depth: .006, bevelEnabled: true, bevelThickness: .002, bevelSize: .002, bevelSegments: 1 }), starM);
+      starMesh.geometry.translate(0, 0, -.003); fest.add(put(starMesh, TX, DY + .385, TZ));
+      const starGlow = gl(0xffd36a, .16, TX, DY + .385, TZ + .01, .8);
+      const treeLight = new T.PointLight(0xffc27a, .45, .9, 2); treeLight.position.set(TX - .05, DY + .22, TZ + .14); scene.add(treeLight);
+      festTick.push(t => {
+        treeBulbs.forEach(b => { b.s.material.opacity = reduce ? .8 : .4 + .5 * (.5 + .5 * Math.sin(t * b.sp + b.ph)); });
+        starMesh.rotation.y = reduce ? 0 : Math.sin(t * .6) * .5; starGlow.material.opacity = reduce ? .8 : .65 + .2 * Math.sin(t * 1.7);
+      });
+
+      /* -- two wrapped gifts under it -- */
+      function gift(x, z, w, h, d, paperHex, ribbonHex, ry) {
+        const g = new T.Group(); put(g, x, DY, z); g.rotation.y = ry;
+        g.add(put(box(w, h, d, std(paperHex, .55), .003), 0, h / 2, 0));
+        const rb = std(ribbonHex, .3, .45);
+        g.add(put(box(w + .002, h + .002, .012, rb, .001), 0, h / 2, 0)); g.add(put(box(.012, h + .002, d + .002, rb, .001), 0, h / 2, 0));
+        [-.6, .6].forEach(a => { const lp = mesh(new T.TorusGeometry(.012, .004, 6, 14), rb); lp.rotation.set(Math.PI / 2 - .5, a, 0); g.add(put(lp, a * .012, h + .006, 0)); });   // bow loops
+        fest.add(g); contact(x, z, w * 1.6, d * 1.6, .5, DY + .002);
+      }
+      gift(.555, DZ - .27, .075, .06, .07, 0x2e6b72, 0xd9b046, .3);
+      gift(.6, DZ - .15, .055, .045, .06, 0xb3202a, 0xece6d8, -.4);
+
+      /* -- a wreath on the window's centre mullion, and a Santa hat on the TV -- */
+      const wreath = new T.Group(); put(wreath, 0, 1.43, WINZ + .01);
+      const wgeo = new T.TorusGeometry(.068, .022, 10, 48), wp = wgeo.attributes.position;
+      for (let k = 0; k < wp.count; k++) { const j = 1 + (Math.random() - .5) * .18; wp.setXYZ(k, wp.getX(k) * j, wp.getY(k) * j, wp.getZ(k) * (1 + (Math.random() - .5) * .5)); }
+      wgeo.computeVertexNormals(); wreath.add(mesh(wgeo, needles));
+      for (let k = 0; k < 9; k++) { const a = k / 9 * Math.PI * 2 + .3; wreath.add(put(mesh(new T.SphereGeometry(.0065, 8, 6), std(0xb3202a, .3, .2)), Math.cos(a) * .075, Math.sin(a) * .075, .016)); }   // berries
+      const bowM = std(0xb3202a, .5, .1);
+      [-1, 1].forEach(s => { const lp = mesh(new T.TorusGeometry(.016, .006, 6, 16), bowM); lp.scale.set(1.3, .8, 1); wreath.add(put(lp, s * .019, -.07, .02)); const tail = box(.012, .05, .003, bowM, .001); tail.rotation.z = s * .3; wreath.add(put(tail, s * .012, -.1, .02)); });
+      fest.add(wreath);
+      const hat = new T.Group(); put(hat, -.13, DY + VCR_H + .382, TVZ + .105); hat.rotation.z = .22; hat.rotation.y = .2;   // centred on the cabinet's front block, brim resting on its top
+      const felt = std(0xa81e24, .9);
+      const cone = mesh(new T.ConeGeometry(.05, .12, 24, 4), felt), cp = cone.geometry.attributes.position;
+      for (let k = 0; k < cp.count; k++) { const y = cp.getY(k) + .06; cp.setX(k, cp.getX(k) + y * y * 2.2); }   // the tip flops over
+      cone.geometry.computeVertexNormals(); hat.add(put(cone, 0, .065, 0));
+      const brim = mesh(new T.TorusGeometry(.048, .014, 10, 30), std(0xf2eee6, 1)); brim.rotation.x = Math.PI / 2; hat.add(put(brim, 0, .01, 0));
+      hat.add(put(mesh(new T.SphereGeometry(.016, 14, 10), std(0xf2eee6, 1)), .034, .118, 0));
+      fest.add(hat);
+
+      /* -- coloured fairy lights along the transom -- */
+      fairyLights(swags(3, TRY - .012, .06, WINZ + .012), 33, [0xff4a4a, 0x5fd35f, 0xffc94a, 0x5aa0ff, 0xfff1d6]);
+    }
+  }
+
   /* ---------- volumetric light: the lamp's cone and the sunbeam through the window ---------- */
   const beamTex = canvasTex(4, 256, g => {
     const gr = g.createLinearGradient(0, 0, 0, 256);
@@ -2800,6 +3044,7 @@
     plane.material.opacity = nightK * (Math.sin(t * 5.5) > .55 ? 1 : .3); planeRed.material.opacity = nightK * (Math.sin(t * 5.5 + 2.4) > .75 ? .9 : 0);
     cars.forEach(c => { const u = ((c.userData.off + t * c.userData.sp) % 1 + 1) % 1; c.position.set(-6.5 + u * 13, c.userData.y, c.userData.z); c.material.opacity = nightK * .85; });
     updateTrain(t, nightK, camera.position);
+    for (const f of festTick) f(t, nightK);
     signals.forEach(s => { s.material.opacity = .35 + .6 * nightK * (Math.sin(t * .7 + s.userData.ph) > -.6 ? 1 : .15); });
     deckLamps.forEach(s => { s.material.opacity = .85 * nightK * (1 - .4 * W.fog); });
     if (!reduce) { mistTex.t.offset.x = (t * .004) % 1; streakTex.t.offset.y = (t * 1.5) % 1; rainOut2.material.map.offset.y = (t * 1.05) % 1; }
@@ -2903,7 +3148,7 @@
     istTime = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' }).format(new Date());
   } catch (e) {}
   const isDayNow = istHour >= 6 && istHour < 18;
-  if (istTime) $('#clock').textContent = `${istTime} in Navi Mumbai · ${isDayNow ? 'daytime' : 'night'} at the desk`;
+  if (istTime) $('#clock').textContent = `${istTime} in Navi Mumbai · ${FEST_NAME ? FEST_NAME + ' ' : ''}${isDayNow ? (FEST_NAME ? 'day' : 'daytime') : 'night'} at the desk`;
   // the sky outside follows the visitor's own clock until their live weather (with is_day) arrives; the caption keeps the desk's time
   const localHour = new Date().getHours();
   setDay(localHour >= 6 && localHour < 18, true);

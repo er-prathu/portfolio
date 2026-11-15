@@ -23,6 +23,7 @@ copy('room.html', 'index.html');
 copy('room.html');
 copy('tv.config.js');
 copy('weather.config.js');
+copy('festival.config.js');
 
 // models: the glTF JSON (buffer embedded) and its textures; the .gltf/.bin originals aren't loaded by the page
 for (const id of fs.readdirSync(path.join(ROOT, 'models'))) {
