@@ -46,7 +46,7 @@
     --ground-2: #101317;
     --ink: #EDE7DC;
     --ink-2: #9EA5A8;
-    --muted: #6C7378;
+    --muted: #7F868B;   /* AA contrast (4.7:1+) on the dark ground and glass for small labels */
     --amber: #E8913C;
     --teal: #2E6B72;
     --teal-type: #5fa3ab;
@@ -368,6 +368,12 @@
   /* recruiter shortcuts at the top of About */
   .cta-row.top { margin: 4px 0 22px; gap: 8px; }
   .cta-row.top .btn { padding: 11px 15px; }
+  /* touch: the header's compact controls keep their look but get a 44 px invisible hit area */
+  @media (pointer: coarse) {
+    .nav .brand, .nav .switch, .nav .wxi, .nav .pill { position: relative; }
+    .nav .brand::after, .nav .switch::after, .nav .wxi::after, .nav .pill::after { content: ""; position: absolute; left: -3px; right: -3px; top: 50%; height: 44px; translate: 0 -50%; }
+    .term-in input { min-height: 40px; }
+  }
   @media (pointer: coarse) { .btn { min-height: 44px; align-items: center; } .lk { min-height: 56px; } .case-back, .case-next { min-height: 44px; } .gh-head .ln { padding: 10px 0; } }
   /* contact: four plain link cards */
   .links-grid { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -376,9 +382,9 @@
   .lk-k { font: 500 10px/1.2 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
   .lk-v { font-size: 13.5px; color: var(--ink); overflow-wrap: anywhere; }
   /* experience summary */
-  .exp-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 16px; }
-  .exp-sum div { padding: 12px 12px 10px; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 2px; }
-  .exp-sum b { font: 800 26px/1 var(--display); color: var(--ink); letter-spacing: -.02em; }
+  .exp-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 4px 0 16px; }
+  .exp-sum div { min-width: 0; padding: 11px 10px 9px; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 2px; }
+  .exp-sum b { font: 800 clamp(20px, 2.2vw, 26px)/1 var(--display); color: var(--ink); letter-spacing: -.02em; }
   .exp-sum span { font: 500 10px/1.3 var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
   .tl-pts { list-style: none; margin-top: 6px; display: grid; gap: 4px; }
   .tl-pts li { position: relative; padding: 0 0 0 14px !important; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; display: block !important; }
@@ -915,7 +921,7 @@
   <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request my résumé">Download résumé</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a></div>
 </aside>
 
-<aside class="sheet" id="sheet" aria-label="Section" aria-hidden="true">
+<aside class="sheet" id="sheet" aria-label="Section" aria-hidden="true" inert>
   <div class="sheet-head">
     <span class="label amber" id="chapter">01 — About</span>
     <div class="acts"><button type="button" id="closeBtn">Back to room</button></div>
@@ -959,7 +965,7 @@
       <h3 class="sub">Career</h3>
       <ol class="tl">
         <li class="current"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span>
-          <ul class="tl-pts"><li>Full-stack work on the Nolo legal product.</li><li>Works on LLM features in production, such as the AI lead qualification engine.</li><li>Built the Figma-to-HTML skill used across the IB team, and is the sole developer of the Nolo CMS.</li></ul></li>
+          <ul class="tl-pts"><li>Full-stack work on the Nolo legal product.</li><li>Works on LLM features in production, such as the AI lead qualification engine.</li><li>Built the Figma-to-HTML skill used across the IB team.</li><li>Sole developer of the Nolo CMS.</li></ul></li>
         <li><time>Sep 2021 — Aug 2024</time><h3>Software Engineer</h3><span class="co">The Information Company</span></li>
         <li><time>Jan 2020 — Sep 2021</time><h3>PHP Developer</h3><span class="co">Neolite Infotech</span></li>
         <li><time>Jun 2018 — Aug 2019</time><h3>Associate Developer</h3><span class="co">Centillion Solutions and Services</span></li>
@@ -1053,7 +1059,7 @@
         </li>
         <li class="case" data-case="3">
           <button type="button" class="case-open" aria-expanded="false" aria-controls="case3">
-            <span class="row"><span class="label amber">PP—04</span><span class="badge open">Open source · Live</span></span>
+            <span class="row"><span class="label amber">PP—04</span><span class="badge open">Public repo · Live</span></span>
             <span class="case-h">Prathamesh's Desk (this site)</span>
             <span class="lede">A portfolio you explore as a 3D desk: a working CRT television, live weather in the window, and a contact form that really sends.</span>
             <span class="tags">three.js · GLSL · Cloudflare Workers</span>
@@ -1061,7 +1067,7 @@
           </button>
           <div class="case-body" id="case3" role="region" aria-label="Prathamesh's Desk, case study">
             <h3 class="cs-h" tabindex="-1">Prathamesh's Desk</h3>
-            <dl class="cs-meta"><div><dt>Role</dt><dd>Design and build</dd></div><div><dt>Status</dt><dd>Live</dd></div><div><dt>Source</dt><dd>Public</dd></div></dl>
+            <dl class="cs-meta"><div><dt>Role</dt><dd>Design and build</dd></div><div><dt>Status</dt><dd>Live</dd></div><div><dt>Source</dt><dd>Public on GitHub</dd></div></dl>
             <section class="doc"><h4><span>A</span>Overview</h4><p>The portfolio is a room: every object on the desk opens part of it, and a plain text version is always one click away.</p></section>
             <section class="doc"><h4><span>B</span>Problem</h4><p>A portfolio people remember, that is still fast, accessible and quick for a recruiter to scan.</p></section>
             <section class="doc"><h4><span>C</span>Technical challenges</h4><ul class="pts">
@@ -1071,14 +1077,14 @@
               <li>One codebase for desktop, tablet and phone, keyboard and screen readers included.</li></ul></section>
             <section class="doc"><h4><span>D</span>Architecture</h4>
               <figure class="arch"><ol>
-                <li><b>Browser</b><span>three.js scene · one GLSL pass for the CRT · Web Audio</span></li>
-                <li><b>Cloudflare Worker</b><span>static files · <code>/api/contact</code> · <code>/api/geo</code></span></li>
-                <li class="end split"><b>Resend</b><span>email</span><b>Open-Meteo</b><span>weather</span></li>
-              </ol><figcaption>Deployed from GitHub on every push.</figcaption></figure></section>
-            <section class="doc"><h4><span>E</span>Implementation</h4><p>No framework and no build step for the page: three.js and GSAP load from a CDN. The TV picture is a single shader on the screen mesh; sound is synthesized in the browser and off until asked for. The Worker validates and rate-limits contact messages, uses a honeypot, and reports success only on the provider's confirmation. Weather readings are cached, so a reload doesn't call the API again.</p></section>
+                <li><b>Browser</b><span>three.js scene · one GLSL pass for the CRT · Web Audio · weather fetched straight from Open-Meteo (no key)</span></li>
+                <li><b>Cloudflare Worker</b><span>static files · <code>/api/geo</code>: approximate city from Cloudflare's request data · <code>/api/contact</code>: validation, rate limit, honeypot</span></li>
+                <li class="end"><b>Resend</b><span>delivers contact messages; the key lives only in the Worker</span></li>
+              </ol><figcaption>Deployed from GitHub to Cloudflare on every push.</figcaption></figure></section>
+            <section class="doc"><h4><span>E</span>Implementation</h4><p>No framework and no bundler: the page is plain HTML and JavaScript, with three.js and GSAP from a CDN. The TV picture is a single shader on the screen mesh; sound is synthesized in the browser and off until asked for. The Worker validates and rate-limits contact messages, uses a honeypot, and reports success only on the provider's confirmation. A weather reading is reused for 15 minutes, so reloading the page doesn't call the API again.</p></section>
             <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Open-Meteo</li><li>Node test runner</li></ul></section>
             <section class="doc"><h4><span>G</span>My contribution</h4><p>Designed and built it, with AI-assisted development (Claude Code).</p></section>
-            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Live, open source, with automated tests for the contact endpoint and the Worker.</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></section>
+            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Live, with its source public on GitHub and automated tests for the contact endpoint and the Worker.</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></section>
           </div>
         </li>
         <li class="case bench">
@@ -1256,14 +1262,14 @@
     chapter.textContent = String(i + 1).padStart(2, '0') + ' — ' + NAMES[sec];
     $('#prevBtn').textContent = '← ' + NAMES[ORDER[(i + ORDER.length - 1) % ORDER.length]];
     $('#nextBtn').textContent = NAMES[ORDER[(i + 1) % ORDER.length]] + ' →';
-    sheet.setAttribute('aria-hidden', 'false');
+    sheet.setAttribute('aria-hidden', 'false'); sheet.inert = false;
     body.classList.add('sheet-open');
     sheetBody.scrollTop = 0;
     markNav(sec);
   }
   function hideSheet() {
     current = null;
-    sheet.setAttribute('aria-hidden', 'true');
+    sheet.setAttribute('aria-hidden', 'true'); sheet.inert = !root.classList.contains('text-mode');   // closed: out of the tab order too
     body.classList.remove('sheet-open');
     markNav(null);
   }
@@ -1288,7 +1294,7 @@
     root.classList.toggle('text-mode', on);
     $('#modeBtn').innerHTML = on ? '3D desk' : '<span class="long">Quick read</span><span class="short">Read</span>';
     $('#modeBtn').setAttribute('aria-label', on ? 'Back to the 3D desk' : 'Quick read: the whole portfolio as one page');
-    if (on) { hideSheet(); $$('.sec').forEach(s => { s.hidden = false; }); sheet.setAttribute('aria-hidden', 'false'); loadRepos(); }
+    if (on) { hideSheet(); $$('.sec').forEach(s => { s.hidden = false; }); sheet.setAttribute('aria-hidden', 'false'); sheet.inert = false; loadRepos(); }
     if (room) room.setPaused(on);
     if (!on) fromHash();
   }
@@ -2796,7 +2802,7 @@
   scene.add(cup);
   const NBX = -.36, NBZ = DZ + .3;   // the open notebook lies front-left, in the lamp's pool
   const nb = new T.Group(); put(nb, NBX, DY, NBZ); nb.rotation.y = .16;
-  const pageTex = canvasTex(256, 360, g => { g.fillStyle = '#ece6d8'; g.fillRect(0, 0, 256, 360); g.strokeStyle = 'rgba(46,107,114,.35)'; g.lineWidth = 1; for (let y = 40; y < 360; y += 16) { g.beginPath(); g.moveTo(14, y); g.lineTo(242, y); g.stroke(); } g.fillStyle = 'rgba(30,30,30,.55)'; g.font = '500 15px "JetBrains Mono", monospace'; ['// todo', 'ship lead engine v2', 'figma skill → docs', 'read: DDIA ch.5'].forEach((s, i) => g.fillText(s, 18, 54 + i * 32)); }, true);
+  const pageTex = canvasTex(256, 360, g => { g.fillStyle = '#ece6d8'; g.fillRect(0, 0, 256, 360); g.strokeStyle = 'rgba(46,107,114,.35)'; g.lineWidth = 1; for (let y = 40; y < 360; y += 16) { g.beginPath(); g.moveTo(14, y); g.lineTo(242, y); g.stroke(); } g.fillStyle = 'rgba(30,30,30,.55)'; g.font = '500 15px "JetBrains Mono", monospace'; ['// todo', 'lead engine', 'figma skill → docs', 'read: DDIA ch.5'].forEach((s, i) => g.fillText(s, 18, 54 + i * 32)); }, true);
   nb.add(put(box(.17, .008, .24, std(0x2a2e31, .7), .003), 0, .004, 0));
   const pageM = new T.Mesh(new T.PlaneGeometry(.155, .225), std(0xb4ad9f, .92, 0, { map: pageTex.t })); pageM.rotation.x = -Math.PI / 2; nb.add(put(pageM, 0, .0085, 0));
   const pen = mesh(new T.CylinderGeometry(.004, .004, .14, 10), std(0x111315, .3, .5)); pen.rotation.set(Math.PI / 2, 0, .4); nb.add(put(pen, .06, .013, .02));
@@ -4048,7 +4054,7 @@
     camera.updateProjectionMatrix();
     // screens refresh ~8 fps
     if (tvSet.state === 'IDLE' && t - lastScreen > .085) { tvScreen.draw(reduce ? 0 : t); lastScreen = t; }   // the channel card only redraws while it's showing
-    tvFrame(t, Math.min(.1, Math.max(0, t - tvPrevT))); tvPrevT = t;
+    tvFrame(t, Math.min(.25, Math.max(0, t - tvPrevT))); tvPrevT = t;   // keeps the intro in real time down to ~4 fps (a hidden tab still pauses it)
     if (t - lastPhone > 20) { phoneScreen.draw(); lastPhone = t; }   // keep the lock-screen clock current
     // day ↔ night
     const d = sky.day;

@@ -43,6 +43,15 @@ test('GET /api/geo without location data says ok:false, so the page falls back t
   assert.equal((await res.json()).ok, false);
 });
 
+test('plain HTTP redirects to HTTPS (301), keeping the path; localhost does not', async () => {
+  const res = await worker.fetch(new Request('http://portfolio.example.workers.dev/room.html?x=1'), env);
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.get('location'), 'https://portfolio.example.workers.dev/room.html?x=1');
+  const local = await worker.fetch(new Request('http://localhost:8787/missing-local'), env);
+  assert.equal(await local.text(), 'asset');
+  assetsSeen.length = 0;
+});
+
 test('other paths fall through to the static assets', async () => {
   const res = await worker.fetch(new Request('https://portfolio.example.workers.dev/missing-page'), env);
   assert.equal(await res.text(), 'asset');

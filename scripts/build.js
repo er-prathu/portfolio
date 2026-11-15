@@ -55,6 +55,7 @@ fs.writeFileSync(path.join(OUT, '_headers'), [
   '  X-Content-Type-Options: nosniff',
   '  Referrer-Policy: strict-origin-when-cross-origin',
   '  X-Frame-Options: SAMEORIGIN',
+  '  Strict-Transport-Security: max-age=31536000',
   '/models/*',
   '  Cache-Control: public, max-age=604800',
   '',

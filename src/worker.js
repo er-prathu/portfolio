@@ -27,7 +27,12 @@ export function geo(request) {
 
 export default {
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url), { pathname } = url;
+    // plain HTTP → HTTPS (workers.dev answers on both); local development stays on http://localhost
+    if (url.protocol === 'http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)) {
+      url.protocol = 'https:';
+      return Response.redirect(url.toString(), 301);
+    }
     if (pathname === '/api/contact') return contact({ request, env });
     if (pathname === '/api/geo') return geo(request);
     return env.ASSETS.fetch(request);
