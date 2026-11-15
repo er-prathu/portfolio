@@ -1474,13 +1474,17 @@
   }
   const tcode = s => `SP  0:${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
-  /* ---- sound: synthesized in the browser (no files, no external URLs); nothing is created until the visitor turns it on ---- */
+  /* ---- sound: synthesized in the browser (no files, no external URLs). Browsers only allow audio after a click or key
+     press, so nothing plays before the visitor's first one; the remote's SOUND key mutes it. ---- */
   const sfx = { ctx: null, master: null, on: !!TVC.soundDefault, vol: TVC.volume, hum: null, music: [], noise: null };
   function audio() {
     if (!sfx.on) return null;
     if (!sfx.ctx) {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-      sfx.ctx = new AC(); sfx.master = sfx.ctx.createGain(); sfx.master.gain.value = sfx.vol * .8; sfx.master.connect(sfx.ctx.destination);
+      sfx.ctx = new AC(); sfx.master = sfx.ctx.createGain(); sfx.master.gain.value = sfx.vol * .8;
+      // a gentle limiter, so the louder mix never clips on small speakers
+      const lim = sfx.ctx.createDynamicsCompressor(); lim.threshold.value = -10; lim.knee.value = 6; lim.ratio.value = 6; lim.attack.value = .003; lim.release.value = .2;
+      sfx.master.connect(lim).connect(sfx.ctx.destination);
       const len = sfx.ctx.sampleRate, buf = sfx.ctx.createBuffer(1, len, sfx.ctx.sampleRate), d = buf.getChannelData(0);
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; sfx.noise = buf;
     }
@@ -1498,16 +1502,17 @@
   function sndStatic(dur) {
     const c = audio(); if (!c) return; const t0 = c.currentTime;
     const n = c.createBufferSource(); n.buffer = sfx.noise; n.loop = true; const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
-    const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.09, t0 + .05); g.gain.setValueAtTime(.09, t0 + dur * .7); g.gain.linearRampToValueAtTime(0, t0 + dur);
+    const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.16, t0 + .05); g.gain.setValueAtTime(.16, t0 + dur * .7); g.gain.linearRampToValueAtTime(0, t0 + dur);
     n.connect(hp).connect(g).connect(sfx.master); n.start(t0); n.stop(t0 + dur + .05);
   }
   function humOn() {
     const c = audio(); if (!c || sfx.hum) return; const t0 = c.currentTime, g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(1, t0 + .8);
-    const lo = c.createOscillator(); lo.frequency.value = 50; const gl = c.createGain(); gl.gain.value = .022;
+    const lo = c.createOscillator(); lo.frequency.value = 50; const gl = c.createGain(); gl.gain.value = .03;
+    const mid = c.createOscillator(); mid.type = 'sawtooth'; mid.frequency.value = 100; const mf = c.createBiquadFilter(); mf.type = 'lowpass'; mf.frequency.value = 400; const gm = c.createGain(); gm.gain.value = .018;   // the buzz small speakers can actually play
     const hi = c.createOscillator(); hi.frequency.value = 15625; const gh = c.createGain(); gh.gain.value = .004;   // the flyback whine
-    lo.connect(gl).connect(g); hi.connect(gh).connect(g); g.connect(sfx.master); lo.start(); hi.start(); sfx.hum = { g, lo, hi };
+    lo.connect(gl).connect(g); mid.connect(mf).connect(gm).connect(g); hi.connect(gh).connect(g); g.connect(sfx.master); lo.start(); mid.start(); hi.start(); sfx.hum = { g, oscs: [lo, mid, hi] };
   }
-  function humOff() { const h = sfx.hum; if (!h || !sfx.ctx) return; const t0 = sfx.ctx.currentTime; h.g.gain.cancelScheduledValues(t0); h.g.gain.setValueAtTime(h.g.gain.value, t0); h.g.gain.linearRampToValueAtTime(0, t0 + .35); h.lo.stop(t0 + .4); h.hi.stop(t0 + .4); sfx.hum = null; }
+  function humOff() { const h = sfx.hum; if (!h || !sfx.ctx) return; const t0 = sfx.ctx.currentTime; h.g.gain.cancelScheduledValues(t0); h.g.gain.setValueAtTime(h.g.gain.value, t0); h.g.gain.linearRampToValueAtTime(0, t0 + .35); h.oscs.forEach(o => o.stop(t0 + .4)); sfx.hum = null; }
   // a quiet warm pad under the titles (four chords across the sequence), scheduled from wherever playback is
   const CHORDS = [[220, 261.6, 329.6], [174.6, 220, 261.6], [196, 246.9, 293.7], [164.8, 207.7, 246.9]];
   function musicFrom(t) {
@@ -1516,16 +1521,23 @@
     CHORDS.forEach((ch, i) => {
       const s = i * seg, e = s + seg; if (e <= t) return;
       const at = t0 + Math.max(0, s - t), dur = e - Math.max(s, t);
-      const g = c.createGain(), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
-      g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.05, at + Math.min(.9, dur * .4)); g.gain.setValueAtTime(.05, at + dur - .5); g.gain.linearRampToValueAtTime(0, at + dur + .2);
+      const g = c.createGain(), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
+      g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.13, at + Math.min(.9, dur * .4)); g.gain.setValueAtTime(.13, at + dur - .5); g.gain.linearRampToValueAtTime(0, at + dur + .2);
       lp.connect(g).connect(sfx.master);
       ch.forEach((f, k) => { const o = c.createOscillator(); o.type = 'triangle'; o.frequency.value = f; o.detune.value = (k - 1) * 6; o.connect(lp); o.start(at); o.stop(at + dur + .3); sfx.music.push(o); });
+      // a soft bell on each new chord (only for chords that start from here on), two octaves up so any speaker carries it
+      if (s >= t) [ch[0], ch[1], ch[2], ch[1] * 2].forEach((f, k) => {
+        const b = c.createOscillator(), bg = c.createGain(), bt = at + k * .14; b.type = 'sine'; b.frequency.value = f * 2;
+        bg.gain.setValueAtTime(0, bt); bg.gain.linearRampToValueAtTime(.11, bt + .008); bg.gain.exponentialRampToValueAtTime(.0001, bt + 1.4);
+        b.connect(bg).connect(sfx.master); b.start(bt); b.stop(bt + 1.5); sfx.music.push(b);
+      });
     });
   }
   function musicStop() { sfx.music.forEach(o => { try { o.stop(); } catch (e) {} }); sfx.music = []; }
-  function setSound(on) {
+  function setSound(on, uiOnly) {
     sfx.on = on; $('#tvSound').setAttribute('aria-pressed', on ? 'true' : 'false'); $('#tvSound').setAttribute('aria-label', on ? 'Sound on' : 'Sound off'); volBar();
     if (tvSet.video) { tvSet.video.muted = !on; tvSet.video.volume = sfx.vol; }
+    if (uiOnly) return;                                   // page load: no audio before the visitor's first click
     if (on) { audio(); if (sfx.master) sfx.master.gain.value = sfx.vol * .8; if (['PLAYING_INTRO', 'SIGNAL_STATIC', 'ENDED', 'PAUSED'].includes(tvSet.state)) humOn(); if (tvSet.state === 'PLAYING_INTRO') musicFrom(tvSet.introT); }
     else { musicStop(); humOff(); if (sfx.master) sfx.master.gain.value = 0; }
   }
@@ -1709,7 +1721,8 @@
   }
   backToIdle();
   function tvClick() {
-    if (busy()) return;                                   // mid-transition: ignore, so nothing overlaps
+    audio();                                              // inside the click itself, so browsers (Safari above all) let the sound start
+    if (busy()) return;                                  // mid-transition: ignore, so nothing overlaps
     if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED' || tvSet.state === 'ENDED') return pauseToggle();
     loadTape();
   }
@@ -1721,7 +1734,7 @@
     if (!sfx.on) { setSound(true); if (d < 0) { volOSD(); return; } }   // first press un-mutes
     else sfx.vol = Math.round(Math.max(0, Math.min(1, sfx.vol + d)) * 8) / 8;
     if (sfx.master) sfx.master.gain.value = sfx.vol * .8; if (tvSet.video) tvSet.video.volume = sfx.vol;
-    if (sfx.on) { const c = audio(); if (c) { const o = c.createOscillator(), g = c.createGain(); o.frequency.value = 880; env(g, c.currentTime, .003, .06, .05); o.connect(g).connect(sfx.master); o.start(); o.stop(c.currentTime + .08); } }   // a tiny beep at the new level
+    if (sfx.on) { const c = audio(); if (c) { const o = c.createOscillator(), g = c.createGain(); o.frequency.value = 880; env(g, c.currentTime, .003, .12, .05); o.connect(g).connect(sfx.master); o.start(); o.stop(c.currentTime + .08); } }   // a tiny beep at the new level
     volBar(); volOSD();
   };
   press('#tvVolDn', () => setVol(-1 / 8));
@@ -1730,7 +1743,10 @@
   press('#tvAbout', () => { powerOff(true); backToIdle(); setHash('about'); });
   ctl.addEventListener('pointerdown', e => e.stopPropagation());
   addEventListener('keydown', e => { if (e.key === 'Escape' && !current && (isOn() || tvSet.state === 'POWERING_ON')) powerOff(false); });
-  setSound(sfx.on);
+  setSound(sfx.on, true);
+  // unlock audio on the visitor's first click or key press anywhere (a silent start), so the TV can play when it powers on
+  const unlock = () => { if (sfx.on) audio(); removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); };
+  addEventListener('pointerdown', unlock, true); addEventListener('keydown', unlock, true);
   $('#modeBtn').addEventListener('click', () => { if (root.classList.contains('text-mode') && tvSet.state !== 'IDLE') backToIdle(); });   // text mode: the set goes quiet
   // a hidden tab: the picture already stops with the render loop; stop sound and video too, and pick them up on return
   document.addEventListener('visibilitychange', () => {
