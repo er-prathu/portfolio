@@ -28,6 +28,21 @@ test('GET /api/contact is a 405, not a static file', async () => {
   assert.equal(res.status, 405);
 });
 
+test('GET /api/geo returns the approximate city from request.cf, rounded, never cached', async () => {
+  const req = new Request('https://portfolio.example.workers.dev/api/geo');
+  Object.defineProperty(req, 'cf', { value: { city: 'Pune', region: 'Maharashtra', country: 'IN', latitude: '18.52043', longitude: '73.85674', timezone: 'Asia/Kolkata' } });
+  const res = await worker.fetch(req, env);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('cache-control'), 'private, no-store');
+  assert.deepEqual(await res.json(), { ok: true, city: 'Pune', region: 'Maharashtra', country: 'IN', latitude: 18.52, longitude: 73.86, timezone: 'Asia/Kolkata' });
+});
+
+test('GET /api/geo without location data says ok:false, so the page falls back to asking', async () => {
+  const res = await worker.fetch(new Request('https://portfolio.example.workers.dev/api/geo'), env);
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).ok, false);
+});
+
 test('other paths fall through to the static assets', async () => {
   const res = await worker.fetch(new Request('https://portfolio.example.workers.dev/missing-page'), env);
   assert.equal(await res.text(), 'asset');

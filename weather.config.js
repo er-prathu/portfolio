@@ -2,12 +2,21 @@
  * Live weather settings for the desk (room.html).
  *
  * The window shows the visitor's real local weather, fetched from Open-Meteo (https://open-meteo.com, no API key).
- * If the visitor declines location access, or their browser has none, the weather for the FALLBACK city is shown
- * instead, labelled with that city's name. Change the fallback here; nothing else needs editing.
+ * Where it comes from, in order:
+ *   1. a city the visitor picked by hand in the weather panel (remembered in their browser),
+ *   2. their browser location, if they allow it,
+ *   3. their approximate city from the site's own server (/api/geo: Cloudflare's request data, no third party),
+ *   4. the fallback below, if one is set; otherwise the panel asks them to search for their city.
  */
 window.DESK_WEATHER_CONFIG = {
-  // Shown when the visitor's location is unavailable. Coordinates are the city centre.
-  fallback: { name: 'Navi Mumbai', latitude: 19.033, longitude: 73.029 },
+  // Optional last resort, e.g. { name: 'Mumbai', latitude: 19.076, longitude: 72.878 }. null = ask the visitor instead.
+  fallback: null,
+
+  // The site's own approximate-location endpoint (src/worker.js). '' turns this step off.
+  ipLocationUrl: '/api/geo',
+
+  // City search in the weather panel (Open-Meteo's free geocoder, no key).
+  geocodeSearchUrl: 'https://geocoding-api.open-meteo.com/v1/search',
 
   // How often to refresh the weather while the page is open (Open-Meteo updates roughly every 15 minutes).
   refreshMinutes: 15,

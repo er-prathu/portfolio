@@ -59,6 +59,22 @@ If it fails: Worker → **Observability → Logs**. Log lines are events like `c
 4. Set `CONTACT_FROM_EMAIL` to e.g. `Portfolio <contact@prathameshpatil.dev>`, `CONTACT_EMAIL` to any inbox,
    update `ALLOWED_ORIGIN`.
 
+## What the Worker serves besides files
+
+- `POST /api/contact`: the contact form (above).
+- `GET /api/geo`: the visitor's approximate city from Cloudflare's own request data (`request.cf`), used by the
+  weather when the browser's location isn't shared. No key, no third-party lookup, nothing stored. Turn it off with
+  `ipLocationUrl: ''` in `weather.config.js`.
+
+## Résumé
+
+`resume.html` is the source; `resume.pdf` is printed from it. After editing the page, regenerate the PDF with
+Microsoft Edge while `npm start` is running:
+
+```bash
+"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --no-pdf-header-footer --virtual-time-budget=8000 --print-to-pdf="%CD%\resume.pdf" http://localhost:3000/resume.html
+```
+
 ## Known limits
 
 - The rate limit (5 messages per visitor per 10 minutes) is kept in memory per Cloudflare instance, so it is

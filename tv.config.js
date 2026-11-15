@@ -11,6 +11,6 @@
 window.DESK_TV_CONFIG = {
   introVideo: '',            // e.g. 'media/intro.mp4'; '' = use the built-in title sequence
   introVideoWebm: '',        // optional WebM alternative, tried first where supported
-  soundDefault: true,        // sound plays when the TV turns on (after the visitor's first click); false = muted until they press SOUND
+  soundDefault: false,       // false = silent until the visitor presses SOUND on the remote; true = sound plays when the TV turns on
   volume: 0.6,               // starting volume (0–1) once sound is on
 };

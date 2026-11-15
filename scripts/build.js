@@ -25,6 +25,8 @@ copy('tv.config.js');
 copy('weather.config.js');
 copy('festival.config.js');
 copy('festival.dates.js');
+// résumé (page + PDF), icons, social preview and crawler files
+['resume.html', 'resume.pdf', 'favicon.svg', 'apple-touch-icon.png', 'og-image.jpg', 'robots.txt', 'sitemap.xml'].forEach(f => copy(f));
 
 // models: the glTF JSON (buffer embedded) and its textures; the .gltf/.bin originals aren't loaded by the page
 for (const id of fs.readdirSync(path.join(ROOT, 'models'))) {

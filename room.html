@@ -3,8 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prathamesh's Desk</title>
-<meta name="description" content="Prathamesh Patil, Senior Software Engineer at WebMD. Explore his desk in Navi Mumbai: work, stack, timeline and contact.">
+<title>Prathamesh Patil · Senior Software Engineer · Prathamesh's Desk</title>
+<meta name="description" content="Prathamesh Patil, Senior Software Engineer at WebMD with 9+ years in PHP, Laravel, JavaScript and LLM integrations. Explore an interactive 3D desk: experience, projects, tech stack and contact.">
+<meta name="author" content="Prathamesh Patil">
+<meta name="theme-color" content="#0A0C0E">
+<link rel="canonical" href="https://portfolio.prathpatil3.workers.dev/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Prathamesh's Desk">
+<meta property="og:title" content="Prathamesh Patil · Senior Software Engineer">
+<meta property="og:description" content="An interactive 3D desk: a working CRT TV, a terminal, live weather in the window, and nine years of engineering work.">
+<meta property="og:url" content="https://portfolio.prathpatil3.workers.dev/">
+<meta property="og:image" content="https://portfolio.prathpatil3.workers.dev/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A 3D desk at night: a CRT television showing PRATHAMESH PATIL, a lamp, cassette tapes and the city through the window.">
+<meta property="profile:first_name" content="Prathamesh">
+<meta property="profile:last_name" content="Patil">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Prathamesh Patil",
+  "jobTitle": "Senior Software Engineer",
+  "worksFor": { "@type": "Organization", "name": "WebMD" },
+  "address": { "@type": "PostalAddress", "addressLocality": "Navi Mumbai", "addressCountry": "IN" },
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Mumbai" },
+  "url": "https://portfolio.prathpatil3.workers.dev/",
+  "sameAs": ["https://www.linkedin.com/in/prathu123", "https://github.com/er-prathu"],
+  "knowsAbout": ["PHP", "Laravel", "CodeIgniter", "JavaScript", "jQuery", "Node.js", "MySQL", "Elasticsearch", "LLM integrations", "Model Context Protocol", "Application architecture"]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -147,6 +178,16 @@
   .wxp-note:empty { display: none; }
   .wxp-loc { margin-top: 10px; height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 12px Sora, sans-serif; cursor: pointer; }
   .wxp-loc:hover { border-color: var(--amber); color: var(--amber); }
+  .wxp-acts { display: flex; gap: 8px; flex-wrap: wrap; } .wxp-acts:not(:has(button:not([hidden]))) { display: none; }
+  .wxp-find { display: flex; gap: 6px; margin-top: 12px; }
+  .wxp-find input { flex: 1; min-width: 0; height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(237,231,220,.04); color: var(--ink); font: 400 13px Sora, sans-serif; }
+  .wxp-find input:focus { outline: none; border-color: var(--amber); }
+  .wxp-find button { height: 34px; padding: 0 14px; border-radius: 999px; background: var(--amber); color: #1a1108; font: 600 12px Sora, sans-serif; }
+  .wxp-res { list-style: none; margin: 8px 0 0; display: grid; gap: 2px; max-height: 190px; overflow-y: auto; }
+  .wxp-res button { width: 100%; text-align: left; padding: 7px 10px; border-radius: 8px; display: grid; font-size: 13px; }
+  .wxp-res button span { font-size: 11.5px; color: var(--ink-2); }
+  .wxp-res button:hover, .wxp-res button:focus-visible { background: rgba(232,145,60,.14); }
+  .wxp-res .msg { padding: 6px 10px; font-size: 12px; color: var(--ink-2); }
   .wxp-attr { margin: 10px 0 0; font-size: 10.5px; color: var(--ink-2); opacity: .8; }
   .wxp-attr a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   @media (max-width: 760px) {
@@ -196,6 +237,110 @@
   .remote .vol i.on { background: #E8913C; box-shadow: 0 0 5px rgba(232,145,60,.6); }
   .remote .brand { grid-column: 1 / -1; font: 800 9px/1 Syne, sans-serif; letter-spacing: .2em; color: rgba(225,220,210,.4); margin-top: 4px; }
   .remote .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .remote .k-exit { grid-column: 1 / -1; width: 84px; height: 30px; border-radius: 15px; font-size: 10px; letter-spacing: .14em; }
+  .remote .dpad { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 3px; border-radius: 22px; background: #0a0b0c; box-shadow: inset 0 2px 4px rgba(0,0,0,.8); }
+  .remote .dpad button { width: 28px; height: 28px; font-size: 10px; }
+  .remote .dpad .k-ok { font-size: 9px; color: #1a1108; background: radial-gradient(circle at 40% 25%, #f0d9b5, #cdb38c 60%, #9b8461); }
+  .remote:not([data-state="ENDED"]) .dpad button { opacity: .45; }
+  /* the TV's menu, mirrored as real buttons: readable, tappable and announced to screen readers */
+  .tvmenu {
+    position: fixed; z-index: 19; left: max(28px, env(safe-area-inset-left, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+    display: grid; gap: 4px; width: 210px; padding: 14px 12px 12px; border-radius: 14px;
+    background: rgba(10,9,8,.74); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    animation: menu-in .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .tvmenu[hidden] { display: none; }
+  .tvmenu .label { margin: 0 4px 6px; font-family: var(--mono); letter-spacing: .12em; }
+  .tvmenu button { text-align: left; padding: 9px 12px; border-radius: 8px; font: 600 14px/1.2 var(--display); letter-spacing: .02em; color: var(--ink); transition: background .2s, color .2s; }
+  .tvmenu button::before { content: "▶"; display: inline-block; width: 0; margin-right: 0; overflow: hidden; vertical-align: 1px; font-size: 9px; transition: width .2s, margin .2s; }
+  .tvmenu button.sel, .tvmenu button:hover { background: rgba(232,145,60,.92); color: #1a1108; }
+  .tvmenu button.sel::before { width: 12px; margin-right: 4px; }
+  .tvmenu-keys { margin: 6px 4px 0; font: 500 10px/1.4 var(--mono); color: var(--ink-2); }
+  @keyframes menu-in { from { opacity: 0; transform: translateY(14px); } }
+  @media (max-width: 760px) {
+    .tvmenu { left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(66px + env(safe-area-inset-bottom, 0px)); width: min(190px, calc(100vw - 150px)); padding: 10px 8px 8px; }
+    .tvmenu button { padding: 10px 10px; font-size: 13px; }
+    .tvmenu-keys { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tvmenu { animation: none; } }
+  html.text-mode .tvmenu { display: none !important; }
+  .skip { position: fixed; z-index: 60; left: 16px; top: -60px; padding: 10px 16px; border-radius: 999px; background: var(--amber); color: #1a1108; font: 600 13px/1 var(--sans); transition: top .2s; }
+  .skip:focus-visible { top: calc(12px + env(safe-area-inset-top, 0px)); outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- Terminal: the pocket computer's screen, enlarged. Amber phosphor on warm black, faint scanlines ---------- */
+  .term { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); background: rgba(6,5,4,.55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: fade-in .25s ease both; }
+  .term[hidden] { display: none; }
+  .term-win {
+    --ph: #ffb35f; width: min(760px, 100%); height: min(560px, calc(100dvh - 48px)); display: grid; grid-template-rows: auto 1fr auto auto;
+    border-radius: 16px; overflow: hidden; background: #110c07; color: var(--ph);
+    box-shadow: 0 0 0 1px rgba(255,179,95,.18), 0 40px 80px -20px rgba(0,0,0,.8), inset 0 0 80px rgba(0,0,0,.6);
+    font: 400 14px/1.55 var(--mono); position: relative; animation: term-on .45s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .term-win::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); border-radius: inherit; box-shadow: inset 0 0 120px rgba(0,0,0,.55); }
+  @keyframes term-on { from { opacity: 0; transform: scaleY(.04) scaleX(.6); filter: brightness(3); } 60% { filter: brightness(1.4); } }
+  @keyframes fade-in { from { opacity: 0; } }
+  .term-bar { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 16px; border-bottom: 1px solid rgba(255,179,95,.15); background: rgba(255,179,95,.04); }
+  .term-bar h2 { font: 500 12px/1 var(--mono); letter-spacing: .04em; color: rgba(255,179,95,.75); flex: 1; }
+  .term-dots { display: flex; gap: 6px; } .term-dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,179,95,.22); }
+  .term-x { width: 36px; height: 36px; border-radius: 10px; color: var(--ph); font-size: 14px; }
+  .term-x:hover { background: rgba(255,179,95,.12); }
+  .term-out { overflow-y: auto; padding: 16px 18px 6px; white-space: pre-wrap; word-break: break-word; text-shadow: 0 0 6px rgba(255,160,70,.25); scrollbar-width: thin; scrollbar-color: rgba(255,179,95,.3) transparent; }
+  .term-out .cmd { color: #ffe0b8; } .term-out .dim { color: rgba(255,179,95,.55); } .term-out .err { color: #ff8a6a; } .term-out .hd { color: #ffe0b8; font-weight: 600; }
+  .term-out a { color: #ffe0b8; text-decoration: underline; text-underline-offset: 3px; }
+  .term-in { display: flex; align-items: center; gap: 10px; padding: 10px 18px 12px; }
+  .term-ps { color: #ffe0b8; }
+  .term-in input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--ph); font: inherit; caret-color: var(--ph); }
+  .term-in input::placeholder { color: rgba(255,179,95,.35); }
+  .term-keys { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+  .term-keys button { padding: 6px 10px; border-radius: 7px; border: 1px solid rgba(255,179,95,.22); font: 500 12px/1 var(--mono); color: rgba(255,179,95,.85); }
+  .term-keys button:hover, .term-keys button:focus-visible { background: rgba(255,179,95,.12); }
+  .term :focus-visible { outline: 1px solid var(--ph); outline-offset: 2px; }
+  @media (max-width: 760px) {
+    .term { place-items: end stretch; padding: 0; }
+    .term-win { width: 100%; height: min(78dvh, 640px); border-radius: 16px 16px 0 0; font-size: 13px; padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .term-out { padding: 14px 16px 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .term, .term-win { animation: none; } }
+
+  /* ---------- Walkman panel and résumé card: small cards that rise from the bottom-left ---------- */
+  .deck { position: fixed; z-index: 21; left: max(28px, env(safe-area-inset-left, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px)); width: 340px; padding: 16px 18px 18px; border-radius: 16px; background: rgba(12,10,8,.86); border: 1px solid var(--line); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 30px 60px -20px rgba(0,0,0,.7); animation: menu-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  .deck[hidden] { display: none; }
+  .deck-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .deck-x { width: 34px; height: 34px; border-radius: 10px; color: var(--ink-2); margin-right: -8px; }
+  .deck-x:hover { color: var(--ink); background: rgba(237,231,220,.07); }
+  .deck h2 { font-size: 24px; margin-bottom: 12px; }
+  .deck p { color: var(--ink-2); font-size: 13.5px; }
+  .deck-tracks { list-style: none; display: grid; gap: 2px; margin-bottom: 14px; }
+  .deck-tracks li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; padding: 8px 10px; border-radius: 9px; font-size: 13.5px; color: var(--ink-2); transition: background .25s, color .25s; }
+  .deck-tracks li b { display: block; font: 500 10px/1.6 var(--sans); text-transform: uppercase; letter-spacing: .13em; color: var(--muted); }
+  .deck-tracks .n { font: 500 11px/1.9 var(--mono); color: var(--muted); }
+  .deck-tracks li.on { background: rgba(232,145,60,.12); color: var(--ink); }
+  .deck-tracks li.on b, .deck-tracks li.on .n { color: var(--amber); }
+  .deck-ctl { display: flex; align-items: center; gap: 8px; }
+  .deck-ctl button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); font-size: 13px; color: var(--ink); }
+  .deck-ctl button:hover { border-color: var(--amber); color: var(--amber); }
+  .deck-ctl .deck-play { width: 48px; height: 48px; background: var(--amber); color: #1a1108; border-color: var(--amber); font-size: 15px; }
+  .deck-ctl .deck-play:hover { color: #1a1108; filter: brightness(1.1); }
+  .deck-ctr { margin-left: auto; font: 500 13px/1 var(--mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .deck-note { margin: 12px 0 0; font-size: 12px !important; }
+  .deck-note button { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
+  .rcard .cta-row { margin-top: 16px; }
+  body.tv-on .deck { display: none; }
+  @media (max-width: 760px) {
+    .deck { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); padding: 14px 16px 16px; }
+    .deck h2 { font-size: 21px; margin-bottom: 8px; }
+    .deck-tracks li { padding: 6px 8px; font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .deck { animation: none; } }
+  /* quick buttons under the name: the desk's objects, reachable by tap and keyboard */
+  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 10px; pointer-events: auto; }
+  .quick button { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(237,231,220,.2); background: rgba(10,9,8,.45); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 500 12px/1 var(--sans); color: var(--ink); transition: border-color .2s, color .2s, background-color .2s; touch-action: manipulation; }
+  .quick button span { font: 600 11px/1 var(--mono); color: var(--amber); }
+  .quick button:hover { border-color: var(--amber); color: var(--amber); }
+  body.sheet-open .quick, body.term-open .quick { visibility: hidden; }
+  @media (max-width: 760px) { .quick { gap: 5px; margin: 10px 0 8px; } .quick button { height: 34px; padding: 0 10px; font-size: 11.5px; } }
+  html.text-mode .deck { display: none !important; }
   body.tv-on .intro, body.tv-on .reset { opacity: 0 !important; pointer-events: none; }
   @media (max-width: 760px) {
     .remote { right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(66px + env(safe-area-inset-bottom, 0px)); width: 104px; transform-origin: 100% 100%; scale: .84; }   /* above the section menu */
@@ -341,6 +486,49 @@
   .jobs li { grid-template-columns: 1fr auto; column-gap: 16px; }
   .jobs h3 { font-size: 18px; }
   .jobs .co { color: var(--ink-2); font-size: 14px; }
+  .sec h3.sub { font: 500 10.5px/1.4 var(--sans); text-transform: uppercase; letter-spacing: .15em; color: var(--ink-2); margin: 26px 0 10px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; margin: 22px 0 4px; padding: 18px 0; border-block: 1px solid var(--line); }
+  .facts .stat { margin: 0; }
+  .kv { display: grid; gap: 8px; }
+  .kv div { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 13.5px; }
+  .kv dt { color: var(--muted); } .kv dd { color: var(--ink); }
+  .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips li { padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; font: 500 12.5px/1.2 var(--sans); color: var(--ink); background: rgba(237,231,220,.03); }
+  .chips.sm li { padding: 4px 9px; font-size: 11.5px; color: var(--ink-2); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  .cases { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
+  .case { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(237,231,220,.035), rgba(237,231,220,.01)); transition: border-color .25s, background-color .25s; }
+  .case:hover, .case:has(details[open]) { border-color: rgba(232,145,60,.45); }
+  .case summary { list-style: none; cursor: pointer; display: grid; gap: 6px; padding: 16px 18px; border-radius: 14px; }
+  .case summary::-webkit-details-marker { display: none; }
+  .case summary .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .case h3 { font-size: 19px; }
+  .case .lede { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+  .case .more { justify-self: start; margin-top: 4px; font: 600 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+  .case .more::after { content: " +"; }
+  .case details[open] .more::after { content: " −"; }
+  .cs { display: grid; gap: 12px; padding: 4px 18px 18px; animation: cs-in .45s cubic-bezier(.2,.8,.2,1); }
+  .cs div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13.5px; line-height: 1.6; }
+  .cs dt { font: 500 10px/1.8 var(--sans); text-transform: uppercase; letter-spacing: .13em; color: var(--muted); }
+  .cs dd { color: var(--ink); min-width: 0; }
+  .cs .ln { color: var(--amber); border-bottom: 1px solid rgba(232,145,60,.4); }
+  @keyframes cs-in { from { opacity: 0; transform: translateY(-6px); } }
+  .case.bench { padding: 16px 18px; display: grid; gap: 6px; border-style: dashed; }
+  .case.bench p { margin: 0; font-size: 14px; }
+  .stack { display: grid; gap: 4px; }
+  .stack .sub { margin-top: 18px; }
+  .stack .edu { color: var(--ink); margin: 0; }
+  .tl { list-style: none; position: relative; margin-top: 18px; padding-left: 22px; }
+  .tl::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(var(--amber), var(--line) 30%); }
+  .tl li { position: relative; padding: 0 0 22px; display: grid; gap: 3px; }
+  .tl li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--ground); border: 1px solid var(--ink-2); }
+  .tl li.now::before { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 4px rgba(232,145,60,.18); }
+  .tl time { font: 500 11.5px/1.4 var(--mono); color: var(--ink-2); }
+  .tl h3 { font-size: 18px; }
+  .tl .co { color: var(--ink-2); font-size: 14px; }
+  .tl p { margin: 4px 0 0; font-size: 13.5px; }
+  @media (max-width: 520px) { .facts { grid-template-columns: 1fr; gap: 14px; } .cs div { grid-template-columns: 1fr; gap: 2px; } }
+  @media (prefers-reduced-motion: reduce) { .cs { animation: none; } }
   .jobs time { font-size: 12.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; grid-row: 1; grid-column: 2; align-self: baseline; }
   .now { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin-right: 8px; vertical-align: middle; }
   .mail { display: inline-block; margin: 6px 0 22px; font: 600 clamp(18px, 1.7vw, 22px)/1.3 var(--display); border-bottom: 1px solid var(--amber); user-select: all; word-break: break-all; }
@@ -427,6 +615,8 @@
 </style>
 </head>
 <body>
+<a class="skip" id="tvStart" href="#tv">Turn on the TV introduction</a>
+<a class="skip" href="#about" style="left:260px">Skip to About</a>
 <canvas id="gl" aria-label="An illustrated 3D desk at night in front of a window onto the Navi Mumbai skyline. Objects on the desk open sections of the portfolio."></canvas>
 <div class="vignette" aria-hidden="true"></div>
 <div class="grade" aria-hidden="true"></div>
@@ -438,9 +628,9 @@
   <div class="nav-right">
     <ul class="links">
       <li><a href="#about">About</a></li>
-      <li><a href="#work">Work</a></li>
+      <li><a href="#timeline">Experience</a></li>
+      <li><a href="#work">Projects</a></li>
       <li><a href="#stack">Stack</a></li>
-      <li><a href="#timeline">Timeline</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <button class="switch" id="dayBtn" type="button" aria-pressed="false" aria-label="Switch to day">
@@ -462,12 +652,14 @@
           <div><dt>Feels like</dt><dd id="wxpFeels">—</dd></div>
           <div><dt>Humidity</dt><dd id="wxpHum">—</dd></div>
           <div><dt>Wind</dt><dd id="wxpWind">—</dd></div>
-          <div><dt>Precipitation</dt><dd id="wxpPrecip">—</dd></div>
+          <div><dt>Local time</dt><dd id="wxpTime">—</dd></div>
           <div><dt>Rain chance</dt><dd id="wxpProb">—</dd></div>
           <div><dt>Updated</dt><dd id="wxpUpd">—</dd></div>
         </dl>
         <p class="wxp-note" id="wxpNote"></p>
-        <button class="wxp-loc" id="wxpLoc" type="button" hidden>Use my location</button>
+        <form class="wxp-find" id="wxpFind" role="search"><label for="wxpQ" class="sr-only">Search for a city</label><input id="wxpQ" type="search" placeholder="Search for a city" autocomplete="off" enterkeyhint="search" maxlength="60"><button type="submit">Find</button></form>
+        <ul class="wxp-res" id="wxpRes" aria-live="polite" hidden></ul>
+        <div class="wxp-acts"><button class="wxp-loc" id="wxpLoc" type="button" hidden>Use my location</button><button class="wxp-loc" id="wxpRetry" type="button" hidden>Retry</button></div>
         <p class="wxp-attr">Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</p>
       </div>
     </div>
@@ -476,30 +668,90 @@
 </header>
 
 <nav class="dock" aria-label="Sections">
-  <a href="#about">About</a><a href="#work">Work</a><a href="#stack">Stack</a><a href="#timeline">Timeline</a><a href="#contact">Contact</a>
+  <a href="#about">About</a><a href="#timeline">Career</a><a href="#work">Projects</a><a href="#stack">Stack</a><a href="#contact">Contact</a>
 </nav>
 
 <div class="intro" id="intro">
   <p class="label amber">Senior Software Engineer · WebMD · Navi Mumbai</p>
   <h1>Prathamesh Patil<i>.</i></h1>
   <p class="label room-only" id="clock" style="margin-bottom:8px"></p>
+  <div class="quick room-only" role="group" aria-label="Things on the desk">
+    <button type="button" id="qTv"><span aria-hidden="true">▶</span> TV intro</button>
+    <button type="button" id="qTerm"><span aria-hidden="true">&gt;_</span> Terminal</button>
+    <button type="button" id="qDeck"><span aria-hidden="true">◉</span> Now building</button>
+    <button type="button" id="qCv"><span aria-hidden="true">▤</span> Résumé</button>
+  </div>
   <p class="hint"><span class="room-only" id="hintText">This is my desk. <b>Click anything on it</b>, drag to look around, scroll to zoom, double-click to move.</span><span class="text-only">Full-stack engineer shipping LLM features in production on the Nolo legal team at WebMD.</span></p>
 </div>
 
 <div class="tip" id="tip" aria-hidden="true"></div>
 
+<div class="tvmenu" id="tvMenu" role="menu" aria-label="TV menu" hidden>
+  <p class="label amber" aria-hidden="true">PRATHAMESH.EXE · Menu</p>
+  <button type="button" role="menuitem" data-i="0">About me</button>
+  <button type="button" role="menuitem" data-i="1">Experience</button>
+  <button type="button" role="menuitem" data-i="2">Projects</button>
+  <button type="button" role="menuitem" data-i="3">Tech stack</button>
+  <button type="button" role="menuitem" data-i="4">Contact</button>
+  <p class="tvmenu-keys" aria-hidden="true">↑ ↓ choose · Enter open · Esc exit</p>
+</div>
 <div class="remote" id="tvCtl" role="toolbar" aria-label="TV remote" hidden>
   <span class="ir" aria-hidden="true"></span>
+  <button type="button" id="tvExit" class="k-exit" aria-label="Close the TV and return to the desk">✕ EXIT</button>
   <div class="key"><button type="button" id="tvOff" class="k-power" aria-label="Turn the television off and eject the tape"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></button><span aria-hidden="true">POWER</span></div>
   <div class="key"><button type="button" id="tvSound" class="k-sound" aria-pressed="false" aria-label="Sound"><span aria-hidden="true">♪<span class="led"></span></span></button><span aria-hidden="true">SOUND</span></div>
   <button type="button" id="tvPlay" class="k-play" aria-label="Pause the introduction">❚❚</button>
+  <div class="dpad" role="group" aria-label="Menu keys"><button type="button" id="tvUp" aria-label="Menu up">▲</button><button type="button" id="tvOk" class="k-ok" aria-label="Open the highlighted menu item">OK</button><button type="button" id="tvDown" aria-label="Menu down">▼</button></div>
   <div class="key"><button type="button" id="tvRestart" aria-label="Rewind and restart the introduction">◀◀</button><span aria-hidden="true">REW</span></div>
-  <div class="key"><button type="button" id="tvAbout" aria-label="Open About">i</button><span aria-hidden="true">ABOUT</span></div>
+  <div class="key"><button type="button" id="tvAbout" aria-label="Show the menu">☰</button><span aria-hidden="true">MENU</span></div>
   <div class="rocker"><button type="button" id="tvVolDn" aria-label="Volume down">−</button><span aria-hidden="true">VOL</span><button type="button" id="tvVolUp" aria-label="Volume up">+</button></div>
   <div class="vol" id="tvVolBar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <span class="brand" aria-hidden="true">PRATHAMESH</span>
 </div>
 <button class="pill reset" id="resetBtn" type="button">Reset view</button>
+
+<div class="term" id="term" role="dialog" aria-modal="true" aria-labelledby="termTitle" hidden>
+  <div class="term-win">
+    <div class="term-bar">
+      <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <h2 id="termTitle">prathamesh@desk: ~</h2>
+      <button type="button" id="termClose" class="term-x" aria-label="Close the terminal">✕</button>
+    </div>
+    <div class="term-out" id="termOut" role="log" aria-live="polite" tabindex="-1"></div>
+    <form class="term-in" id="termForm" autocomplete="off">
+      <label for="termInput" class="sr-only">Type a command</label>
+      <span class="term-ps" aria-hidden="true">$</span>
+      <input id="termInput" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" maxlength="80" placeholder="type help">
+    </form>
+    <div class="term-keys" role="group" aria-label="Quick commands">
+      <button type="button">help</button><button type="button">about</button><button type="button">skills</button><button type="button">experience</button><button type="button">projects</button><button type="button">contact</button><button type="button">clear</button>
+    </div>
+  </div>
+</div>
+
+<aside class="deck" id="deck" aria-labelledby="deckTitle" hidden>
+  <div class="deck-head"><span class="label amber" id="deckSide">Side A · Now playing</span><button type="button" id="deckClose" class="deck-x" aria-label="Close the Walkman">✕</button></div>
+  <h2 id="deckTitle">Currently building</h2>
+  <ol class="deck-tracks" id="deckTracks">
+    <li><span class="n">01</span><span><b>Currently building</b>AI-powered development tools</span></li>
+    <li><span class="n">02</span><span><b>Currently exploring</b>Claude Code, MCP and LLM integrations</span></li>
+    <li><span class="n">03</span><span><b>Currently learning</b>Modern application architecture: system design, RAG and vector databases</span></li>
+  </ol>
+  <div class="deck-ctl">
+    <button type="button" id="deckPrev" aria-label="Previous track">⏮</button>
+    <button type="button" id="deckPlay" class="deck-play" aria-label="Play">▶</button>
+    <button type="button" id="deckNext" aria-label="Next track">⏭</button>
+    <span class="deck-ctr" id="deckCtr" aria-hidden="true">0:00</span>
+  </div>
+  <p class="deck-note" id="deckNote"></p>
+</aside>
+
+<aside class="deck rcard" id="rcard" aria-labelledby="rcardTitle" hidden>
+  <div class="deck-head"><span class="label amber">Floppy · 1.44 MB</span><button type="button" id="rcardClose" class="deck-x" aria-label="Close">✕</button></div>
+  <h2 id="rcardTitle">Résumé</h2>
+  <p>One page: experience, projects, skills and education.</p>
+  <div class="cta-row"><a class="btn solid" href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">Download PDF</a><a class="btn" href="resume.html" target="_blank" rel="noopener">View online ↗</a></div>
+</aside>
 
 <aside class="sheet" id="sheet" aria-label="Section" aria-hidden="true">
   <div class="sheet-head">
@@ -514,50 +766,123 @@
       <p class="big">Nine years shipping web software in PHP and JavaScript. Now I put <em>LLMs into production</em> at WebMD.</p>
       <p>I'm a Senior Software Engineer on the Nolo legal team at WebMD, working full-stack. I use Claude Code, the Claude API and MCP in production work every day.</p>
       <p>Right now I'm going deeper into system design and RAG / vector databases, on the way to Tech Lead and Solution Architect roles.</p>
-      <div class="stat"><b>09</b><span class="label">Years shipping, since Aug 2017</span></div>
+      <div class="facts">
+        <div class="stat"><b>9+</b><span class="label">Years shipping,<br>since Aug 2017</span></div>
+        <dl class="kv">
+          <div><dt>Role</dt><dd>Senior Software Engineer</dd></div>
+          <div><dt>Company</dt><dd>WebMD · Nolo legal team</dd></div>
+          <div><dt>Based in</dt><dd>Navi Mumbai, open to relocation</dd></div>
+        </dl>
+      </div>
+      <h3 class="sub">What I care about</h3>
+      <ul class="chips">
+        <li>Backend engineering</li><li>Full-stack development</li><li>AI-powered applications</li><li>LLM integrations</li><li>Developer productivity</li><li>Application architecture</li>
+      </ul>
+      <div class="cta-row"><a class="btn solid" href="#work">See projects</a><a class="btn" href="resume.html" target="_blank" rel="noopener">Résumé ↗</a></div>
+    </section>
+
+    <section class="sec" id="timeline" data-section="timeline" hidden>
+      <p class="label amber text-only">02 — Experience</p>
+      <h2>Experience.</h2>
+      <p>Nine years and five teams, from web developer to senior engineer.</p>
+      <ol class="tl">
+        <li class="now"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span><p>Full-stack work on the Nolo legal product, shipping LLM features in production.</p></li>
+        <li><time>Sep 2021 — Aug 2024</time><h3>Software Engineer</h3><span class="co">The Information Company</span></li>
+        <li><time>Jan 2020 — Sep 2021</time><h3>PHP Developer</h3><span class="co">Neolite Infotech</span></li>
+        <li><time>Jun 2018 — Aug 2019</time><h3>Associate Developer</h3><span class="co">Centillion Solutions and Services</span></li>
+        <li><time>Aug 2017 — Jun 2018</time><h3>Web Developer</h3><span class="co">Techfryday</span></li>
+      </ol>
+      <div class="cta-row"><a class="btn" href="resume.html" target="_blank" rel="noopener">Full résumé ↗</a></div>
     </section>
 
     <section class="sec" id="work" data-section="work" hidden>
-      <p class="label amber text-only">02 — Work</p>
-      <h2>Built at WebMD.</h2>
-      <ul class="items">
-        <li><div class="row"><span class="label amber">PP—01</span><span class="label">LLM in production</span></div>
-          <h3>AI lead qualification engine</h3>
-          <p>An LLM asks users follow-up questions, tells strong leads from weak ones and scores them, so Nolo gets better-qualified leads.</p></li>
-        <li><div class="row"><span class="label amber">PP—02</span><span class="label">Figma MCP · Claude Code</span></div>
-          <h3>Figma-to-HTML skill</h3>
-          <p>Integrated the Figma MCP with Claude Code and Cline, then built a skill that turns Figma designs into HTML. Used across the entire IB team.</p></li>
-        <li><div class="row"><span class="label amber">PP—03</span><span class="label">Full-stack · solo dev</span></div>
-          <h3>Nolo CMS</h3>
-          <p>The only developer on a full-stack CMS for the Nolo legal product, built with AI-assisted tooling.</p></li>
-        <li><div class="row"><span class="label amber">PP—04</span><span class="label">In progress</span></div>
+      <p class="label amber text-only">03 — Projects</p>
+      <h2>Projects.</h2>
+      <p>Work built at WebMD is internal, so it has no public demo or code. Open a project for the details.</p>
+      <ul class="cases">
+        <li class="case">
+          <details>
+            <summary>
+              <span class="row"><span class="label amber">PP—01</span><span class="label">LLM in production · WebMD</span></span>
+              <h3>AI lead qualification engine</h3>
+              <span class="lede">An LLM asks users follow-up questions, tells strong leads from weak ones and scores them, so Nolo gets better-qualified leads.</span>
+              <span class="more" aria-hidden="true">Case study</span>
+            </summary>
+            <dl class="cs">
+              <div><dt>Problem</dt><dd>Nolo needed to tell strong leads from weak ones, so the leads it passes on are better qualified.</dd></div>
+              <div><dt>What it does</dt><dd>An LLM asks the user follow-up questions, then classifies and scores the lead from the answers.</dd></div>
+              <div><dt>Built with</dt><dd><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></dd></div>
+              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
+            </dl>
+          </details>
+        </li>
+        <li class="case">
+          <details>
+            <summary>
+              <span class="row"><span class="label amber">PP—02</span><span class="label">Figma MCP · Claude Code · WebMD</span></span>
+              <h3>Figma-to-HTML skill</h3>
+              <span class="lede">Integrated the Figma MCP with Claude Code and Cline, then built a skill that turns Figma designs into HTML.</span>
+              <span class="more" aria-hidden="true">Case study</span>
+            </summary>
+            <dl class="cs">
+              <div><dt>Problem</dt><dd>Turning Figma designs into HTML by hand is slow and repetitive.</dd></div>
+              <div><dt>What I built</dt><dd>Connected the Figma MCP server to Claude Code and Cline, then wrote a skill that converts a Figma design into HTML.</dd></div>
+              <div><dt>Built with</dt><dd><ul class="chips sm"><li>Figma MCP</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></dd></div>
+              <div><dt>Impact</dt><dd>Used across the entire IB team.</dd></div>
+              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
+            </dl>
+          </details>
+        </li>
+        <li class="case">
+          <details>
+            <summary>
+              <span class="row"><span class="label amber">PP—03</span><span class="label">Full-stack · solo developer · WebMD</span></span>
+              <h3>Nolo CMS</h3>
+              <span class="lede">The only developer on a full-stack CMS for the Nolo legal product, built with AI-assisted tooling.</span>
+              <span class="more" aria-hidden="true">Case study</span>
+            </summary>
+            <dl class="cs">
+              <div><dt>Problem</dt><dd>The Nolo legal product needed its own content management system.</dd></div>
+              <div><dt>My role</dt><dd>Sole developer, across the full stack.</dd></div>
+              <div><dt>How</dt><dd>Built with AI-assisted development tools.</dd></div>
+              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
+            </dl>
+          </details>
+        </li>
+        <li class="case">
+          <details>
+            <summary>
+              <span class="row"><span class="label amber">PP—04</span><span class="label">Open source · live</span></span>
+              <h3>Prathamesh's Desk (this site)</h3>
+              <span class="lede">A portfolio you explore as a 3D desk: a working CRT television, live local weather in the window, and a contact form that really sends.</span>
+              <span class="more" aria-hidden="true">Case study</span>
+            </summary>
+            <dl class="cs">
+              <div><dt>Problem</dt><dd>A portfolio people remember, that is still fast, accessible and easy for recruiters to scan.</dd></div>
+              <div><dt>What I built</dt><dd>A three.js room rendered in the browser, with no build step. The TV's picture is a single GPU shader: curvature, scanlines, static and VHS tracking. Weather comes from Open-Meteo and drives rain, fog and snow outside. A Cloudflare Worker serves the site and sends contact messages through Resend, with validation, rate limiting and a honeypot. A text version is always one click away.</dd></div>
+              <div><dt>Built with</dt><dd><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL shaders</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Node.js tests</li></ul></dd></div>
+              <div><dt>Links</dt><dd><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></dd></div>
+            </dl>
+          </details>
+        </li>
+        <li class="case bench">
+          <span class="row"><span class="label amber">PP—05</span><span class="label">In progress</span></span>
           <h3>On the bench</h3>
-          <p>Studying system design, RAG and vector databases to design AI systems end to end.</p></li>
+          <p>Studying system design, RAG and vector databases to design AI systems end to end.</p>
+        </li>
       </ul>
     </section>
 
     <section class="sec" id="stack" data-section="stack" hidden>
-      <p class="label amber text-only">03 — Stack</p>
-      <h2>The stack.</h2>
-      <ul class="items skills">
-        <li><span class="label amber">AI &amp; LLM</span><span class="name">Claude Code, Claude API, MCP, <span>Figma MCP, Cline</span></span><span class="count">05</span></li>
-        <li><span class="label teal">Back end</span><span class="name">PHP, Laravel, CodeIgniter, <span>MySQL, REST APIs, C#</span></span><span class="count">06</span></li>
-        <li><span class="label amber">Front end</span><span class="name">JavaScript, Angular, jQuery, <span>HTML5, CSS, Bootstrap</span></span><span class="count">06</span></li>
-        <li><span class="label teal">Learning</span><span class="name">System design, RAG, <span>vector databases</span></span><span class="count">03</span></li>
-        <li><span class="label">Education</span><span class="name">Bachelor's degree, <span>University of Mumbai</span></span><span class="count">—</span></li>
-      </ul>
-    </section>
-
-    <section class="sec" id="timeline" data-section="timeline" hidden>
-      <p class="label amber text-only">04 — Timeline</p>
-      <h2>Timeline.</h2>
-      <ul class="items jobs">
-        <li><h3>Senior Software Engineer</h3><time>Aug 2024 — Now</time><span class="co"><span class="now" aria-hidden="true"></span>WebMD · Nolo legal team</span></li>
-        <li><h3>Software Engineer</h3><time>Sep 2021 — Aug 2024</time><span class="co">The Information Company</span></li>
-        <li><h3>PHP Developer</h3><time>Jan 2020 — Sep 2021</time><span class="co">Neolite Infotech</span></li>
-        <li><h3>Associate Developer</h3><time>Jun 2018 — Aug 2019</time><span class="co">Centillion Solutions and Services</span></li>
-        <li><h3>Web Developer</h3><time>Aug 2017 — Jun 2018</time><span class="co">Techfryday</span></li>
-      </ul>
+      <p class="label amber text-only">04 — Tech stack</p>
+      <h2>Tech stack.</h2>
+      <div class="stack">
+        <div><h3 class="sub"><span class="label teal">Back end</span></h3><ul class="chips"><li>PHP</li><li>Laravel</li><li>CodeIgniter</li><li>Node.js</li><li>MySQL</li><li>Elasticsearch</li><li>REST APIs</li><li>C#</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">Front end</span></h3><ul class="chips"><li>JavaScript</li><li>jQuery</li><li>Angular</li><li>HTML5</li><li>CSS</li><li>Bootstrap</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">AI &amp; LLM</span></h3><ul class="chips"><li>Claude Code</li><li>Claude API</li><li>MCP</li><li>Figma MCP</li><li>Cline</li></ul></div>
+        <div><h3 class="sub"><span class="label teal">Learning now</span></h3><ul class="chips"><li>System design</li><li>RAG</li><li>Vector databases</li></ul></div>
+        <div><h3 class="sub"><span class="label">Education</span></h3><p class="edu">Bachelor's degree, University of Mumbai</p></div>
+      </div>
     </section>
 
     <section class="sec" id="contact" data-section="contact" hidden>
@@ -606,7 +931,7 @@
       <div class="elsewhere">
         <span class="label">Or reach me directly</span>
         <a class="mail" href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a>
-        <div class="btns"><a class="btn" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+        <div class="btns"><a class="btn" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a><a class="btn" href="https://github.com/er-prathu" target="_blank" rel="noopener">GitHub ↗</a><a class="btn" href="resume.html" target="_blank" rel="noopener">Résumé ↗</a></div>
       </div>
     </section>
 
@@ -634,8 +959,8 @@
   const root = document.documentElement, body = document.body;
   const forceMotion = /[?&]motion\b/.test(location.search) || location.hash === '#motion';
   const reduce = !forceMotion && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ORDER = ['about', 'work', 'stack', 'timeline', 'contact'];
-  const NAMES = { about: 'About', work: 'Work', stack: 'Stack', timeline: 'Timeline', contact: 'Contact' };
+  const ORDER = ['about', 'timeline', 'work', 'stack', 'contact'];   // the TV menu's order: About me · Experience · Projects · Tech stack · Contact
+  const NAMES = { about: 'About', work: 'Projects', stack: 'Tech stack', timeline: 'Experience', contact: 'Contact' };
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 
   /* festivals: which theme (if any) the desk wears today, by the date in India (dates in festival.config.js) */
@@ -723,6 +1048,139 @@
     $('#modeBtn').hidden = true;
     body.classList.add('ready');
   }
+
+  /* ================= Terminal: a small command line with fixed answers. It never runs anything: every command is a
+     lookup in TERM_CMDS below, so nothing typed here reaches a server. ================= */
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const TERM_CMDS = {
+    help: () => [
+      ['hd', 'Available commands'],
+      '  about        who I am',
+      '  skills       languages, frameworks and tools',
+      '  experience   where I have worked',
+      '  projects     what I have built',
+      '  contact      how to reach me',
+      '  resume       my résumé (PDF)',
+      '  open <name>  open a section beside the desk (about, experience, projects, stack, contact)',
+      '  clear        clear the screen',
+      ['dim', 'Tip: ↑ and ↓ go through your previous commands.'],
+    ],
+    about: () => [
+      'Senior Software Engineer with 9+ years of experience building web applications,',
+      'backend systems and modern development solutions.',
+      '',
+      'Right now: full-stack on the Nolo legal team at WebMD, shipping LLM features in',
+      'production with Claude Code, the Claude API and MCP.',
+      'Next: system design, RAG and vector databases, on the way to Tech Lead and',
+      'Solution Architect roles.',
+    ],
+    skills: () => [
+      ['hd', 'Back end   '], '  PHP · Laravel · CodeIgniter · Node.js · MySQL · Elasticsearch · REST APIs · C#',
+      ['hd', 'Front end  '], '  JavaScript · jQuery · Angular · HTML5 · CSS · Bootstrap',
+      ['hd', 'AI & LLM   '], '  Claude Code · Claude API · MCP · Figma MCP · Cline',
+      ['hd', 'Learning   '], '  System design · RAG · vector databases',
+    ],
+    experience: () => [
+      ['hd', 'Aug 2024 – now     Senior Software Engineer · WebMD (Nolo legal team)'],
+      'Sep 2021 – Aug 2024  Software Engineer · The Information Company',
+      'Jan 2020 – Sep 2021  PHP Developer · Neolite Infotech',
+      'Jun 2018 – Aug 2019  Associate Developer · Centillion Solutions and Services',
+      'Aug 2017 – Jun 2018  Web Developer · Techfryday',
+    ],
+    projects: () => [
+      ['hd', 'PP-01  AI lead qualification engine'], '       An LLM asks follow-up questions, then scores the lead. (WebMD, internal)',
+      ['hd', 'PP-02  Figma-to-HTML skill'], '       Figma MCP + Claude Code/Cline skill; used across the entire IB team. (WebMD, internal)',
+      ['hd', 'PP-03  Nolo CMS'], '       Sole developer on a full-stack CMS for the Nolo legal product. (WebMD, internal)',
+      ['hd', 'PP-04  Prathamesh\'s Desk (this site)'], ['html', '       three.js · GLSL · Cloudflare Workers · <a href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">github.com/er-prathu/portfolio</a>'],
+      ['dim', 'Run "open projects" for the full case studies.'],
+    ],
+    contact: () => [
+      ['html', 'Email      <a href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a>'],
+      ['html', 'LinkedIn   <a href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">linkedin.com/in/prathu123</a>'],
+      ['html', 'GitHub     <a href="https://github.com/er-prathu" target="_blank" rel="noopener">github.com/er-prathu</a>'],
+      ['dim', 'Or run "open contact" to send a message from the form.'],
+    ],
+    resume: () => [['html', 'Résumé: <a href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">download PDF</a> · <a href="resume.html" target="_blank" rel="noopener">view online</a>']],
+  };
+  const TERM_ALIAS = { stack: 'skills', work: 'projects', timeline: 'experience', career: 'experience', cv: 'resume', whoami: 'about', ls: 'help', '?': 'help' };
+  const SECTION_OF = { about: 'about', experience: 'timeline', timeline: 'timeline', projects: 'work', work: 'work', stack: 'stack', skills: 'stack', contact: 'contact' };
+  const term = { el: $('#term'), out: $('#termOut'), input: $('#termInput'), hist: [], hi: 0, queue: Promise.resolve(), opener: null, booted: false };
+  const termSleep = ms => new Promise(r => setTimeout(r, ms));
+  function termLine(item) {
+    const p = document.createElement('div');
+    if (Array.isArray(item)) { const [k, s] = item; if (k === 'html') p.innerHTML = s; else { p.className = k; p.textContent = s; } }
+    else p.textContent = item || ' ';
+    return p;
+  }
+  // print lines with a quick type-on (instant with reduced motion); queued so output never interleaves
+  function termPrint(lines) {
+    term.queue = term.queue.then(async () => {
+      for (const item of lines) {
+        const p = termLine(item);
+        const typed = !reduce && !(Array.isArray(item) && item[0] === 'html') && p.textContent.length < 120;
+        if (typed) { const full = p.textContent; p.textContent = ''; term.out.appendChild(p); for (let i = 0; i <= full.length; i += 3) { p.textContent = full.slice(0, i); term.out.scrollTop = term.out.scrollHeight; await termSleep(6); } p.textContent = full; }
+        else term.out.appendChild(p);
+        term.out.scrollTop = term.out.scrollHeight;
+      }
+    });
+    return term.queue;
+  }
+  function termRun(raw) {
+    const line = raw.trim().slice(0, 80);
+    const echo = document.createElement('div'); echo.className = 'cmd'; echo.textContent = '$ ' + line;
+    term.queue = term.queue.then(() => { term.out.appendChild(echo); term.out.scrollTop = term.out.scrollHeight; });   // after any output still typing
+    if (!line) return;
+    term.hist.push(line); term.hi = term.hist.length;
+    const [word, ...rest] = line.toLowerCase().split(/\s+/), cmd = TERM_ALIAS[word] || word;
+    if (cmd === 'clear' || cmd === 'cls') { term.queue = term.queue.then(() => { term.out.textContent = ''; }); return; }
+    if (cmd === 'exit' || cmd === 'quit') { closeTerm(); return; }
+    if (cmd === 'open' || cmd === 'cd') {
+      const sec = SECTION_OF[rest[0]];
+      if (!sec) return termPrint([['err', `open: say which section: about, experience, projects, stack or contact`]]);
+      termPrint([['dim', `Opening ${NAMES[sec]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash(sec); }, reduce ? 0 : 350));
+      return;
+    }
+    if (cmd === 'sudo') return termPrint([['err', 'Nice try. This terminal is read-only: it answers questions, it runs nothing.']]);
+    if (TERM_CMDS[cmd]) return termPrint(TERM_CMDS[cmd]());
+    termPrint([['err', `command not found: ${word}`], ['dim', 'Type "help" to see what this terminal knows.']]);
+  }
+  function openTerm() {
+    term.opener = document.activeElement; term.el.hidden = false; body.classList.add('term-open');
+    if (!term.booted) {
+      term.booted = true;
+      termPrint([['dim', 'PRATHAMESH OS 1.0 · read-only shell'], ['dim', 'Ask me about my work. Type "help" or tap a command below.'], '']);
+    }
+    setTimeout(() => term.input.focus({ preventScroll: true }), reduce ? 0 : 120);
+  }
+  function closeTerm(silent) {
+    if (term.el.hidden) return;
+    term.el.hidden = true; body.classList.remove('term-open');
+    if (!silent && term.opener && term.opener.focus && document.contains(term.opener)) term.opener.focus({ preventScroll: true });
+  }
+  $('#termForm').addEventListener('submit', e => { e.preventDefault(); const v = term.input.value; term.input.value = ''; termRun(v); });
+  term.input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' && term.hist.length) { e.preventDefault(); term.hi = Math.max(0, term.hi - 1); term.input.value = term.hist[term.hi]; }
+    else if (e.key === 'ArrowDown' && term.hist.length) { e.preventDefault(); term.hi = Math.min(term.hist.length, term.hi + 1); term.input.value = term.hist[term.hi] || ''; }
+  });
+  $$('.term-keys button').forEach(b => b.addEventListener('click', () => { termRun(b.textContent); if (!matchMedia('(pointer: coarse)').matches) term.input.focus(); }));
+  $('#termClose').addEventListener('click', () => closeTerm());
+  term.el.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === term.el) closeTerm(); });
+  term.el.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.stopPropagation(); closeTerm(); }
+    if (e.key === 'Tab') {   // keep focus inside the dialog
+      const f = [...term.el.querySelectorAll('button, input, a[href]')].filter(x => x.offsetParent !== null), first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  // the backtick or ~ key opens it from anywhere (outside text fields)
+  addEventListener('keydown', e => { if ((e.key === '`' || e.key === '~') && term.el.hidden && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { e.preventDefault(); openTerm(); } });
+
+  /* résumé card (the floppy disk opens it; the nav and the terminal link straight to the files) */
+  const rcard = $('#rcard');
+  function openResume() { rcard.hidden = false; setTimeout(() => rcard.querySelector('a').focus({ preventScroll: true }), 30); }
+  $('#rcardClose').addEventListener('click', () => { rcard.hidden = true; });
+  rcard.addEventListener('pointerdown', e => e.stopPropagation());
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !rcard.hidden) rcard.hidden = true; });
 
   /* ================= 3D room ================= */
   if (!window.THREE || !window.gsap) { fallback(); return; }
@@ -1273,7 +1731,7 @@
     // the VCR's blue input screen: the set glows like a lamp of its own
     const bg = g.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, w * .72); bg.addColorStop(0, '#3d5cf2'); bg.addColorStop(.6, '#2a43cf'); bg.addColorStop(1, '#0d1a6e');
     g.fillStyle = bg; g.fillRect(0, 0, w, h);
-    const CH = { home: ['01', ''], about: ['01', 'ABOUT'], work: ['02', 'WORK'], stack: ['03', 'STACK'], timeline: ['04', 'TIMELINE'], contact: ['05', 'CONTACT'] }[tvMode] || ['01', ''];
+    const CH = { home: ['01', ''], about: ['01', 'ABOUT'], timeline: ['02', 'CAREER'], work: ['03', 'PROJECTS'], stack: ['04', 'STACK'], contact: ['05', 'CONTACT'] }[tvMode] || ['01', ''];
     g.textAlign = 'center';
     if (tvMode === 'home') {
       // a bold title card, left-aligned and filling the picture (the reference's screen reads from across the room)
@@ -1331,7 +1789,7 @@
   }, true);
   tv.add(put(new T.Mesh(new T.PlaneGeometry(.112, .03), new T.MeshBasicMaterial({ map: vfd.t, toneMapped: false })), .135, .046, VF + .0076));
   for (let i = 0; i < 6; i++) tv.add(put(box(.024, .009, .007, keyM, .0018), -.135 + i * .031, .021, VF + .0065));   // rewind · play · ff · stop · pause · rec
-  tv.add(put(box(.032, .013, .008, keyM, .002), -.198, .05, VF + .007));                                      // power
+  const vcrPowerKey = put(box(.032, .013, .008, keyM, .002), -.198, .05, VF + .007); tv.add(vcrPowerKey);       // power (pressed in as the set comes on)
   tv.add(put(new T.Mesh(new T.SphereGeometry(.0022, 10, 8), new T.MeshBasicMaterial({ color: 0xff8a3c, toneMapped: false })), -.198, .032, VF + .0065));
   [.098, .124].forEach(x => { const k = mesh(new T.CylinderGeometry(.0065, .007, .008, 20), std(0x34373b, .3, .7)); k.rotation.x = Math.PI / 2; tv.add(put(k, x, .021, VF + .007)); });
   const vcrBadge = canvasTex(128, 24, g => { g.clearRect(0, 0, 128, 24); g.fillStyle = 'rgba(170,176,180,.8)'; g.font = '700 15px Sora, sans-serif'; g.fillText('VHS · HQ', 4, 17); }, true);   // printed model mark
@@ -1405,8 +1863,11 @@
      the last, so repeated clicks never stack animations, audio or video.
      ===================================================================================================================== */
   const TVC = Object.assign({ introVideo: '', introVideoWebm: '', soundDefault: false, volume: .6 }, window.DESK_TV_CONFIG || {});
-  const INTRO_LEN = 10.6;                                   // seconds of title sequence (a video uses its own length)
-  const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '' };
+  // the sequence: tape loads (0–1.7 s) · PRATHAMESH.EXE boots (1.75–3.7) · the introduction (3.8–8.6) · the menu (8.8 →)
+  const MENU_AT = 8.8, INTRO_LEN = 9.3;                    // seconds of title sequence (a video uses its own length, then the menu)
+  const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['TECH STACK', 'stack'], ['CONTACT', 'contact']];
+  const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
+  const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
   const introTex = canvasTex(640, 480, g => { g.fillStyle = '#000'; g.fillRect(0, 0, 640, 480); });
   // standby LED on the set's bezel: green when on, amber while warming up, a dim red at standby
   const ledMat = new T.MeshBasicMaterial({ color: 0x5dff9a, toneMapped: false });
@@ -1415,6 +1876,7 @@
 
   /* ---- the title sequence: typography and motion only (no footage, no likeness), in the portfolio's palette ---- */
   const clamp01 = x => Math.max(0, Math.min(1, x));
+  function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   const ease = x => 1 - (1 - clamp01(x)) ** 3;
   const fade = (t, a, b, c, d) => Math.min(ease((t - a) / (b - a)), 1 - ease((t - c) / (d - c)));
   const CREAM = '243,234,217', AMBER = '232,145,60';
@@ -1434,51 +1896,91 @@
     sh.addColorStop(0, 'rgba(255,240,220,0)'); sh.addColorStop(.5, 'rgba(255,240,220,.05)'); sh.addColorStop(1, 'rgba(255,240,220,0)');
     g.fillStyle = sh; g.fillRect(0, 0, w, h);
     g.textAlign = 'left'; g.textBaseline = 'alphabetic';
-    // 0–2.3 s · PRATHAMESH PRESENTS
-    let a = fade(T, .5, 1.1, 1.9, 2.3);
-    if (a > 0) { g.fillStyle = `rgba(${CREAM},${a})`; g.font = '600 28px "JetBrains Mono", monospace'; spaced(g, 'PRATHAMESH  PRESENTS', w / 2, h / 2 + 9, 5); }
-    // 2.3–5.7 s · HELLO, I'M PRATHAMESH · SOFTWARE ENGINEER · PROBLEM SOLVER · BUILDER
-    a = fade(T, 2.4, 2.9, 5.35, 5.7);
+    const now = performance.now() / 1000;
+    // 0–1.7 s · the tape loads: a cassette with turning reels, a counter and a progress bar
+    let a = fade(T, .05, .35, 1.45, 1.7);
     if (a > 0) {
-      g.fillStyle = `rgba(${AMBER},${a})`; g.font = '600 26px "JetBrains Mono", monospace'; spaced(g, "HELLO, I'M", w / 2, h * .33, 5);
+      const cx = w / 2, cy = h * .42, bw = 250, bh = 150;
+      g.strokeStyle = `rgba(${CREAM},${a * .9})`; g.lineWidth = 3; rr(g, cx - bw / 2, cy - bh / 2, bw, bh, 12); g.stroke();
+      g.fillStyle = `rgba(${AMBER},${a * .85})`; g.fillRect(cx - bw / 2 + 18, cy - bh / 2 + 16, bw - 36, 26);
+      g.fillStyle = `rgba(20,14,8,${a})`; g.font = '700 15px "JetBrains Mono", monospace'; g.textAlign = 'center'; g.fillText('PRATHAMESH · SIDE A', cx, cy - bh / 2 + 34);
+      g.strokeStyle = `rgba(${CREAM},${a * .5})`; g.lineWidth = 2; rr(g, cx - 70, cy - 8, 140, 44, 8); g.stroke();
+      [-46, 46].forEach(dx => {
+        g.save(); g.translate(cx + dx, cy + 14); g.rotate(T * 5.5);
+        g.strokeStyle = `rgba(${CREAM},${a})`; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 17, 0, 7); g.stroke();
+        for (let k = 0; k < 6; k++) { g.rotate(Math.PI / 3); g.beginPath(); g.moveTo(0, 6); g.lineTo(0, 15); g.stroke(); }
+        g.restore();
+      });
+      const p = clamp01((T - .2) / 1.15);
+      g.fillStyle = `rgba(${CREAM},${a})`; g.font = '600 20px "JetBrains Mono", monospace'; spaced(g, 'LOADING TAPE', cx, h * .74, 4);
+      g.fillStyle = `rgba(${CREAM},${a * .18})`; g.fillRect(cx - 150, h * .79, 300, 6);
+      g.fillStyle = `rgba(${AMBER},${a})`; g.fillRect(cx - 150, h * .79, 300 * p, 6);
+      g.textAlign = 'left';
+    }
+    // 1.75–3.7 s · the program boots: a typed command, then the title
+    a = fade(T, 1.75, 1.9, 3.45, 3.7);
+    if (a > 0) {
+      const cmd = 'C:\\> RUN PRATHAMESH.EXE', n = Math.floor(clamp01((T - 1.85) / .65) * cmd.length);
+      g.fillStyle = `rgba(${AMBER},${a})`; g.font = '600 22px "JetBrains Mono", monospace';
+      g.fillText(cmd.slice(0, n) + (n < cmd.length || Math.floor(now * 3) % 2 ? '█' : ''), 64, h * .3);
+      const b = fade(T, 2.6, 2.85, 3.45, 3.7);
+      if (b > 0) {
+        g.textAlign = 'center'; g.fillStyle = `rgba(${CREAM},${b})`; g.font = '800 62px Syne, sans-serif'; g.fillText('PRATHAMESH.EXE', w / 2, h * .55, w - 80);
+        const p = clamp01((T - 2.8) / .6), cells = 18;
+        g.font = '600 18px "JetBrains Mono", monospace'; g.fillStyle = `rgba(${CREAM},${b * .85})`;
+        g.fillText('█'.repeat(Math.round(p * cells)) + '░'.repeat(cells - Math.round(p * cells)) + `  ${Math.round(p * 100)}%`, w / 2, h * .68);
+        g.textAlign = 'left';
+      }
+    }
+    // 3.8–8.6 s · the introduction
+    a = fade(T, 3.8, 4.1, 8.3, 8.6);
+    if (a > 0) {
+      g.fillStyle = `rgba(${AMBER},${a})`; g.font = '600 22px "JetBrains Mono", monospace'; spaced(g, "HELLO, I'M", w / 2, h * .27, 5);
       // the name drops in letter by letter, each landing with a little bounce
-      g.font = '800 82px Syne, sans-serif'; const NAME = 'PRATHAMESH', nw = g.measureText(NAME).width, fit = Math.min(1, (w - 60) / nw);
-      g.save(); g.translate(w / 2, h * .52); g.scale(fit, fit);
+      g.font = '800 76px Syne, sans-serif'; const NAME = 'Prathamesh.', nw = g.measureText(NAME).width, fit = Math.min(1, (w - 70) / nw);
+      g.save(); g.translate(w / 2, h * .44); g.scale(fit, fit);
       let lx = -nw / 2;
       for (let i = 0; i < NAME.length; i++) {
-        const ch = NAME[i], cw = g.measureText(ch).width, q = clamp01((T - 2.55 - i * .06) / .5);
+        const ch = NAME[i], cw = g.measureText(ch).width, q = clamp01((T - 3.95 - i * .055) / .5);
         if (q > 0) {
-          const bounce = q < 1 ? -Math.abs(Math.cos(q * Math.PI * 1.5)) * 70 * (1 - q) ** 2 : 0;
-          g.fillStyle = `rgba(${CREAM},${a * Math.min(1, q * 3)})`; g.fillText(ch, lx, bounce);
+          const bounce = q < 1 ? -Math.abs(Math.cos(q * Math.PI * 1.5)) * 60 * (1 - q) ** 2 : 0;
+          g.fillStyle = i === NAME.length - 1 ? `rgba(${AMBER},${a * Math.min(1, q * 3)})` : `rgba(${CREAM},${a * Math.min(1, q * 3)})`; g.fillText(ch, lx, bounce);
         }
         lx += cw;
       }
       g.restore();
-      const b = fade(T, 3.5, 3.9, 5.35, 5.7);
-      if (b > 0) { g.fillStyle = `rgba(${CREAM},${b})`; g.font = '700 28px "JetBrains Mono", monospace'; spaced(g, 'SOFTWARE ENGINEER', w / 2, h * .66, 3); }
-      const line = 'PROBLEM SOLVER · BUILDER', n = Math.floor(clamp01((T - 4.15) / .9) * line.length);   // typed on
-      if (n > 0) { g.fillStyle = `rgba(${AMBER},${a * .95})`; g.font = '600 22px "JetBrains Mono", monospace'; spaced(g, line.slice(0, n) + (n < line.length && Math.floor(T * 6) % 2 ? '▌' : ''), w / 2, h * .75, 2); }
-    }
-    // 5.7–8.9 s · BUILDING IDEAS / INTO REALITY
-    a = fade(T, 5.8, 6.3, 8.5, 8.9);
-    if (a > 0) {
-      const rule = ease((T - 5.75) / .55);
-      g.fillStyle = `rgba(${AMBER},${a})`; g.fillRect(w / 2 - 150 * rule, h * .33, 300 * rule, 2);
-      g.textAlign = 'center'; g.font = '800 58px Syne, sans-serif';
-      g.fillStyle = `rgba(${CREAM},${fade(T, 6.0, 6.5, 8.5, 8.9)})`; g.fillText('BUILDING IDEAS', w / 2, h * .5, w - 60);
-      g.fillStyle = `rgba(${AMBER},${fade(T, 6.5, 7.0, 8.5, 8.9)})`; g.fillText('INTO REALITY', w / 2, h * .63, w - 60);
+      const b = fade(T, 4.9, 5.3, 8.3, 8.6);
+      if (b > 0) { g.fillStyle = `rgba(${CREAM},${b})`; g.font = '700 24px "JetBrains Mono", monospace'; spaced(g, 'SENIOR SOFTWARE ENGINEER', w / 2, h * .57, 3); }
+      // typed on, two lines
+      const L1 = 'Building scalable applications and', L2 = 'exploring the future of AI-powered development.';
+      const n = Math.floor(clamp01((T - 5.6) / 1.9) * (L1.length + L2.length));
+      g.textAlign = 'center'; g.fillStyle = `rgba(${CREAM},${a * .9})`; g.font = '500 21px Sora, sans-serif';
+      const cur = n < L1.length + L2.length && Math.floor(now * 6) % 2 ? '▌' : '';
+      if (n > 0) g.fillText(L1.slice(0, n) + (n <= L1.length ? cur : ''), w / 2, h * .7, w - 80);
+      if (n > L1.length) g.fillText(L2.slice(0, n - L1.length) + cur, w / 2, h * .77, w - 80);
       g.textAlign = 'left';
     }
-    // 8.9 s → end · the sign-off, held as the end card
-    a = ease((T - 9.0) / .7);
-    if (a > 0) {
-      g.textAlign = 'center'; g.fillStyle = `rgba(${CREAM},${a})`; g.font = '800 64px Syne, sans-serif';
-      const tw = Math.min(g.measureText('PRATHAMESH').width, w - 130);   // fits inside the tube's curve, with room for the dot
-      g.fillText('PRATHAMESH', w / 2 - 12, h * .48, w - 130);
-      g.fillStyle = `rgba(${AMBER},${a})`; g.beginPath(); g.arc(w / 2 - 12 + tw / 2 + 16, h * .48 - 8, 8 + 2.2 * Math.sin(T * 4) ** 2, 0, 7); g.fill();   // the dot keeps a pulse
-      g.fillStyle = `rgba(${CREAM},${a * .85})`; g.font = '600 19px "JetBrains Mono", monospace'; g.fillText('SOFTWARE ENGINEER  |  PROBLEM SOLVER  |  BUILDER', w / 2, h * .61, w - 90);
-      g.textAlign = 'left';
-    }
+    // 8.8 s → · the menu, held until the visitor picks something (▲▼ / arrows / tap a row)
+    a = ease((T - MENU_AT) / .5);
+    if (a > 0) drawMenu(g, w, h, a, now);
+  }
+  function drawMenu(g, w, h, a, now) {
+    g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+    g.fillStyle = `rgba(${AMBER},${a})`; g.font = '600 17px "JetBrains Mono", monospace'; g.fillText('PRATHAMESH.EXE', 70, 74);
+    g.textAlign = 'right'; g.fillStyle = `rgba(${CREAM},${a * .6})`; g.fillText('MAIN MENU', w - 70, 74); g.textAlign = 'left';
+    g.fillStyle = `rgba(${CREAM},${a * .25})`; g.fillRect(70, 88, w - 140, 2);
+    MENU.forEach(([label], i) => {
+      const y = MENU_Y0 + i * MENU_DY, sel = i === tvSet.menu, q = clamp01((performance.now() / 1000 - (tvSet.menuShownAt || 0)) * 4 - i * .5);
+      const k = a * (reduce ? 1 : q);
+      if (sel) { g.fillStyle = `rgba(${AMBER},${k * .95})`; rr(g, 62, y - 34, w - 124, 46, 6); g.fill(); }
+      g.fillStyle = sel ? `rgba(26,17,8,${k})` : `rgba(${CREAM},${k * .88})`; g.font = '800 30px Syne, sans-serif';
+      g.fillText((sel ? '▶ ' : '   ') + label, 78, y);
+      g.font = '600 15px "JetBrains Mono", monospace'; g.textAlign = 'right'; g.fillText('0' + (i + 1), w - 80, y - 4); g.textAlign = 'left';
+    });
+    g.fillStyle = `rgba(${CREAM},${a * .25})`; g.fillRect(70, h - 84, w - 140, 2);
+    g.fillStyle = `rgba(${CREAM},${a * .65})`; g.font = '600 15px "JetBrains Mono", monospace';
+    g.fillText('▲▼ SELECT   OK OPEN   ✕ EXIT', 70, h - 54);
+    if (Math.floor(now * 2) % 2) { g.fillStyle = `rgba(${AMBER},${a})`; g.fillRect(w - 86, h - 68, 12, 18); }
   }
   function drawVideoFrame(g, w, h) {
     const v = tvSet.video; g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
@@ -1563,7 +2065,9 @@
     if (tvSet.video) { tvSet.video.muted = !on; tvSet.video.volume = sfx.vol; }
     if (uiOnly) return;                                   // page load: no audio before the visitor's first click
     if (on) { audio(); if (sfx.master) sfx.master.gain.value = sfx.vol * .8; if (['PLAYING_INTRO', 'SIGNAL_STATIC', 'ENDED', 'PAUSED'].includes(tvSet.state)) humOn(); if (tvSet.state === 'PLAYING_INTRO') musicFrom(tvSet.introT); }
-    else { musicStop(); humOff(); if (sfx.master) sfx.master.gain.value = 0; }
+    else { musicStop(); humOff(); deckSoundStop(); if (sfx.master) sfx.master.gain.value = 0; }
+    if (on && deckState.playing) deckSoundStart();
+    if (!deckEl.hidden) syncDeck();
   }
 
   /* ---- optional real video (from tv.config.js); falls back to the title sequence on any error ---- */
@@ -1610,7 +2114,38 @@
     play.textContent = s === 'PLAYING_INTRO' ? '❚❚' : s === 'ENDED' ? '↻ ▶' : '▶';
     play.setAttribute('aria-label', s === 'PLAYING_INTRO' ? 'Pause the introduction' : s === 'ENDED' ? 'Replay the introduction' : 'Resume the introduction');
     ctl.dataset.state = s;
+    const menuWas = !tvMenuEl.hidden; tvMenuEl.hidden = s !== 'ENDED';
+    if (!tvMenuEl.hidden && !menuWas) { markMenu(); }
   }
+  /* ---- the TV menu: the picture draws it; the HTML list mirrors it for taps, keyboards and screen readers ---- */
+  const tvMenuEl = $('#tvMenu'), tvMenuBtns = [...tvMenuEl.querySelectorAll('button')];
+  function markMenu() { tvMenuBtns.forEach((b, i) => { b.classList.toggle('sel', i === tvSet.menu); b.tabIndex = i === tvSet.menu ? 0 : -1; }); }
+  function blip(f = 660) { const c = audio(); if (!c) return; const o = c.createOscillator(), g = c.createGain(); o.type = 'square'; o.frequency.value = f; env(g, c.currentTime, .002, .05, .06); o.connect(g).connect(sfx.master); o.start(); o.stop(c.currentTime + .1); }
+  function menuSel(i, moveFocus) {
+    tvSet.menu = (i + MENU.length) % MENU.length; markMenu(); tvSet.lastDraw = -1;
+    if (moveFocus) tvMenuBtns[tvSet.menu].focus({ preventScroll: true });
+  }
+  function menuMove(d) { if (tvSet.state !== 'ENDED') return; menuSel(tvSet.menu + d, tvMenuEl.contains(document.activeElement)); blip(d > 0 ? 520 : 620); }
+  function menuOpen(i = tvSet.menu) {
+    if (tvSet.state !== 'ENDED') return;
+    menuSel(i); blip(880);
+    const sec = MENU[tvSet.menu][1];
+    // a quick channel change on the tube, then the section opens beside the desk
+    G.timeline().to(crt.uniforms.uStatic, { value: .7, duration: .08 }).to(crt.uniforms.uTrack, { value: 1, duration: .08 }, '<').add(() => setHash(sec), reduce ? 0 : .12);
+  }
+  function skipToMenu() {
+    if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED') {
+      if (tvSet.videoOk) { tvSet.video.pause(); endIntro(); return; }
+      tvSet.introT = Math.max(tvSet.introT, MENU_AT); tvSet.menuShownAt = performance.now() / 1000; if (tvSet.state === 'PAUSED') startIntro(tvSet.introT); musicStop();
+    }
+  }
+  tvMenuBtns.forEach((b, i) => {
+    b.addEventListener('click', () => menuOpen(i));
+    b.addEventListener('focus', () => { if (tvSet.menu !== i) menuSel(i); });
+    b.addEventListener('pointerenter', () => { if (tvSet.menu !== i) { menuSel(i); blip(600); } });
+    b.addEventListener('keydown', e => { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); e.stopPropagation(); menuMove(e.key === 'ArrowDown' ? 1 : -1); menuSel(tvSet.menu, true); } });
+  });
+  tvMenuEl.addEventListener('pointerdown', e => e.stopPropagation());
 
   /* ---- the sequence ---- */
   const isOn = () => ['POWERING_ON', 'SIGNAL_STATIC', 'PLAYING_INTRO', 'PAUSED', 'ENDED'].includes(tvSet.state);
@@ -1680,6 +2215,7 @@
     if (tvSet.tl) tvSet.tl.kill();
     if (tvSet.state !== 'LOADING_TAPE') { tvSet.fromIdle = tvSet.state === 'IDLE'; if (current) setHash('home'); prepareVideo(); setTimeout(() => focus('tv'), current ? 80 : 0); }
     showControls(true);
+    G.fromTo(vcrPowerKey.position, { z: VF + .007 }, { z: VF + .0025, duration: .09, ease: 'power2.in', yoyo: true, repeat: 1 });   // the power key goes in and springs back
     const fromIdle = tvSet.fromIdle, k = reduce ? .35 : 1, u = crt.uniforms;
     setState('POWERING_ON'); tvSet.introT = 0; tvSet.osdKey = ''; drawOSD({});
     const tl = G.timeline(); tvSet.tl = tl;
@@ -1701,8 +2237,9 @@
     else musicFrom(from);
   }
   function endIntro() {
+    tvSet.menuShownAt = tvSet.introT >= MENU_AT && !tvSet.videoOk ? tvSet.menuShownAt || performance.now() / 1000 : performance.now() / 1000;
     setState('ENDED'); tvSet.introT = introLen(); musicStop();
-    drawOSD({ tl: '■ STOP', tr: 'CH 01' });
+    drawOSD({});
     if (tvSet.tl) tvSet.tl.kill();
     tvSet.tl = G.timeline().to(crt.uniforms.uTrack, { value: .9, duration: .15 }).to(crt.uniforms.uTrack, { value: .1, duration: .8 });   // a closing tracking roll
   }
@@ -1747,8 +2284,15 @@
   function tvClick() {
     audio();                                              // inside the click itself, so browsers (Safari above all) let the sound start
     if (busy()) return;                                  // mid-transition: ignore, so nothing overlaps
-    if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED' || tvSet.state === 'ENDED') return pauseToggle();
+    if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED') return skipToMenu();   // a click mid-intro jumps to the menu
+    if (tvSet.state === 'ENDED') return;                  // menu rows are picked by where the tube was clicked (see the picker)
     loadTape();
+  }
+  // which menu row is under a click on the tube (the ray from the last pick), or -1
+  function menuRowAt() {
+    const h = ray.intersectObject(tvScreenMesh, false)[0]; if (!h || !h.uv) return -1;
+    const y = (1 - h.uv.y) * 480, i = Math.floor((y - (MENU_Y0 - 40)) / MENU_DY);
+    return i >= 0 && i < MENU.length ? i : -1;
   }
   const press = (id, fn) => $(id).addEventListener('click', e => { zap(e.currentTarget); fn(); });
   press('#tvPlay', pauseToggle);
@@ -1764,9 +2308,22 @@
   press('#tvVolDn', () => setVol(-1 / 8));
   press('#tvVolUp', () => setVol(1 / 8));
   press('#tvOff', () => powerOff(false));
-  press('#tvAbout', () => { powerOff(true); backToIdle(); setHash('about'); });
+  press('#tvAbout', () => { if (tvSet.state === 'ENDED') tvMenuBtns[tvSet.menu].focus(); else skipToMenu(); });
+  press('#tvExit', () => powerOff(false));
+  press('#tvUp', () => menuMove(-1));
+  press('#tvDown', () => menuMove(1));
+  press('#tvOk', () => menuOpen());
   ctl.addEventListener('pointerdown', e => e.stopPropagation());
-  addEventListener('keydown', e => { if (e.key === 'Escape' && !current && (isOn() || tvSet.state === 'POWERING_ON')) powerOff(false); });
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !current && (isOn() || tvSet.state === 'POWERING_ON')) { powerOff(false); return; }
+    if (current || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
+    if (tvSet.state === 'ENDED') {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); menuMove(e.key === 'ArrowDown' ? 1 : -1); }
+      else if (e.key === 'Enter' && !(e.target && e.target.closest && e.target.closest('button, a'))) { e.preventDefault(); menuOpen(); }
+    } else if ((tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED') && (e.key === 'Enter' || e.key === 'ArrowDown')) skipToMenu();
+  });
+  // keyboard and screen-reader start: the skip link at the top of the page turns the set on
+  $('#tvStart').addEventListener('click', e => { e.preventDefault(); tvClick(); setTimeout(() => $('#tvExit').focus({ preventScroll: true }), 60); });
   setSound(sfx.on, true);
   // unlock audio on the visitor's first click or key press anywhere (a silent start), so the TV can play when it powers on
   const unlock = () => { if (sfx.on) audio(); removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); };
@@ -1796,17 +2353,18 @@
     }
     if (s === 'PLAYING_INTRO') {
       tvSet.introT = tvSet.videoOk ? tvSet.video.currentTime : tvSet.introT + dt;
-      if (tvSet.introT >= introLen()) endIntro();
+      if (tvSet.introT >= introLen()) { endIntro(); return; }
       // VHS tracking: a calm baseline, a roll at each cut, and the odd stray band
-      const cuts = [0, 2.3, 5.7, 8.9].map(c => Math.exp(-((tvSet.introT - c) ** 2) * 18)), stray = Math.max(0, Math.sin(t * .9) * Math.sin(t * 2.3) - .82) * 3;
+      const cuts = [0, 1.72, 3.75, MENU_AT].map(c => Math.exp(-((tvSet.introT - c) ** 2) * 18)), stray = Math.max(0, Math.sin(t * .9) * Math.sin(t * 2.3) - .82) * 3;
       u.uTrack.value = .12 + .9 * Math.max(...cuts) + stray;
       if (performance.now() < (tvSet.osdUntil || 0)) { /* a volume bar is showing */ }
-      else if (tvSet.introT < 1.6) drawOSD({ tl: '▶ PLAY', tr: 'CH 01', bl: tcode(tvSet.introT) }); else drawOSD({ bl: tcode(tvSet.introT) });
+      else if (tvSet.introT < 1.6) drawOSD({ tl: '▶ PLAY', tr: 'CH 01', bl: tcode(tvSet.introT) }); else drawOSD(tvSet.introT < MENU_AT - .3 ? { bl: tcode(tvSet.introT) } : {});   // the menu has its own header and footer
     }
     const live = s === 'PLAYING_INTRO' || s === 'PAUSED' || s === 'ENDED' || s === 'SIGNAL_STATIC' || s === 'POWERING_ON';
     if (live && t - tvSet.lastDraw > 1 / 30) {                       // the picture redraws at 30 fps, and only while the set is on
       tvSet.lastDraw = t;
-      if (tvSet.videoOk) drawVideoFrame(introTex.g, 640, 480); else drawIntro(introTex.g, 640, 480, s === 'POWERING_ON' ? 0 : tvSet.introT);
+      if (s === 'ENDED') drawIntro(introTex.g, 640, 480, MENU_AT + .5 + (performance.now() / 1000 - tvSet.menuShownAt));   // the menu (after a video too), backdrop still drifting
+      else if (tvSet.videoOk) drawVideoFrame(introTex.g, 640, 480); else drawIntro(introTex.g, 640, 480, s === 'POWERING_ON' ? 0 : tvSet.introT);
       introTex.t.needsUpdate = true;
     }
     // the screen lights the room: cool blue for the channel card, warm for the intro, brighter while snow is on
@@ -1865,7 +2423,7 @@
     ['THE INFORMATION CO.', 'SOFTWARE ENGINEER · 2021–24', '#22808a'],
     ['WEBMD · NOLO', 'SENIOR SOFTWARE ENGINEER · 2024—', '#d9772a'],
   ], .42, DZ + .04, .05);   // forward of the set, so the piles read tall beside it (reference framing)
-  hotspot(vhsTimeline, 'timeline', 'Tapes · <b>Timeline</b>');
+  hotspot(vhsTimeline, 'timeline', 'Career tapes · <b>Experience</b>');
   const vhsWork = stackOf([
     ['BLANK', 'E-180 · SP · UNUSED', '#56534d'],
     ['ON THE BENCH', 'PP—04 · RAG & SYSTEM DESIGN', '#5b4a8c'],
@@ -1873,7 +2431,7 @@
     ['FIGMA → HTML', 'PP—02 · FIGMA MCP SKILL', '#2b7a4b'],
     ['LEAD ENGINE', 'PP—01 · LLM IN PRODUCTION', '#d9772a'],
   ], .64, DZ + .1, -.09);
-  hotspot(vhsWork, 'work', 'Project tapes · <b>Work</b>');
+  hotspot(vhsWork, 'work', 'Project tapes · <b>Projects</b>');
   // the intro tape, laid a little askew on top of the career pile: click it (or the set) and it is loaded and played
   introTape = tape('HELLO · PRATHAMESH', 'INTRO · SP · 0:10 · PRESS PLAY', '#b8392a', true);
   TAPE_HOME.set(.42 - .004, DY + .0125 + 6 * .0252, DZ + .04 + .006); TAPE_RY = .05 - .11;
@@ -1899,7 +2457,7 @@
     const b = mesh(new T.BoxGeometry(w, th, d), mats); b.rotation.y = (i % 2 ? -1 : 1) * .05 * i;
     books.add(put(b, 0, by + th / 2, 0)); by += th;
   });
-  hotspot(books, 'stack', 'Books · <b>Stack</b>');
+  hotspot(books, 'stack', 'Books · <b>Tech stack</b>');
 
   /* ---------- mug, pen cup, notebook, remote ---------- */
   const MUGX = -.12, MUGZ = DZ + .26;
@@ -1909,6 +2467,10 @@
   mug.add(put(mesh(new T.CylinderGeometry(.036, .036, .002, 28), std(0x2a160b, .2)), 0, .092, 0));
   const handle = mesh(new T.TorusGeometry(.026, .007, 10, 20, Math.PI), ceramic); handle.rotation.z = -Math.PI / 2; mug.add(put(handle, .042, .05, 0));
   scene.add(mug);
+  let steamBoost = 0;   // a sip: the steam lifts for a moment (the mug carries a hover note, it opens nothing)
+  hotspot(mug, null, 'Coffee · <b>still warm</b>'); mug.userData.hot.action = () => {
+    steamBoost = 1; if (!reduce) G.fromTo(mug.rotation, { z: 0 }, { z: .05, duration: .12, yoyo: true, repeat: 3, ease: 'sine.inOut', onComplete: () => { mug.rotation.z = 0; } });
+  };
   const CUPX = -.74, CUPZ = DZ + .34;   // front-left, cut by the frame edge like the reference's
   const cup = new T.Group(); put(cup, CUPX, DY, CUPZ);
   cup.add(put(mesh(new T.CylinderGeometry(.038, .034, .1, 22), std(0x2b2f33, .45, .3)), 0, .05, 0));
@@ -1920,7 +2482,7 @@
   nb.add(put(box(.17, .008, .24, std(0x2a2e31, .7), .003), 0, .004, 0));
   const pageM = new T.Mesh(new T.PlaneGeometry(.155, .225), std(0xb4ad9f, .92, 0, { map: pageTex.t })); pageM.rotation.x = -Math.PI / 2; nb.add(put(pageM, 0, .0085, 0));
   const pen = mesh(new T.CylinderGeometry(.004, .004, .14, 10), std(0x111315, .3, .5)); pen.rotation.set(Math.PI / 2, 0, .4); nb.add(put(pen, .06, .013, .02));
-  scene.add(nb);
+  hotspot(nb, 'timeline', 'Notebook · <b>Experience</b>');
   const remote = new T.Group(); put(remote, .06, DY, DZ + .3); remote.rotation.y = .5;
   remote.add(put(box(.048, .018, .17, std(0x161719, .55), .008), 0, .009, 0));
   for (let i = 0; i < 9; i++) remote.add(put(mesh(new T.CylinderGeometry(.0045, .0045, .004, 10), std(i === 0 ? 0xc8372d : 0x3a3d41, .5)), (i % 3 - 1) * .013, .019, -.05 + Math.floor(i / 3) * .018));
@@ -1970,6 +2532,140 @@
     s.userData.o = i / 7; scene.add(s); steam.push(s);
   }
 
+  /* ---------- small things on the desk that each open something: pocket computer (terminal), Walkman (currently building),
+     floppy disk (résumé). deskTick runs once a frame for their little animations. ---------- */
+  const deskTick = [];
+  const act = (group, label, fn) => { hotspot(group, null, label); group.userData.hot.action = fn; return group; };
+  // an invisible, slightly larger tap target around a small object, so a fingertip finds it on a phone
+  const padMat = new T.MeshBasicMaterial({ colorWrite: false, depthWrite: false, transparent: true, opacity: 0 });
+  const hitPad = (group, w, h, d, y = h / 2) => { const m = new T.Mesh(new T.BoxGeometry(w, h, d), padMat); m.position.y = y; group.add(m); return group; };
+
+  /* pocket computer: a late-70s portable with an amber LCD strip and a full keyboard; opens the terminal */
+  const PCX = .27, PCZ = DZ + .27;
+  const pc = new T.Group(); put(pc, PCX, DY, PCZ); pc.rotation.y = -.12;
+  pc.add(put(box(.2, .018, .118, std(0x1f1e1b, .55, .12), .005), 0, .009, 0));
+  pc.add(put(box(.204, .004, .122, std(0x141311, .7), .002), 0, .002, 0));                       // darker base plate
+  const pcLcdTex = canvasTex(512, 112, (g, w, h, t = 0) => {
+    g.fillStyle = '#140d06'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#ffb35f'; g.font = '600 30px "JetBrains Mono", monospace';
+    g.fillText('PRATHAMESH OS 1.0', 18, 42);
+    g.fillText('$ help' + (Math.floor(t * 2) % 2 ? ' █' : ''), 18, 90);
+    g.fillStyle = 'rgba(0,0,0,.28)'; for (let y = 0; y < h; y += 3) g.fillRect(0, y, w, 1);
+  }, true);
+  const pcPanel = new T.Group(); put(pcPanel, 0, .018, -.034); pcPanel.rotation.x = .2; pc.add(pcPanel);   // the display strip leans back
+  pcPanel.add(put(box(.19, .006, .046, std(0x1b1a17, .45, .2), .002), 0, .003, 0));
+  const pcLcd = new T.Mesh(new T.PlaneGeometry(.168, .037), new T.MeshBasicMaterial({ map: pcLcdTex.t, toneMapped: false }));
+  pcLcd.rotation.x = -Math.PI / 2; pcPanel.add(put(pcLcd, 0, .0062, 0));
+  const keyGeo = new T.BoxGeometry(.0105, .004, .0102), pcKeys = new T.InstancedMesh(keyGeo, std(0x2c2a26, .62, .05), 52), km = new T.Matrix4();
+  let kn = 0;
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 13; c++) { if (r === 3 && c > 9) continue; km.makeTranslation(-.084 + c * .0135 + r * .003, .02, .0 + r * .0128); pcKeys.setMatrixAt(kn++, km); }
+  pcKeys.count = kn; pcKeys.castShadow = true; pc.add(pcKeys);
+  pc.add(put(box(.07, .004, .0102, std(0x2c2a26, .62, .05), .0015), .004, .02, .0512));       // space bar
+  pc.add(put(box(.0105, .004, .0102, std(0x9a4a22, .5), .0015), .085, .02, .0128));           // the orange RETURN key
+  hitPad(pc, .26, .07, .17); act(pc, 'Pocket computer · <b>Terminal</b>', () => openTerm());
+  let pcBlink = -1;
+  deskTick.push(t => { const b = Math.floor(t * 2); if (b !== pcBlink) { pcBlink = b; pcLcdTex.draw(t); } });
+
+  /* Walkman on top of the book stack: click → the lid opens, a cassette drops in, the reels turn ("currently building") */
+  const wk = new T.Group(); put(wk, BKX + .005, DY + by, BKZ + .01); wk.rotation.y = .62;
+  const wkBody = std(0x7b2b1f, .42, .3), wkMetal = std(0xb7b4ad, .32, .85), wkDark = std(0x111214, .5, .2);
+  wk.add(put(box(.088, .03, .124, wkBody, .006), 0, .015, 0));
+  wk.add(put(box(.074, .002, .108, wkDark, .001), 0, .0302, .002));                                // the well the cassette sits in
+  [-.024, -.008, .008, .024].forEach((x, i) => wk.add(put(box(.012, .006, .01, i === 1 ? std(0xc9772f, .45) : wkMetal, .002), x, .0175, -.066)));   // transport keys on the back edge
+  const wkLabel = canvasTex(256, 40, g => { g.clearRect(0, 0, 256, 40); g.fillStyle = 'rgba(235,225,210,.85)'; g.font = '700 22px Sora, sans-serif'; g.fillText('STEREO · AUTO REVERSE', 6, 28); }, true);
+  const wkSide = new T.Mesh(new T.PlaneGeometry(.1, .016), new T.MeshBasicMaterial({ map: wkLabel.t, transparent: true }));
+  wkSide.rotation.y = Math.PI / 2; wk.add(put(wkSide, .0442, .015, .004));
+  // the lid: hinged along its back edge, a smoked window over the cassette
+  const wkLid = new T.Group(); put(wkLid, 0, .031, -.052); wk.add(wkLid);
+  wkLid.add(put(box(.082, .004, .108, wkMetal, .002), 0, .002, .054));
+  const wkWin = new T.Mesh(new T.PlaneGeometry(.06, .05), new T.MeshPhysicalMaterial({ color: 0x0a0b0c, roughness: .08, clearcoat: 1, transparent: true, opacity: .55 }));
+  wkWin.rotation.x = -Math.PI / 2; wkLid.add(put(wkWin, 0, .0042, .058));
+  // the cassette: 100 × 63 × 12 mm, with two reels behind its window
+  const cas = new T.Group();
+  cas.add(put(box(.063, .008, .1, std(0xd9d2c3, .55), .002), 0, .004, 0));
+  const casLabel = canvasTex(256, 160, g => { g.fillStyle = '#e9e2d2'; g.fillRect(0, 0, 256, 160); g.fillStyle = '#E8913C'; g.fillRect(0, 0, 256, 34); g.fillStyle = '#2a1d14'; g.font = '700 20px "JetBrains Mono", monospace'; g.fillText('SIDE A', 12, 24); g.font = '600 17px "JetBrains Mono", monospace'; g.fillText('NOW BUILDING', 12, 140); g.fillStyle = '#1a1a1a'; g.fillRect(40, 58, 176, 54); }, true);
+  const casTop = new T.Mesh(new T.PlaneGeometry(.06, .095), std(0xffffff, .8, 0, { map: casLabel.t })); casTop.rotation.x = -Math.PI / 2; casTop.rotation.z = Math.PI / 2; cas.add(put(casTop, 0, .0082, 0));
+  const reels = [-.021, .021].map(z => { const r = new T.Group(); put(r, 0, .0086, z); const hub = mesh(new T.CylinderGeometry(.0075, .0075, .0012, 18), std(0xf2ede4, .5)); r.add(hub); for (let k = 0; k < 3; k++) { const s = mesh(new T.BoxGeometry(.0014, .0014, .012), std(0x3a2a1c, .6)); s.rotation.y = k * Math.PI / 3; s.position.y = .0008; r.add(s); } cas.add(r); return r; });
+  const CAS_IN = new T.Vector3(0, .023, .002), CAS_OUT = new T.Vector3(.02, .11, .2);
+  cas.position.copy(CAS_OUT); cas.visible = false; wk.add(cas);
+  const deckState = { loaded: false, playing: false, busy: false, track: 0, t: 0 };
+  hitPad(wk, .15, .08, .18); act(wk, 'Walkman · <b>Currently building</b>', () => openDeck());
+  deskTick.push((t, dt) => {
+    if (!deckState.playing) return;
+    deckState.t += dt; reels.forEach((r, i) => { r.rotation.y -= dt * (i ? 4.2 : 5.4); });
+    if (Math.floor(deckState.t * 4) !== deckState.shown) { deckState.shown = Math.floor(deckState.t * 4); syncDeck(); }
+  });
+  function loadCassette(done) {
+    if (deckState.loaded) return done();
+    const k = reduce ? .25 : 1; deckState.busy = true; cas.visible = true; cas.position.copy(CAS_OUT); cas.rotation.set(-.6, .4, .2);
+    G.timeline({ onComplete: () => { deckState.loaded = true; deckState.busy = false; done(); } })
+      .to(wkLid.rotation, { x: -1.75, duration: .35 * k, ease: 'back.out(1.6)' })                     // lid pops open
+      .to(cas.position, { x: CAS_IN.x, y: CAS_IN.y + .045, z: CAS_IN.z, duration: .55 * k, ease: 'power2.out' }, '-=.1')
+      .to(cas.rotation, { x: 0, y: 0, z: 0, duration: .55 * k, ease: 'power2.out' }, '<')
+      .to(cas.position, { y: CAS_IN.y, duration: .18 * k, ease: 'power2.in' })                         // seated
+      .to(wkLid.rotation, { x: 0, duration: .3 * k, ease: 'bounce.out' }, '+=.08')                     // lid snaps shut
+      .add(() => { sndClick(); if (!reduce) G.fromTo(wk.position, { y: DY + by - .002 }, { y: DY + by, duration: .3, ease: 'elastic.out(1, .4)' }); });
+  }
+
+  /* floppy disk on the notebook: the résumé */
+  const flop = new T.Group(); put(flop, -.31, DY + .0092, DZ + .33); flop.rotation.y = .42;
+  flop.add(put(box(.09, .0033, .094, std(0x1e2125, .45, .1), .0012), 0, .00165, 0));
+  flop.add(put(box(.05, .0037, .032, std(0xbfc2c6, .28, .9), .0008), .006, .00185, -.031));        // sliding metal shutter
+  const flopTex = canvasTex(256, 200, g => { g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 256, 200); g.fillStyle = '#E8913C'; g.fillRect(0, 0, 256, 18); g.strokeStyle = 'rgba(46,107,114,.35)'; for (let y = 64; y < 200; y += 30) { g.beginPath(); g.moveTo(12, y); g.lineTo(244, y); g.stroke(); } g.fillStyle = '#1d1a16'; g.font = '700 34px "JetBrains Mono", monospace'; g.fillText('RESUME', 16, 88); g.font = '500 22px "JetBrains Mono", monospace'; g.fillText('P. PATIL · 2026', 16, 148); }, true);
+  const flopLabel = new T.Mesh(new T.PlaneGeometry(.07, .052), std(0xffffff, .85, 0, { map: flopTex.t })); flopLabel.rotation.x = -Math.PI / 2; flop.add(put(flopLabel, 0, .00345, .018));
+  hitPad(flop, .13, .035, .13); act(flop, 'Floppy disk · <b>Résumé</b>', () => openResume());
+  /* the Walkman's panel: three "tracks" (what I'm building, exploring, learning), play/pause turns the reels and, only if
+     the visitor has switched sound on, plays a quiet synthesized tape loop (original: oscillators and noise, no recording) */
+  const deckEl = $('#deck'), deckTracks = [...$('#deckTracks').children];
+  let deckAmb = null;
+  function deckSoundStart() {
+    const c = audio(); if (!c || deckAmb) return;
+    const t0 = c.currentTime, out = c.createGain(); out.gain.setValueAtTime(0, t0); out.gain.linearRampToValueAtTime(1, t0 + 1.2); out.connect(sfx.master);
+    const hiss = c.createBufferSource(); hiss.buffer = sfx.noise; hiss.loop = true; const hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3500; const hg = c.createGain(); hg.gain.value = .012; hiss.connect(hp).connect(hg).connect(out); hiss.start();
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; const pg = c.createGain(); pg.gain.value = .05; lp.connect(pg).connect(out);
+    const wob = c.createOscillator(), wg = c.createGain(); wob.frequency.value = .45; wg.gain.value = 3; wob.connect(wg); wob.start();   // tape wow
+    const notes = [[146.8, 220, 293.7], [130.8, 196, 261.6], [110, 164.8, 220], [123.5, 185, 246.9]][deckState.track % 4];
+    const oscs = notes.map((f, i) => { const o = c.createOscillator(); o.type = i ? 'sine' : 'triangle'; o.frequency.value = f; wg.connect(o.detune); o.connect(lp); o.start(); return o; });
+    deckAmb = { out, nodes: [hiss, wob, ...oscs] };
+  }
+  function deckSoundStop() {
+    if (!deckAmb || !sfx.ctx) { deckAmb = null; return; }
+    const t0 = sfx.ctx.currentTime, a = deckAmb; deckAmb = null;
+    a.out.gain.cancelScheduledValues(t0); a.out.gain.setValueAtTime(a.out.gain.value, t0); a.out.gain.linearRampToValueAtTime(0, t0 + .4);
+    a.nodes.forEach(n => { try { n.stop(t0 + .45); } catch (e) {} });
+  }
+  function syncDeck() {
+    deckTracks.forEach((li, i) => { li.classList.toggle('on', i === deckState.track); li.setAttribute('aria-current', i === deckState.track ? 'true' : 'false'); });
+    const p = $('#deckPlay'); p.textContent = deckState.playing ? '❚❚' : '▶'; p.setAttribute('aria-label', deckState.playing ? 'Pause' : 'Play');
+    const s = Math.floor(deckState.t); $('#deckCtr').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    $('#deckSide').textContent = deckState.playing ? 'Side A · Now playing' : 'Side A · Paused';
+    $('#deckNote').innerHTML = sfx.on ? 'Sound on: a quiet tape loop, made in your browser.' : 'Sound is off. <button type="button" id="deckSound">Turn sound on</button>';
+  }
+  function deckPlay(on) {
+    deckState.playing = on; if (on && sfx.on) deckSoundStart(); else deckSoundStop();
+    if (on) { const k = reduce ? 0 : 1; G.fromTo(wk.position, { y: DY + by }, { y: DY + by + .0015, duration: .06 * k, yoyo: true, repeat: 1 }); }
+    syncDeck();
+  }
+  function openDeck() {
+    if (deckState.busy) return;
+    rcard.hidden = true; deckEl.hidden = false; syncDeck();
+    loadCassette(() => { if (!deckState.playing) deckPlay(true); });
+  }
+  function closeDeck() { deckPlay(false); deckEl.hidden = true; }
+  $('#deckPlay').addEventListener('click', () => { audio(); deckPlay(!deckState.playing); });
+  $('#deckPrev').addEventListener('click', () => { deckState.track = (deckState.track + 2) % 3; deckState.t = 0; if (deckAmb) { deckSoundStop(); deckSoundStart(); } syncDeck(); });
+  $('#deckNext').addEventListener('click', () => { deckState.track = (deckState.track + 1) % 3; deckState.t = 0; if (deckAmb) { deckSoundStop(); deckSoundStart(); } syncDeck(); });
+  $('#deckClose').addEventListener('click', closeDeck);
+  deckEl.addEventListener('click', e => { if (e.target.id === 'deckSound') { setSound(true); if (deckState.playing) deckSoundStart(); syncDeck(); } });
+  deckEl.addEventListener('pointerdown', e => e.stopPropagation());
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !deckEl.hidden) closeDeck(); });
+  // the quick buttons under the name do what a tap on each object does
+  $('#qTv').addEventListener('click', () => { tvClick(); setTimeout(() => $('#tvExit').focus({ preventScroll: true }), 80); });
+  $('#qTerm').addEventListener('click', () => openTerm());
+  $('#qDeck').addEventListener('click', () => { openDeck(); setTimeout(() => $('#deckPlay').focus({ preventScroll: true }), 60); });
+  $('#qCv').addEventListener('click', () => openResume());
+  // the tracks advance on their own while it plays, like a tape running on
+  deskTick.push(() => { if (deckState.playing && deckState.t > 9) { deckState.t = 0; deckState.track = (deckState.track + 1) % 3; if (deckAmb) { deckSoundStop(); deckSoundStart(); } syncDeck(); } });
   /* ---------- desk lamp, left of the set, coral shade (warm key light) ---------- */
   const lamp = new T.Group();
   const lampMat = std(0xa34a2b, .42, .35);
@@ -1990,7 +2686,18 @@
   const bulb = new T.Mesh(new T.SphereGeometry(.025, 16, 12), new T.MeshBasicMaterial({ color: 0xffc58a, toneMapped: false }));
   lampHead.add(put(bulb, 0, -.02, 0));
   lamp.add(lampHead);
-  scene.add(lamp);
+  // the lamp is clickable: its switch turns the desk light off and on (the procedural lamp and the model share one group,
+  // pivoting at the base so the hover lift stays in place)
+  const lampHot = new T.Group(); lampHot.add(lamp);
+  let lampWanted = 1;
+  function toggleLamp() {
+    lampWanted = lampWanted ? 0 : 1; sndClick();
+    G.killTweensOf(lampFade);
+    if (lampWanted && !reduce) G.timeline().add(() => { lampLevel = .5; }).add(() => { lampLevel = .1; }, .06).add(() => { lampLevel = .85; }, .13).add(() => { lampFade.v = .85; G.to(lampFade, { v: 1, duration: .25, onUpdate: () => { lampLevel = lampFade.v; } }); }, .2);
+    else { lampFade.v = lampLevel; G.to(lampFade, { v: lampWanted, duration: reduce ? 0 : .35, ease: 'power2.out', onUpdate: () => { lampLevel = lampFade.v; } }); }
+    tip.innerHTML = lampWanted ? 'Desk lamp · <b>On</b>' : 'Desk lamp · <b>Off</b>';
+  }
+  const lampFade = { v: 1 };
   const spot = new T.SpotLight(0xffa458, 0, 2.1, .9, .88, 1.4);   // warm tungsten (the reference's desk zone measures strongly orange-warm)   // tungsten, ~2700 K: amber-white rather than orange
   spot.position.copy(headPos).addScaledVector(aimDir, .05); spot.target.position.copy(aim);
   spot.castShadow = true; spot.shadow.mapSize.set(isPhone() ? 1024 : 2048, isPhone() ? 1024 : 2048); spot.shadow.bias = -.0008; spot.shadow.radius = 4;
@@ -2044,11 +2751,13 @@
     // the PRATHAMESH picture goes onto the model's own tube: its glass is ~.26 × .22 m, centred .26 m up (found by raycasting the front)
     [tvScreenMesh, tvGlass].forEach((s, i) => { s.scale.set(.8, .885, 1); s.position.set(0, .262, TVM.z + .118 + i * .0015); });
   });
-  const LAMPM = { s: .58, ry: 2.4, x: LB.x + .02, z: LB.z + .27 };   // forward of the set, so the shade reads big and low at its left (reference framing)   // shade just off the set's left shoulder, a little below its top (reference placement)
+  const LAMPM = { s: .58, ry: 2.4, x: LB.x + .02, z: LB.z + .27 };
+  lampHot.position.set(LAMPM.x, DY, LAMPM.z); lamp.position.set(-LAMPM.x, -DY, -LAMPM.z);
+  act(lampHot, 'Desk lamp · <b>Switch</b>', toggleLamp);   // forward of the set, so the shade reads big and low at its left (reference framing)   // shade just off the set's left shoulder, a little below its top (reference placement)
   loadModel('desk_lamp_arm_01', m => {
     lamp.visible = false;
     let light = null; m.traverse(o => { if (o.isMesh && /light/i.test(o.material.name)) light = o; });
-    m.scale.setScalar(LAMPM.s); m.rotation.y = LAMPM.ry; scene.add(put(m, LAMPM.x, DY + .015, LAMPM.z)); m.updateMatrixWorld(true);
+    m.scale.setScalar(LAMPM.s); m.rotation.y = LAMPM.ry; lampHot.add(put(m, 0, .015, 0)); lampHot.updateMatrixWorld(true);
     if (light) {
       light.material = new T.MeshBasicMaterial({ color: 0xffc58a, toneMapped: false }); light.castShadow = false; modelBulb = light.material;
       const c = new T.Box3().setFromObject(light).getCenter(new T.Vector3());
@@ -2905,7 +3614,9 @@
     ripple(e.clientX, e.clientY, !!g);
     if (g) {
       if (!reduce && g !== tv && g !== introTape && g !== deskRemote) G.fromTo(g.scale, { x: 1.06, y: 1.06, z: 1.06 }, { x: 1, y: 1, z: 1, duration: .6, ease: 'elastic.out(1, .5)' });   // tap acknowledgement
-      if (g === tv || g === introTape || g === deskRemote) { tvClick(); return; }   // load the tape and play the intro (pause/resume once it's on)
+      if (g === tv && tvSet.state === 'ENDED') { const i = menuRowAt(); if (i >= 0) menuOpen(i); return; }   // a row of the on-screen menu
+      if (g === tv || g === introTape || g === deskRemote) { tvClick(); return; }   // load the tape and play the intro (skip to the menu once it's on)
+      if (g.userData.hot.action) { g.userData.hot.action(); return; }   // terminal, Walkman, floppy, lamp, mug
       setHash(g.userData.hot.section); return;
     }
     if (dbl && e.pointerType !== 'mouse') { moveTo(e.clientX, e.clientY); return; }
@@ -2976,7 +3687,7 @@
   const clock = new T.Clock();
   const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);   // touch-first device
   let tvPrevT = 0;
-  let paused = false, lastScreen = 0, lastPhone = 0, lastRain = 0, lastClock = 0, lampLevel = 0;
+  let paused = false, lastScreen = 0, lastPhone = 0, lastRain = 0, lastClock = 0, lampLevel = 0, deskPrevT = 0;
   const camOff = new T.Vector3(), camAt = new T.Vector3(), fwd = new T.Vector3(), lookPt = new T.Vector3(), sph = new T.Spherical();
   function render() {
     const t = clock.getElapsedTime();
@@ -3049,6 +3760,8 @@
     cars.forEach(c => { const u = ((c.userData.off + t * c.userData.sp) % 1 + 1) % 1; c.position.set(-6.5 + u * 13, c.userData.y, c.userData.z); c.material.opacity = nightK * .85; });
     updateTrain(t, nightK, camera.position);
     for (const f of festTick) f(t, nightK);
+    const ddt = Math.min(.1, Math.max(0, t - deskPrevT)); deskPrevT = t; steamBoost = Math.max(0, steamBoost - ddt * .35);
+    for (const f of deskTick) f(t, ddt);
     signals.forEach(s => { s.material.opacity = .35 + .6 * nightK * (Math.sin(t * .7 + s.userData.ph) > -.6 ? 1 : .15); });
     deckLamps.forEach(s => { s.material.opacity = .85 * nightK * (1 - .4 * W.fog); });
     if (!reduce) { mistTex.t.offset.x = (t * .004) % 1; streakTex.t.offset.y = (t * 1.5) % 1; rainOut2.material.map.offset.y = (t * 1.05) % 1; }
@@ -3104,7 +3817,7 @@
       const k = reduce ? .4 : ((t * .22 + s.userData.o) % 1);
       s.position.set(MUGX + Math.sin(k * 6 + s.userData.o * 9) * .018, DY + .11 + k * .22, MUGZ);
       const sc = .035 + k * .07; s.scale.set(sc, sc, sc);
-      s.material.opacity = Math.sin(k * Math.PI) * .22 * lampLevel * (1 - d * .5);
+      s.material.opacity = Math.sin(k * Math.PI) * .22 * Math.max(lampLevel, .5 * steamBoost) * (1 - d * .5) * (1 + 1.6 * steamBoost);
     });
     if (!reduce) figBody.rotation.y = Math.sin(t * .45) * .42;   // turntable sway
     if (tip.classList.contains('on') && pointer.in) tip.style.transform = `translate(${pointer.x + 16}px, ${pointer.y + 18}px)`;
@@ -3161,7 +3874,7 @@
      Never blocks the room: the scene starts in its own ambience and eases into real conditions when they arrive.
      Never invents weather: cached readings say how old they are; with no data the indicator says it's offline. */
   const WXC = Object.assign({
-    fallback: { name: 'Navi Mumbai', latitude: 19.033, longitude: 73.029 }, refreshMinutes: 15, askForLocation: true, askDelaySeconds: 4,
+    fallback: null, ipLocationUrl: '/api/geo', geocodeSearchUrl: 'https://geocoding-api.open-meteo.com/v1/search', refreshMinutes: 15, askForLocation: true, askDelaySeconds: 4,
     coordinateDecimals: 2, cacheMaxAgeHours: 6, forecastUrl: 'https://api.open-meteo.com/v1/forecast',
     reverseGeocodeUrl: 'https://api.bigdatacloud.net/data/reverse-geocode-client',
   }, window.DESK_WEATHER_CONFIG || {});
@@ -3217,8 +3930,10 @@
     'fog':         { weather_code: 45, is_day: 0, temperature_2m: 17.3, apparent_temperature: 17.3, relative_humidity_2m: 99, precipitation: 0, rain: 0, showers: 0, snowfall: 0, cloud_cover: 100, wind_speed_10m: 2.2, prob: 10 },
     'snow':        { weather_code: 73, is_day: 0, temperature_2m: -2.4, apparent_temperature: -6.9, relative_humidity_2m: 88, precipitation: .6, rain: 0, showers: 0, snowfall: .42, cloud_cover: 100, wind_speed_10m: 14.0, prob: 80 },
   };
-  const wx = { rec: null, status: 'loading', geo: 'pending', placeIsFallback: true, timer: 0, asked: false };
-  const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+  // where the reading's place came from: 'gps' (browser location), 'manual' (picked in the panel), 'ip' (approximate,
+  // from the site's own server), 'fallback' (weather.config.js), 'mock' (?wxmock= test data)
+  const wx = { rec: null, status: 'loading', geo: 'pending', timer: 0, asked: false };
+  const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
   const round = (v, d = WXC.coordinateDecimals) => { const m = 10 ** d; return Math.round(v * m) / m; };
   async function getJSON(url, ms = 9000) {
     if (WX_FAIL) throw new Error('forced failure');
@@ -3232,13 +3947,20 @@
     const j = await getJSON(`${WXC.forecastUrl}?${p}`);
     const c = j.current; if (!c || c.weather_code == null) throw new Error('bad response');
     const hourKey = String(c.time || '').slice(0, 13), i = (j.hourly?.time || []).findIndex(t => t.slice(0, 13) === hourKey);
-    return Object.assign({}, c, { prob: i >= 0 ? j.hourly.precipitation_probability[i] : null });
+    return Object.assign({}, c, { prob: i >= 0 ? j.hourly.precipitation_probability[i] : null, tz: j.timezone || null, utcOffset: j.utc_offset_seconds ?? null });
   }
   async function cityName(lat, lon) {
     try {
       const j = await getJSON(`${WXC.reverseGeocodeUrl}?${new URLSearchParams({ latitude: round(lat), longitude: round(lon), localityLanguage: 'en' })}`, 6000);
       return j.city || j.locality || j.principalSubdivision || j.countryName || 'Your area';
     } catch (e) { return 'Your area'; }
+  }
+  /* local time at the reading's place: the IANA zone from Open-Meteo (DST-correct), else its UTC offset */
+  function placeTime(cur) {
+    if (!cur) return '—';
+    try { if (cur.tz) return new Intl.DateTimeFormat('en-GB', { timeZone: cur.tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date()); } catch (e) {}
+    if (cur.utcOffset == null) return '—';
+    const d = new Date(Date.now() + cur.utcOffset * 1000); return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
   }
   /* ---- header + panel ---- */
   const wxBtn = $('#wxBtn'), wxPanel = $('#wxPanel');
@@ -3248,13 +3970,14 @@
     const r = wx.rec, s = wx.status;
     wxBtn.classList.toggle('loading', s === 'loading'); wxBtn.classList.toggle('offline', s === 'offline');
     if (!r) {
+      const need = s === 'needplace';
       $('#wxIcon').innerHTML = ICONS[s === 'offline' ? 'offline' : 'cloud'];
-      $('#wxTemp').textContent = s === 'offline' ? 'Offline' : '··'; $('#wxCity').textContent = s === 'offline' ? 'Weather' : 'Weather';
-      $('#wxpCity').textContent = s === 'offline' ? 'Weather unavailable' : 'Weather'; $('#wxpTemp').textContent = '--°';
-      $('#wxpCond').textContent = s === 'offline' ? 'Live weather can’t be reached right now.' : 'Loading local weather…';
-      ['#wxpFeels', '#wxpHum', '#wxpWind', '#wxpPrecip', '#wxpProb', '#wxpUpd'].forEach(id => { $(id).textContent = '—'; });
-      $('#wxpNote').textContent = s === 'offline' ? 'The room is showing its own rainy ambience, not live conditions.' : '';
-      wxBtn.setAttribute('aria-label', s === 'offline' ? 'Local weather unavailable. Open details' : 'Local weather loading');
+      $('#wxTemp').textContent = s === 'offline' ? 'Offline' : need ? 'Set' : '··'; $('#wxCity').textContent = need ? 'your city' : 'Weather';
+      $('#wxpCity').textContent = s === 'offline' ? 'Weather unavailable' : need ? 'Where are you?' : 'Weather'; $('#wxpTemp').textContent = '--°';
+      $('#wxpCond').textContent = s === 'offline' ? 'Live weather can’t be reached right now.' : need ? 'Search for your city to see its weather in the window.' : 'Loading local weather…';
+      ['#wxpFeels', '#wxpHum', '#wxpWind', '#wxpTime', '#wxpProb', '#wxpUpd'].forEach(id => { $(id).textContent = '—'; });
+      $('#wxpNote').textContent = s === 'offline' ? 'The window is showing its own ambience, not live conditions.' : '';
+      wxBtn.setAttribute('aria-label', s === 'offline' ? 'Local weather unavailable. Open details' : need ? 'Set your city for local weather' : 'Local weather loading');
     } else {
       const c = r.cur, [label] = describe(c.weather_code);
       $('#wxIcon').innerHTML = ICONS[iconFor(c.weather_code, c.is_day === 1)];
@@ -3262,29 +3985,60 @@
       $('#wxpCity').textContent = r.place; $('#wxpCond').textContent = label; $('#wxpTemp').textContent = fmtTemp(c.temperature_2m);
       $('#wxpFeels').textContent = fmtTemp(c.apparent_temperature); $('#wxpHum').textContent = `${Math.round(c.relative_humidity_2m)}%`;
       $('#wxpWind').textContent = `${Math.round(c.wind_speed_10m)} km/h`;
-      $('#wxpPrecip').textContent = `${(+c.precipitation || 0).toFixed(1)} mm`;
+      $('#wxpTime').textContent = placeTime(c);
       $('#wxpProb').textContent = c.prob == null ? '—' : `${Math.round(c.prob)}%`;
       $('#wxpUpd').textContent = ago(r.fetchedAt);
       const notes = [];
       if (r.mock) notes.push('Test data (mock weather), not a live reading.');
       else if (s === 'cached') notes.push(`Live weather can’t be reached, so this is the last reading (${ago(r.fetchedAt)}).`);
-      if (!r.mock && r.isFallback) notes.push(wx.geo === 'denied' ? `Location is off, so this is ${WXC.fallback.name}’s weather.` : wx.geo === 'unavailable' ? `Your location isn’t available, so this is ${WXC.fallback.name}’s weather.` : `Showing ${WXC.fallback.name} until your location is known.`);
+      if (!r.mock && r.source === 'ip') notes.push('Approximate location, from your network. Search for a city or use your location for a closer match.');
+      if (!r.mock && r.source === 'fallback') notes.push(wx.geo === 'denied' ? `Location is off, so this is ${r.place}’s weather.` : `Showing ${r.place} until your location is known.`);
       $('#wxpNote').textContent = notes.join(' ');
       wxBtn.setAttribute('aria-label', `Local weather: ${label}, ${fmtTemp(c.temperature_2m)} in ${r.place}. Open details`);
     }
-    // offer the location prompt only by the visitor's own hand, and only while it can still be asked
-    $('#wxpLoc').hidden = !(WXC.askForLocation && !WX_MOCK && 'geolocation' in navigator && (wx.geo === 'pending' || wx.geo === 'prompt') && r && r.isFallback);
+    // the location prompt is offered only by the visitor's own hand, and only while it can still be asked
+    $('#wxpLoc').hidden = !(WXC.askForLocation && !WX_MOCK && 'geolocation' in navigator && wx.geo !== 'denied' && (!r || r.source !== 'gps'));
+    $('#wxpRetry').hidden = !(s === 'offline' || s === 'cached');
   }
   function openPanel(open) {
     wxBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) { renderWx(); wxPanel.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => wxPanel.classList.add('open'))); }
+    if (open) { renderWx(); wxPanel.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => wxPanel.classList.add('open'))); if (wx.status === 'needplace') setTimeout(() => $('#wxpQ').focus(), 60); }
     else { wxPanel.classList.remove('open'); setTimeout(() => { if (wxBtn.getAttribute('aria-expanded') !== 'true') wxPanel.hidden = true; }, 320); }
   }
   wxBtn.addEventListener('click', e => { e.stopPropagation(); openPanel(wxBtn.getAttribute('aria-expanded') !== 'true'); });
   wxPanel.addEventListener('click', e => e.stopPropagation());
+  wxPanel.addEventListener('pointerdown', e => e.stopPropagation());
   document.addEventListener('click', () => { if (wxBtn.getAttribute('aria-expanded') === 'true') openPanel(false); });
   addEventListener('keydown', e => { if (e.key === 'Escape' && wxBtn.getAttribute('aria-expanded') === 'true') { openPanel(false); wxBtn.focus(); } });
-  $('#wxpLoc').addEventListener('click', () => askLocation(true));
+  $('#wxpLoc').addEventListener('click', () => { store.del('desk-wx-place'); askLocation(true); });
+  $('#wxpRetry').addEventListener('click', () => { wx.status = 'loading'; renderWx(); if (lastCoords) load(lastCoords.coords, lastCoords.place, lastCoords.source); else startWeather(); });
+  /* city search (Open-Meteo geocoder): results are buttons; the pick is remembered in this browser only */
+  let findSeq = 0;
+  $('#wxpFind').addEventListener('submit', async e => {
+    e.preventDefault();
+    const q = $('#wxpQ').value.trim().slice(0, 60), list = $('#wxpRes'), seq = ++findSeq;
+    if (q.length < 2) { list.hidden = false; list.innerHTML = '<li class="msg">Type at least two letters.</li>'; return; }
+    list.hidden = false; list.innerHTML = '<li class="msg">Searching…</li>';
+    try {
+      const j = await getJSON(`${WXC.geocodeSearchUrl}?${new URLSearchParams({ name: q, count: '5', language: 'en', format: 'json' })}`, 8000);
+      if (seq !== findSeq) return;
+      const res = (j.results || []).filter(x => isFinite(x.latitude) && isFinite(x.longitude));
+      if (!res.length) { list.innerHTML = `<li class="msg">No place called “${q.replace(/[<&>"]/g, '')}” found.</li>`; return; }
+      list.innerHTML = '';
+      res.forEach(x => {
+        const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button';
+        const name = x.name, sub = [x.admin1, x.country].filter(Boolean).join(', ');
+        b.innerHTML = '<b></b><span></span>'; b.firstChild.textContent = name; b.lastChild.textContent = sub;
+        b.addEventListener('click', () => {
+          const pick = { name, latitude: x.latitude, longitude: x.longitude };
+          store.set('desk-wx-place', pick); list.hidden = true; $('#wxpQ').value = '';
+          wx.status = 'loading'; renderWx(); load(pick, name, 'manual');
+        });
+        li.appendChild(b); list.appendChild(li);
+      });
+    } catch (err) { if (seq === findSeq) list.innerHTML = '<li class="msg">City search is unavailable right now. Try again in a moment.</li>'; }
+  });
+  setInterval(() => { if (wx.rec && wxBtn.getAttribute('aria-expanded') === 'true') $('#wxpTime').textContent = placeTime(wx.rec.cur); }, 20000);
   /* ---- scene + day/night from a reading; never touches the train or the camera ---- */
   let dayManual = false;
   dayBtn.addEventListener('click', () => { dayManual = true; });   // a visitor's own day/night choice wins over the forecast
@@ -3294,8 +4048,9 @@
     G.to(W, Object.assign({ duration: instant || reduce ? 0 : 6, ease: 'sine.inOut', overwrite: 'auto' }, target));
     if (fresh && !dayManual) setDay(rec.cur.is_day === 1, instant);
   }
-  function accept(cur, place, isFallback, mock) {
-    wx.rec = { cur, place, isFallback, mock: !!mock, fetchedAt: Date.now() };
+  function accept(cur, place, source) {
+    const mock = source === 'mock';
+    wx.rec = { cur, place, source, isFallback: source !== 'gps' && source !== 'manual', mock, fetchedAt: Date.now() };
     wx.status = mock ? 'mock' : 'live';
     if (!mock) store.set('desk-wx-cache', wx.rec);
     renderWx(); applyScene(wx.rec, false);
@@ -3304,15 +4059,26 @@
     const cached = store.get('desk-wx-cache');
     if (cached && cached.cur) { wx.rec = cached; wx.status = 'cached'; applyScene(cached, false); }
     else if (!wx.rec) { wx.status = 'offline'; applyScene(null, false); }
+    else wx.status = 'cached';
     renderWx();
   }
   let lastCoords = null;
-  async function load(coords, place, isFallback) {
-    lastCoords = { coords, place, isFallback };
-    try { const cur = await fetchWeather(coords.latitude, coords.longitude); accept(cur, typeof place === 'function' ? await place() : place, isFallback); }
+  async function load(coords, place, source) {
+    lastCoords = { coords, place, source };
+    try { const cur = await fetchWeather(coords.latitude, coords.longitude); accept(cur, typeof place === 'function' ? await place() : place, source); }
     catch (e) { failed(); }
   }
-  const loadFallback = () => load(WXC.fallback, WXC.fallback.name, true);
+  // no browser location: the site's own approximate location, then the configured fallback, then ask
+  async function loadWithoutGps() {
+    if (WXC.ipLocationUrl) {
+      try {
+        const j = await getJSON(WXC.ipLocationUrl, 5000);
+        if (j && j.ok && isFinite(j.latitude) && isFinite(j.longitude)) return load(j, j.city || j.region || 'Your area', 'ip');
+      } catch (e) {}
+    }
+    if (WXC.fallback) return load(WXC.fallback, WXC.fallback.name, 'fallback');
+    if (!wx.rec) { wx.status = 'needplace'; applyScene(null, false); renderWx(); }
+  }
   function getPosition() {
     return new Promise((res, rej) => {
       if (WX_GEO_TEST === 'granted') return setTimeout(() => res({ latitude: 52.52, longitude: 13.405 }), 300);   // test: Berlin
@@ -3323,21 +4089,24 @@
   }
   async function askLocation(byHand) {
     if (wx.asked && !byHand) return; wx.asked = true;
+    if (!byHand && store.get('desk-wx-place')) return;   // a city picked by hand wins; never prompt over it
     try {
       const pos = await getPosition();
       wx.geo = 'granted'; store.set('desk-wx-geo', 'granted');
-      await load(pos, () => cityName(pos.latitude, pos.longitude), false);
+      await load(pos, () => cityName(pos.latitude, pos.longitude), 'gps');
     } catch (err) {
       wx.geo = err && err.code === 1 ? 'denied' : 'unavailable';
       if (wx.geo === 'denied') store.set('desk-wx-geo', 'denied');   // remember a "no": never ask again
-      if (!wx.rec || !wx.rec.isFallback || wx.status !== 'live') await loadFallback(); else renderWx();
+      if (!wx.rec || wx.status !== 'live') await loadWithoutGps(); else renderWx();
     }
   }
   async function startWeather() {
     const cached = store.get('desk-wx-cache');
-    if (cached && cached.cur && !WX_MOCK) { wx.rec = cached; wx.status = 'cached'; applyScene(cached, true); }
+    if (cached && cached.cur && !WX_MOCK) { cached.source = cached.source || (cached.isFallback ? 'fallback' : 'gps'); wx.rec = cached; wx.status = 'cached'; applyScene(cached, true); }
     renderWx();
-    if (WX_MOCK) { const m = MOCKS[WX_MOCK] || MOCKS['clear-night']; wx.geo = 'granted'; accept(Object.assign({}, m), 'Test city', false, true); return; }
+    if (WX_MOCK) { const m = MOCKS[WX_MOCK] || MOCKS['clear-night']; wx.geo = 'granted'; accept(Object.assign({ tz: 'UTC' }, m), 'Test city', 'mock'); return; }
+    const picked = store.get('desk-wx-place');
+    if (picked && isFinite(picked.latitude)) return load(picked, picked.name, 'manual');
     let state = WX_GEO_TEST ? null : store.get('desk-wx-geo');
     if (!WX_GEO_TEST && navigator.permissions && navigator.permissions.query) {
       try { const p = await navigator.permissions.query({ name: 'geolocation' }); if (p.state === 'granted') state = 'granted'; else if (p.state === 'denied') state = 'denied'; else if (state !== 'denied') state = 'prompt'; } catch (e) {}
@@ -3345,13 +4114,13 @@
     if (!WX_GEO_TEST && !('geolocation' in navigator)) state = 'unavailable';
     wx.geo = state || 'pending';
     if (state === 'granted') return askLocation(false);                 // already allowed: no prompt is shown
-    await loadFallback();                                               // real weather for the fallback city, labelled as such
+    await loadWithoutGps();                                             // approximate city first, labelled as such
     if (state === 'denied' || state === 'unavailable' || !WXC.askForLocation) { renderWx(); return; }
     setTimeout(() => askLocation(false), WXC.askDelaySeconds * 1000);   // one gentle ask, after the room has loaded
   }
   function refreshWeather() {
     if (document.hidden || WX_MOCK || !lastCoords) return;
-    load(lastCoords.coords, lastCoords.isFallback ? lastCoords.place : (wx.rec && !wx.rec.isFallback ? wx.rec.place : lastCoords.place), lastCoords.isFallback);
+    load(lastCoords.coords, wx.rec && wx.rec.source === lastCoords.source ? wx.rec.place : lastCoords.place, lastCoords.source);
   }
   wx.timer = setInterval(refreshWeather, WXC.refreshMinutes * 60e3);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && wx.rec && Date.now() - wx.rec.fetchedAt > WXC.refreshMinutes * 60e3) refreshWeather(); if (wx.rec) $('#wxpUpd').textContent = ago(wx.rec.fetchedAt); });
@@ -3397,7 +4166,7 @@
     focus,
     setPaused(p) { paused = p; },
   };
-  window.__desk = { render, go, focus, scene, camera, shot, view, sky, orbit, renderer, models, tvb, spot, lens, hot, pick, tvSet, tvClick, introTape: () => introTape, crt, W, wx, mockWeather: (k, instant) => { accept(Object.assign({}, MOCKS[k]), 'Test city', false, true); if (instant) applyScene(wx.rec, true); }, flashNow: () => { flashT = clock.getElapsedTime(); }, pinTrain(x, dir = 1, cars = 5) { trainPinned = x; if (x !== null) { trainRun.dir = -dir; planTrain(0); trainRun.dir = dir; trainRun.cars = cars; trainRun.len = cars * (CAR_L + CAR_GAP); train.count = cars; tailL.position.x = -(trainRun.len - CAR_L / 2) - .004; spill.scale.x = trainRun.len; spill.position.x = -(trainRun.len - CAR_L) / 2; } }, get lim() { return LIM; } }; // for testing
+  window.__desk = { render, go, focus, scene, camera, shot, view, sky, orbit, renderer, models, tvb, spot, lens, hot, pick, tvSet, tvClick, introTape: () => introTape, crt, W, wx, mockWeather: (k, instant) => { accept(Object.assign({ tz: 'UTC' }, MOCKS[k]), 'Test city', 'mock'); if (instant) applyScene(wx.rec, true); }, flashNow: () => { flashT = clock.getElapsedTime(); }, pinTrain(x, dir = 1, cars = 5) { trainPinned = x; if (x !== null) { trainRun.dir = -dir; planTrain(0); trainRun.dir = dir; trainRun.cars = cars; trainRun.len = cars * (CAR_L + CAR_GAP); train.count = cars; tailL.position.x = -(trainRun.len - CAR_L / 2) - .004; spill.scale.x = trainRun.len; spill.position.x = -(trainRun.len - CAR_L) / 2; } }, get lim() { return LIM; } }; // for testing
 
   resize();
   applyPower();
