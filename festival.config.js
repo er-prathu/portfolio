@@ -17,11 +17,12 @@ window.DESK_FESTIVALS = {
   // Show one theme all the time (e.g. while testing): 'diwali', 'christmas', or '' to follow the dates below.
   force: '',
 
-  // Diwali follows the lunar calendar, so its date moves each year. These are the Lakshmi Puja dates; check them
-  // against a calendar (some years differ by a day by city) and add new years as they come.
+  // Diwali follows the lunar calendar, so its date moves each year. It is worked out automatically from the
+  // sun and moon (festival.dates.js), for every year, with nothing to update.
+  // To pin a year anyway (e.g. if your family's panchang says a different day), add it here as 'YYYY-MM-DD'.
   // The theme runs from `before` days earlier (Dhanteras) to `after` days later (Bhai Dooj).
   diwali: {
-    dates: ['2025-10-20', '2026-11-08', '2027-10-29', '2028-10-17', '2029-11-05', '2030-10-26'],
+    dates: [],
     before: 4,
     after: 2,
   },

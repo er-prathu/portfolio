@@ -628,6 +628,7 @@
 <script src="weather.config.js"></script>
 <script src="tv.config.js"></script>
 <script src="festival.config.js"></script>
+<script src="festival.dates.js"></script>
 <script>
 (() => {
   const root = document.documentElement, body = document.body;
@@ -648,7 +649,10 @@
     try { ymd = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) {}
     const day = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5, today = day(ymd);
     const dw = cfg.diwali || {}, before = dw.before == null ? 4 : dw.before, after = dw.after == null ? 2 : dw.after;
-    if ((dw.dates || []).some(s => today >= day(s) - before && today <= day(s) + after)) return 'diwali';
+    // Diwali's date is worked out from the sun and moon (festival.dates.js); a date for this year in the config wins
+    const y0 = +ymd.slice(0, 4), calc = window.DESK_FESTIVAL_DATES;
+    const dwDates = [y0 - 1, y0, y0 + 1].map(y => (dw.dates || []).find(s => s.startsWith(y + '-')) || (calc && calc.diwali(y))).filter(Boolean);
+    if (dwDates.some(s => today >= day(s) - before && today <= day(s) + after)) return 'diwali';
     const xm = cfg.christmas || {}, y = ymd.slice(0, 4);
     if (xm.from && xm.to && today >= day(`${y}-${xm.from}`) && today <= day(`${y}-${xm.to}`)) return 'christmas';
     return null;
