@@ -25,8 +25,20 @@ copy('tv.config.js');
 copy('weather.config.js');
 copy('festival.config.js');
 copy('festival.dates.js');
-// résumé (page + PDF), icons, social preview and crawler files
-['resume.html', 'resume.pdf', 'resume-preview.jpg', 'favicon.svg', 'apple-touch-icon.png', 'og-image.jpg', 'robots.txt', 'sitemap.xml'].forEach(f => copy(f));
+copy('site.config.js');
+// icons, social preview and crawler files
+['favicon.svg', 'apple-touch-icon.png', 'og-image.jpg', 'robots.txt', 'sitemap.xml'].forEach(f => copy(f));
+
+// the résumé: only a real PDF that site.config.js points at (resume/…). A path to a missing file stops the build,
+// so the site never ships a "Download résumé" button that 404s.
+const siteCfg = fs.readFileSync(path.join(ROOT, 'site.config.js'), 'utf8');
+const resumePdf = (siteCfg.match(/^\s*resumePdf:\s*'([^']*)'/m) || [])[1] || '';   // the setting itself, not the example in the comment
+if (resumePdf) {
+  if (!/^resume\/[^/]+\.pdf$/i.test(resumePdf)) throw new Error(`site.config.js resumePdf must look like 'resume/Your-Name.pdf' (got '${resumePdf}')`);
+  if (!fs.existsSync(path.join(ROOT, resumePdf))) throw new Error(`site.config.js points at ${resumePdf}, but that file doesn't exist. Add the PDF or clear resumePdf.`);
+  copy(resumePdf);
+  console.log(`résumé: ${resumePdf}`);
+} else console.log('résumé: none configured (the site offers it on request)');
 
 // models: the glTF JSON (buffer embedded) and its textures; the .gltf/.bin originals aren't loaded by the page
 for (const id of fs.readdirSync(path.join(ROOT, 'models'))) {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prathamesh Patil · Senior Software Engineer · Prathamesh's Desk</title>
-<meta name="description" content="Prathamesh Patil, Senior Software Engineer at WebMD with 9+ years in PHP, Laravel, JavaScript and LLM integrations. Explore an interactive 3D desk: experience, projects, tech stack and contact.">
+<meta name="description" content="Prathamesh Patil, Senior Software Engineer at WebMD with 9+ years in PHP, Laravel, JavaScript and LLM integrations. Explore an interactive 3D desk: experience, projects, skills and contact.">
 <meta name="author" content="Prathamesh Patil">
 <meta name="theme-color" content="#0A0C0E">
 <link rel="canonical" href="https://portfolio.prathpatil3.workers.dev/">
@@ -129,6 +129,8 @@
   }
   .pill:hover { border-color: var(--amber); color: var(--amber); }
   .nav-right { display: flex; align-items: center; gap: 22px; }
+  .pill .short { display: none; }
+  @media (max-width: 760px) { .pill .short { display: inline; } }
   @media (max-width: 760px) { .nav-right { gap: 10px; } .pill .long { display: none; } }
   @media (max-width: 430px) {   /* logo, day/night, weather and text all fit inside the 16px side gutter */
     .brand { font-size: 12.5px; }
@@ -352,10 +354,35 @@
   .deck-note { margin: 12px 0 0; font-size: 12px !important; }
   .deck-note button { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
   .rcard .cta-row { margin-top: 16px; }
-  .rc-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: start; }
-  .rc-thumb { display: block; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(237,231,220,.12); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
-  .rc-thumb:hover { transform: translateY(-3px) rotate(-1deg); }
-  .rc-thumb img { display: block; width: 100%; height: auto; background: #fbf8f2; }
+  .rc-row { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: start; }
+  .rc-meta { margin: 6px 0 0 !important; font: 500 11px/1.4 var(--mono) !important; color: var(--muted) !important; }
+  /* a small paper sheet standing in for the PDF (no image of a résumé that may not exist) */
+  .rc-doc { position: relative; display: grid; align-content: start; gap: 5px; width: 64px; height: 84px; padding: 12px 10px; border-radius: 4px; background: #efe8d8; box-shadow: 0 10px 22px rgba(0,0,0,.45); transform: rotate(-3deg); }
+  .rc-doc i { display: block; height: 3px; border-radius: 2px; background: rgba(29,26,22,.28); } .rc-doc i:first-child { width: 70%; background: rgba(29,26,22,.6); } .rc-doc i:nth-child(3) { width: 82%; }
+  .rc-doc b { position: absolute; right: -6px; bottom: 8px; padding: 3px 5px; border-radius: 3px; background: var(--amber); color: #1a1108; font: 700 9px/1 var(--mono); letter-spacing: .06em; }
+  /* download links: an arrow that drops into its tray on hover */
+  svg.dl { vertical-align: -2px; margin-left: 2px; }
+  .has-dl:hover svg.dl, .has-dl:focus-visible svg.dl { animation: dl-drop .7s cubic-bezier(.3,.7,.3,1); }
+  @keyframes dl-drop { 0% { transform: translateY(0); } 40% { transform: translateY(3px); } 70% { transform: translateY(-1px); } 100% { transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .has-dl:hover svg.dl, .has-dl:focus-visible svg.dl { animation: none; } }
+  /* recruiter shortcuts at the top of About */
+  .cta-row.top { margin: 4px 0 22px; gap: 8px; }
+  .cta-row.top .btn { padding: 11px 15px; }
+  @media (pointer: coarse) { .btn { min-height: 44px; align-items: center; } .lk { min-height: 56px; } .case-back, .case-next { min-height: 44px; } .gh-head .ln { padding: 10px 0; } }
+  /* contact: four plain link cards */
+  .links-grid { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lk { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); transition: border-color .2s, background-color .2s; min-width: 0; }
+  .lk:hover, .lk:focus-visible { border-color: rgba(232,145,60,.55); background: rgba(232,145,60,.05); }
+  .lk-k { font: 500 10px/1.2 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+  .lk-v { font-size: 13.5px; color: var(--ink); overflow-wrap: anywhere; }
+  /* experience summary */
+  .exp-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 16px; }
+  .exp-sum div { padding: 12px 12px 10px; border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 2px; }
+  .exp-sum b { font: 800 26px/1 var(--display); color: var(--ink); letter-spacing: -.02em; }
+  .exp-sum span { font: 500 10px/1.3 var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+  .tl-pts { list-style: none; margin-top: 6px; display: grid; gap: 4px; }
+  .tl-pts li { position: relative; padding: 0 0 0 14px !important; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; display: block !important; }
+  .tl-pts li::before { content: "" !important; position: absolute !important; left: 0 !important; top: .7em !important; width: 5px !important; height: 1px !important; border: 0 !important; border-radius: 0 !important; background: var(--amber) !important; box-shadow: none !important; }
   body.tv-on .deck { display: none; }
   @media (max-width: 760px) {
     .deck { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); padding: 14px 16px 16px; }
@@ -403,6 +430,7 @@
     .sheet .facts { grid-template-columns: 1fr; gap: 14px; }
   }
   html.text-mode .dock { display: none !important; }
+  html.text-mode .intro::before { display: none; }   /* the halo is for type over the 3D scene; in the page it only widened the layout */
 
   /* Phone dock replaces the top links */
   .dock { display: none; }
@@ -585,6 +613,50 @@
   .flow li::before { content: counter(step, decimal-leading-zero); font: 500 10px/1 var(--mono); color: var(--amber); }
   .flow li:not(:last-child)::after { content: "→"; position: absolute; right: -11px; top: 50%; translate: 0 -50%; font-size: 11px; color: var(--muted); }
   .flow li:not(:last-child) { margin-right: 8px; }
+  /* case study as engineering documentation: a meta strip, then lettered sections A–H */
+  .cs-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 1px; margin: 4px 0 6px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--line); }
+  .cs-meta div { background: var(--ground-2); padding: 9px 11px; display: grid; gap: 3px; min-width: 0; }
+  .cs-meta dt { font: 500 9.5px/1.2 var(--sans); text-transform: uppercase; letter-spacing: .13em; color: var(--muted); }
+  .cs-meta dd { font-size: 12.5px; color: var(--ink); overflow-wrap: break-word; }
+  .doc { padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--line); }
+  .doc h4 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font: 500 10.5px/1.3 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-2); }
+  .doc h4 span { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; border: 1px solid rgba(232,145,60,.45); color: var(--amber); font: 600 10px/1 var(--mono); letter-spacing: 0; }
+  .doc p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink); max-width: 62ch; }
+  .doc p + p { margin-top: 8px; }
+  .doc.result p:first-of-type { color: var(--amber); font-weight: 600; }
+  .doc code { font: 500 11.5px/1 var(--mono); color: var(--ink); background: rgba(237,231,220,.07); padding: 2px 5px; border-radius: 4px; }
+  .doc .ln { color: var(--amber); border-bottom: 1px solid rgba(232,145,60,.4); }
+  .pts { list-style: none; display: grid; gap: 7px; }
+  .pts li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .pts li::before { content: ""; position: absolute; left: 2px; top: .72em; width: 6px; height: 1px; background: var(--amber); }
+  .np { display: inline-block; font: 500 10px/1.2 var(--mono) !important; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) !important; padding: 3px 7px; border: 1px dashed rgba(237,231,220,.22); border-radius: 6px; }
+  p.np { display: inline-block; }
+  /* architecture diagram: stacked nodes joined by an arrowed spine; reads the same at every width */
+  .arch { margin: 2px 0 0; }
+  .arch ol { list-style: none; display: grid; gap: 18px; position: relative; }
+  .arch li { position: relative; display: grid; gap: 2px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(237,231,220,.05), rgba(237,231,220,.02)); }
+  .arch li:not(:last-child)::after { content: ""; position: absolute; left: 22px; bottom: -18px; width: 1px; height: 18px; background: rgba(232,145,60,.55); }
+  .arch li:not(:last-child)::before { content: ""; position: absolute; left: 19px; bottom: -18px; border: 3.5px solid transparent; border-top: 5px solid rgba(232,145,60,.85); border-bottom: 0; }
+  .arch li.end { border-color: rgba(232,145,60,.45); }
+  .arch li.split { grid-template-columns: auto 1fr; column-gap: 10px; }
+  .arch b { font: 600 13px/1.3 var(--sans); color: var(--ink); }
+  .arch span { font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+  .arch figcaption { margin-top: 8px; font: 500 11px/1.4 var(--mono); color: var(--muted); }
+  /* GitHub repositories, read live from the public API */
+  .gh { margin-top: 26px; }
+  #work.reading .gh { display: none; }
+  .gh-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .gh-head .sub { margin-top: 0; }
+  .gh-head .ln { font-size: 12.5px; color: var(--amber); }
+  .gh-list { list-style: none; display: grid; gap: 8px; }
+  .gh-list a { display: grid; gap: 5px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; transition: border-color .2s; }
+  .gh-list a:hover, .gh-list a:focus-visible { border-color: rgba(232,145,60,.5); }
+  .gh-name { font: 600 14px/1.3 var(--mono); color: var(--ink); }
+  .gh-desc { font-size: 13px; color: var(--ink-2); }
+  .gh-facts { display: flex; flex-wrap: wrap; gap: 12px; font: 500 11px/1.4 var(--mono); color: var(--muted); }
+  .gh-facts .lang::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); margin-right: 6px; vertical-align: 0; }
+  .gh-msg { font-size: 13px; color: var(--ink-2); padding: 4px 0; }
+  .gh-msg a { color: var(--amber); }
   .case-back, .case-next { font: 600 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); padding: 12px 0; }
   .case-back[hidden], .case-next[hidden] { display: none; }
   .case-next { margin-top: 14px; }
@@ -605,9 +677,9 @@
   .stack .edu { color: var(--ink); margin: 0; }
   .tl { list-style: none; position: relative; margin-top: 18px; padding-left: 22px; }
   .tl::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(var(--amber), var(--line) 30%); }
-  .tl li { position: relative; padding: 0 0 22px; display: grid; gap: 3px; }
-  .tl li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--ground); border: 1px solid var(--ink-2); }
-  .tl li.current::before { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 4px rgba(232,145,60,.18); }
+  .tl > li { position: relative; padding: 0 0 22px; display: grid; gap: 3px; }
+  .tl > li::before { content: ""; position: absolute; left: -21px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--ground); border: 1px solid var(--ink-2); }
+  .tl > li.current::before { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 4px rgba(232,145,60,.18); }
   .tl time { font: 500 11.5px/1.4 var(--mono); color: var(--ink-2); }
   .tl h3 { font-size: 18px; }
   .tl .co { color: var(--ink-2); font-size: 14px; }
@@ -715,9 +787,9 @@
       <li><a href="#about">About</a></li>
       <li><a href="#timeline">Experience</a></li>
       <li><a href="#work">Projects</a></li>
-      <li><a href="#stack">Stack</a></li>
+      <li><a href="#stack">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a class="cv" href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">Résumé <span aria-hidden="true">↓</span></a></li>
+      <li><a class="cv js-cv" href="#contact" data-dl="Résumé" data-req="Résumé">Résumé</a></li>
     </ul>
     <button class="switch" id="dayBtn" type="button" aria-pressed="false" aria-label="Switch to day">
       <span class="knob" aria-hidden="true"></span>
@@ -749,12 +821,12 @@
         <p class="wxp-attr">Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</p>
       </div>
     </div>
-    <button class="pill" id="modeBtn" type="button">Text<span class="long"> version</span></button>
+    <button class="pill" id="modeBtn" type="button" aria-label="Quick read: the whole portfolio as one page"><span class="long">Quick read</span><span class="short">Read</span></button>
   </div>
 </header>
 
 <nav class="dock" aria-label="Sections">
-  <a href="#about">About</a><a href="#timeline">Career</a><a href="#work">Projects</a><a href="#stack">Stack</a><a href="#contact">Contact</a>
+  <a href="#about">About</a><a href="#timeline">Career</a><a href="#work">Projects</a><a href="#stack">Skills</a><a href="#contact">Contact</a>
 </nav>
 
 <div class="intro" id="intro">
@@ -778,7 +850,7 @@
   <button type="button" role="menuitem" data-i="0">About me</button>
   <button type="button" role="menuitem" data-i="1">Experience</button>
   <button type="button" role="menuitem" data-i="2">Projects</button>
-  <button type="button" role="menuitem" data-i="3">Tech stack</button>
+  <button type="button" role="menuitem" data-i="3">Skills</button>
   <button type="button" role="menuitem" data-i="4">Contact</button>
   <p class="tvmenu-keys" aria-hidden="true">↑ ↓ choose · Enter open · Esc exit</p>
   <div class="tvmenu-ph"><button type="button" id="tmSound" aria-pressed="false">♪ Sound off</button><button type="button" id="tmExit">✕ Exit TV</button></div>
@@ -837,10 +909,10 @@
 <aside class="deck rcard" id="rcard" aria-labelledby="rcardTitle" hidden>
   <div class="deck-head"><span class="label amber">Floppy · 1.44 MB</span><button type="button" id="rcardClose" class="deck-x" aria-label="Close">✕</button></div>
   <div class="rc-row">
-    <a class="rc-thumb" href="resume.html" target="_blank" rel="noopener" aria-label="Open the résumé online"><img src="resume-preview.jpg" width="120" height="170" alt="First page of the résumé" loading="lazy" decoding="async"></a>
-    <div><h2 id="rcardTitle">Résumé</h2><p>One page: experience, projects, skills and education. PDF, A4.</p></div>
+    <span class="rc-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><b>PDF</b></span>
+    <div><h2 id="rcardTitle">Résumé</h2><p id="rcardText">Experience, projects and skills on one page.</p><p class="rc-meta" id="rcardMeta"></p></div>
   </div>
-  <div class="cta-row"><a class="btn solid" href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">Download PDF</a><a class="btn" href="resume.html" target="_blank" rel="noopener">View online ↗</a></div>
+  <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request my résumé">Download résumé</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a></div>
 </aside>
 
 <aside class="sheet" id="sheet" aria-label="Section" aria-hidden="true">
@@ -856,6 +928,7 @@
       <p class="big">I build web applications and backend systems that hold up in production, and I bring <em>LLM features</em> into real products at WebMD.</p>
       <p>Senior Software Engineer on WebMD's Nolo legal team, working across the stack. Nine years of PHP, Laravel and JavaScript across five companies. AI-assisted development is part of how I work every day: Claude Code, the Claude API and MCP.</p>
       <p>Next: system design, RAG and vector databases, on the way to Tech Lead and Solution Architect roles.</p>
+      <div class="cta-row top"><a class="btn solid" href="#work">View projects</a><a class="btn js-cv" href="#contact" data-dl="Download résumé" data-req="Request résumé">Download résumé</a><a class="btn" href="#contact">Contact me</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a><a class="btn js-github" href="#" target="_blank" rel="noopener">GitHub ↗</a></div>
       <div class="facts">
         <div class="stat"><b>9+</b><span class="label">Years shipping,<br>since Aug 2017</span></div>
         <dl class="kv">
@@ -868,27 +941,37 @@
       <ul class="chips">
         <li>Backend engineering</li><li>Application architecture</li><li>Full-stack development</li><li>LLM integrations</li><li>AI-assisted development</li><li>MCP</li><li>Developer productivity</li>
       </ul>
-      <div class="cta-row"><a class="btn solid" href="#work">See projects</a><a class="btn" href="resume.html" target="_blank" rel="noopener">Résumé ↗</a></div>
     </section>
 
     <section class="sec" id="timeline" data-section="timeline" hidden>
       <p class="label amber text-only">02 — Experience</p>
       <h2>Experience.</h2>
-      <p>Nine years and five teams, from web developer to senior engineer.</p>
+      <div class="exp-sum">
+        <div><b>9+</b><span>years in software</span></div>
+        <div><b>5</b><span>companies</span></div>
+        <div><b>2017</b><span>first role</span></div>
+      </div>
+      <p>From web developer to senior engineer: PHP and JavaScript web applications first, then full-stack ownership, and now LLM features in production at WebMD.</p>
+      <h3 class="sub">What I bring</h3>
+      <ul class="chips">
+        <li>Backend development</li><li>Full-stack engineering</li><li>Application architecture</li><li>API development</li><li>AI and LLM integrations</li><li>Developer productivity</li>
+      </ul>
+      <h3 class="sub">Career</h3>
       <ol class="tl">
-        <li class="current"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span><p>Full-stack work on the Nolo legal product, shipping LLM features in production.</p></li>
+        <li class="current"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span>
+          <ul class="tl-pts"><li>Full-stack work on the Nolo legal product.</li><li>Works on LLM features in production, such as the AI lead qualification engine.</li><li>Built the Figma-to-HTML skill used across the IB team, and is the sole developer of the Nolo CMS.</li></ul></li>
         <li><time>Sep 2021 — Aug 2024</time><h3>Software Engineer</h3><span class="co">The Information Company</span></li>
         <li><time>Jan 2020 — Sep 2021</time><h3>PHP Developer</h3><span class="co">Neolite Infotech</span></li>
         <li><time>Jun 2018 — Aug 2019</time><h3>Associate Developer</h3><span class="co">Centillion Solutions and Services</span></li>
         <li><time>Aug 2017 — Jun 2018</time><h3>Web Developer</h3><span class="co">Techfryday</span></li>
       </ol>
-      <div class="cta-row"><a class="btn" href="resume.html" target="_blank" rel="noopener">Full résumé ↗</a></div>
+      <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request résumé">Download résumé</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a></div>
     </section>
 
     <section class="sec" id="work" data-section="work" hidden>
       <p class="label amber text-only">03 — Projects</p>
       <h2>Projects.</h2>
-      <p class="cases-intro">Production work at WebMD is confidential, so those case studies cover only what can be shared publicly: no internal code, data or figures.</p>
+      <p class="cases-intro">Three projects from WebMD and one you can inspect line by line. WebMD work is confidential: those case studies show only what can be shared publicly, and anything withheld is marked <span class="np">Not public</span>.</p>
       <button type="button" class="case-back" id="caseBack" hidden>← All projects</button>
       <ul class="cases" id="cases">
         <li class="case" data-case="0">
@@ -901,12 +984,22 @@
           </button>
           <div class="case-body" id="case0" role="region" aria-label="AI lead qualification engine, case study">
             <h3 class="cs-h" tabindex="-1">AI lead qualification engine</h3>
-            <div class="cs-block"><p class="cs-k">Problem</p><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></div>
-            <div class="cs-block"><p class="cs-k">Solution</p><p>Instead of a fixed form, an LLM asks each user follow-up questions, then classifies and scores the lead from what they say.</p></div>
-            <div class="cs-block"><p class="cs-k">How it flows</p>
-              <ol class="flow"><li>User's request</li><li>LLM asks follow-up questions</li><li>Strong / weak classification</li><li>Lead score</li><li>Better-qualified leads for Nolo</li></ol></div>
-            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></div>
-            <p class="cs-note">Internal WebMD product: no public demo, code or metrics.</p>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Status</dt><dd>In production</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>An LLM-driven step that qualifies leads for Nolo, WebMD's legal product, by talking to the user instead of relying on a fixed form.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></section>
+            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>D</span>Architecture</h4>
+              <figure class="arch"><ol>
+                <li><b>User</b><span>starts a request</span></li>
+                <li><b>LLM conversation</b><span>asks follow-up questions</span></li>
+                <li><b>Classification</b><span>strong or weak lead</span></li>
+                <li><b>Lead score</b><span>from the answers</span></li>
+                <li class="end"><b>Nolo</b><span>receives better-qualified leads</span></li>
+              </ol><figcaption>Flow at the level described publicly; internal services are not shown.</figcaption></figure></section>
+            <section class="doc"><h4><span>E</span>Implementation</h4><p>Runs in production at WebMD. The model drives the follow-up questions, and the answers become a classification and a score. Prompting, models and integration details are <span class="np">Not public</span>.</p></section>
+            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>Part of my work on the Nolo team at WebMD. Specifics are <span class="np">Not public</span>.</p></section>
+            <section class="doc"><h4><span>H</span>Results and impact</h4><p class="np">Not public</p></section>
           </div>
         </li>
         <li class="case" data-case="1">
@@ -919,14 +1012,22 @@
           </button>
           <div class="case-body" id="case1" role="region" aria-label="Figma-to-HTML skill, case study">
             <h3 class="cs-h" tabindex="-1">Figma-to-HTML skill</h3>
-            <div class="cs-block"><p class="cs-k">Problem</p><p>Turning Figma designs into HTML by hand is slow and repetitive work for every page.</p></div>
-            <div class="cs-block"><p class="cs-k">Solution</p><p>Connect the design file straight to the coding agent: the Figma MCP server gives Claude Code and Cline the design, and a purpose-built skill turns it into HTML.</p></div>
-            <div class="cs-block"><p class="cs-k">How it flows</p>
-              <ol class="flow"><li>Figma design</li><li>Figma MCP server</li><li>Claude Code / Cline</li><li>Figma-to-HTML skill</li><li>HTML</li></ol></div>
-            <div class="cs-block"><p class="cs-k">My contribution</p><p>Integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></div>
-            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></div>
-            <div class="cs-block result"><p class="cs-k">Result</p><p>Used across the entire IB team.</p></div>
-            <p class="cs-note">Internal WebMD tooling: no public demo or code.</p>
+            <dl class="cs-meta"><div><dt>Team</dt><dd>IB team, WebMD</dd></div><div><dt>Status</dt><dd>In use</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>A coding-agent skill that converts a Figma design into HTML, built on the Model Context Protocol so the agent reads the design directly.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>Turning Figma designs into HTML by hand is slow, repetitive work.</p></section>
+            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>D</span>Architecture</h4>
+              <figure class="arch"><ol>
+                <li><b>Figma design</b><span>the source of truth</span></li>
+                <li><b>Figma MCP server</b><span>exposes the design to the agent</span></li>
+                <li><b>Claude Code / Cline</b><span>the coding agent</span></li>
+                <li><b>Figma-to-HTML skill</b><span>tells the agent how to convert it</span></li>
+                <li class="end"><b>HTML</b><span>ready for the team</span></li>
+              </ol><figcaption>How the pieces connect.</figcaption></figure></section>
+            <section class="doc"><h4><span>E</span>Implementation</h4><p>Connected the Figma MCP server to both Claude Code and Cline, then wrote a skill the agent uses to turn a design into HTML.</p></section>
+            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>Integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></section>
+            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Used across the entire IB team.</p></section>
           </div>
         </li>
         <li class="case" data-case="2">
@@ -939,10 +1040,15 @@
           </button>
           <div class="case-body" id="case2" role="region" aria-label="Nolo CMS, case study">
             <h3 class="cs-h" tabindex="-1">Nolo CMS</h3>
-            <div class="cs-block"><p class="cs-k">Problem</p><p>The Nolo legal product needed its own content management system.</p></div>
-            <div class="cs-block"><p class="cs-k">My contribution</p><p>Sole developer, responsible for the whole stack, from back end to interface.</p></div>
-            <div class="cs-block"><p class="cs-k">How</p><p>Built with AI-assisted development tools.</p></div>
-            <p class="cs-note">Internal WebMD product: no public demo, code or metrics.</p>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Sole developer</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>A content management system for the Nolo legal product, built end to end by one engineer.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>The Nolo legal product needed its own content management system.</p></section>
+            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>D</span>Architecture</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>E</span>Implementation</h4><p>Built with AI-assisted development tools.</p></section>
+            <section class="doc"><h4><span>F</span>Technology stack</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>Sole developer, responsible for the whole stack.</p></section>
+            <section class="doc"><h4><span>H</span>Results and impact</h4><p class="np">Not public</p></section>
           </div>
         </li>
         <li class="case" data-case="3">
@@ -955,13 +1061,24 @@
           </button>
           <div class="case-body" id="case3" role="region" aria-label="Prathamesh's Desk, case study">
             <h3 class="cs-h" tabindex="-1">Prathamesh's Desk</h3>
-            <div class="cs-block"><p class="cs-k">Problem</p><p>A portfolio people remember that is still fast, accessible and quick for a recruiter to scan.</p></div>
-            <div class="cs-block"><p class="cs-k">Solution</p><p>The portfolio is a room: every object on the desk opens part of it, and a plain text version is always one click away.</p></div>
-            <div class="cs-block"><p class="cs-k">Architecture</p>
-              <ol class="flow"><li>Browser: three.js scene, one GLSL pass for the CRT</li><li>Cloudflare Worker: static files, <code>/api/contact</code>, <code>/api/geo</code></li><li>Resend (email) · Open-Meteo (weather)</li></ol></div>
-            <div class="cs-block"><p class="cs-k">Implementation</p><p>No build step and no framework: three.js and GSAP from a CDN. The TV picture (curvature, scanlines, static, VHS tracking) is a single shader. Sound is synthesized in the browser. The contact endpoint validates input, rate-limits and uses a honeypot, and only reports success when the email provider accepts the message. Weather is cached so the page makes as few requests as possible.</p></div>
-            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Node test runner</li></ul></div>
-            <div class="cs-block"><p class="cs-k">Links</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></div>
+            <dl class="cs-meta"><div><dt>Role</dt><dd>Design and build</dd></div><div><dt>Status</dt><dd>Live</dd></div><div><dt>Source</dt><dd>Public</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>The portfolio is a room: every object on the desk opens part of it, and a plain text version is always one click away.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>A portfolio people remember, that is still fast, accessible and quick for a recruiter to scan.</p></section>
+            <section class="doc"><h4><span>C</span>Technical challenges</h4><ul class="pts">
+              <li>A believable CRT (curvature, scanlines, static, VHS tracking, power-on beam) without full-screen post-processing, so phones keep up.</li>
+              <li>Live weather in the window with no API keys in the browser and no fake readings: every state (denied location, offline, cached) is labelled.</li>
+              <li>A contact form that never claims success unless the email provider accepted the message.</li>
+              <li>One codebase for desktop, tablet and phone, keyboard and screen readers included.</li></ul></section>
+            <section class="doc"><h4><span>D</span>Architecture</h4>
+              <figure class="arch"><ol>
+                <li><b>Browser</b><span>three.js scene · one GLSL pass for the CRT · Web Audio</span></li>
+                <li><b>Cloudflare Worker</b><span>static files · <code>/api/contact</code> · <code>/api/geo</code></span></li>
+                <li class="end split"><b>Resend</b><span>email</span><b>Open-Meteo</b><span>weather</span></li>
+              </ol><figcaption>Deployed from GitHub on every push.</figcaption></figure></section>
+            <section class="doc"><h4><span>E</span>Implementation</h4><p>No framework and no build step for the page: three.js and GSAP load from a CDN. The TV picture is a single shader on the screen mesh; sound is synthesized in the browser and off until asked for. The Worker validates and rate-limits contact messages, uses a honeypot, and reports success only on the provider's confirmation. Weather readings are cached, so a reload doesn't call the API again.</p></section>
+            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Open-Meteo</li><li>Node test runner</li></ul></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>Designed and built it, with AI-assisted development (Claude Code).</p></section>
+            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Live, open source, with automated tests for the contact endpoint and the Worker.</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></section>
           </div>
         </li>
         <li class="case bench">
@@ -971,15 +1088,20 @@
         </li>
       </ul>
       <button type="button" class="case-next" id="caseNext" hidden>Next project →</button>
+      <div class="gh" id="gh">
+        <div class="gh-head"><h3 class="sub">On GitHub</h3><a class="ln js-github" href="https://github.com/er-prathu" target="_blank" rel="noopener">Profile ↗</a></div>
+        <ul class="gh-list" id="ghList" aria-live="polite"><li class="gh-msg">Public repositories load when you open this section.</li></ul>
+      </div>
     </section>
 
     <section class="sec" id="stack" data-section="stack" hidden>
-      <p class="label amber text-only">04 — Tech stack</p>
-      <h2>Tech stack.</h2>
+      <p class="label amber text-only">04 — Skills</p>
+      <h2>Skills.</h2>
+      <p>The tools I work with day to day.</p>
       <div class="stack">
-        <div><h3 class="sub"><span class="label teal">Back end</span></h3><ul class="chips"><li>PHP</li><li>Laravel</li><li>CodeIgniter</li><li>Node.js</li><li>MySQL</li><li>Elasticsearch</li><li>REST APIs</li><li>C#</li></ul></div>
-        <div><h3 class="sub"><span class="label amber">Front end</span></h3><ul class="chips"><li>JavaScript</li><li>jQuery</li><li>Angular</li><li>HTML5</li><li>CSS</li><li>Bootstrap</li></ul></div>
-        <div><h3 class="sub"><span class="label amber">AI &amp; LLM</span></h3><ul class="chips"><li>Claude Code</li><li>Claude API</li><li>MCP</li><li>Figma MCP</li><li>Cline</li></ul></div>
+        <div><h3 class="sub"><span class="label teal">Back end</span></h3><ul class="chips"><li>PHP</li><li>Laravel</li><li>CodeIgniter</li><li>Node.js</li><li>MySQL</li><li>Elasticsearch</li><li>API development</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">Front end</span></h3><ul class="chips"><li>JavaScript</li><li>jQuery</li><li>HTML</li><li>CSS</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">AI-assisted development</span></h3><ul class="chips"><li>Claude Code</li><li>Claude API</li><li>MCP</li><li>Figma MCP</li><li>Cline</li></ul></div>
         <div><h3 class="sub"><span class="label teal">Learning now</span></h3><ul class="chips"><li>System design</li><li>RAG</li><li>Vector databases</li></ul></div>
         <div><h3 class="sub"><span class="label">Education</span></h3><p class="edu">Bachelor's degree, University of Mumbai</p></div>
       </div>
@@ -1030,8 +1152,12 @@
 
       <div class="elsewhere">
         <span class="label">Or reach me directly</span>
-        <a class="mail" href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a>
-        <div class="btns"><a class="btn" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a><a class="btn" href="https://github.com/er-prathu" target="_blank" rel="noopener">GitHub ↗</a><a class="btn" href="resume.html" target="_blank" rel="noopener">Résumé ↗</a></div>
+        <ul class="links-grid">
+          <li><a class="lk js-mail" href="mailto:prathpatil3@gmail.com"><span class="lk-k">Email</span><span class="lk-v js-mail-text">prathpatil3@gmail.com</span></a></li>
+          <li><a class="lk js-linkedin" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener"><span class="lk-k">LinkedIn</span><span class="lk-v">in/prathu123 ↗</span></a></li>
+          <li><a class="lk js-github" href="https://github.com/er-prathu" target="_blank" rel="noopener"><span class="lk-k">GitHub</span><span class="lk-v">er-prathu ↗</span></a></li>
+          <li><a class="lk js-cv" href="#contact" data-dl="Download PDF" data-req="On request"><span class="lk-k">Résumé</span><span class="lk-v">Download PDF</span></a></li>
+        </ul>
       </div>
     </section>
 
@@ -1054,13 +1180,14 @@
 <script src="tv.config.js"></script>
 <script src="festival.config.js"></script>
 <script src="festival.dates.js"></script>
+<script src="site.config.js"></script>
 <script>
 (() => {
   const root = document.documentElement, body = document.body;
   const forceMotion = /[?&]motion\b/.test(location.search) || location.hash === '#motion';
   const reduce = !forceMotion && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ORDER = ['about', 'timeline', 'work', 'stack', 'contact'];   // the TV menu's order: About me · Experience · Projects · Tech stack · Contact
-  const NAMES = { about: 'About', work: 'Projects', stack: 'Tech stack', timeline: 'Experience', contact: 'Contact' };
+  const NAMES = { about: 'About', work: 'Projects', stack: 'Skills', timeline: 'Experience', contact: 'Contact' };
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 
   /* festivals: which theme (if any) the desk wears today, by the date in India (dates in festival.config.js) */
@@ -1084,6 +1211,35 @@
   })();
   const FEST_NAME = { diwali: 'Diwali', christmas: 'Christmas' }[FEST] || '';
 
+  /* ================= profile links and the résumé, all from site.config.js ================= */
+  const SITE = Object.assign({ resumePdf: '', resumeDownloadName: 'Prathamesh-Patil-Resume.pdf', email: 'prathpatil3@gmail.com', linkedin: 'https://www.linkedin.com/in/prathu123', github: 'https://github.com/er-prathu', githubUser: 'er-prathu', githubPinned: [] }, window.DESK_SITE || {});
+  const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const cvMailto = () => `mailto:${SITE.email}?subject=${encodeURIComponent('Résumé request')}`;
+  const DL_ICON = '<svg class="dl" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 2v8m0 0L4.5 6.5M8 10l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  $$('.js-linkedin').forEach(a => { a.href = SITE.linkedin; });
+  $$('.js-github').forEach(a => { a.href = SITE.github; });
+  $$('.js-mail').forEach(a => { a.href = 'mailto:' + SITE.email; });
+  $$('.js-mail-text').forEach(s => { s.textContent = SITE.email; });
+  // with a PDF: real download links with an icon. Without one: "on request" (email), never a link that 404s.
+  $$('.js-cv').forEach(a => {
+    const label = SITE.resumePdf ? a.dataset.dl : a.dataset.req, slot = a.querySelector('.lk-v') || a;
+    if (SITE.resumePdf) {
+      a.href = SITE.resumePdf; a.setAttribute('download', SITE.resumeDownloadName); a.classList.add('has-dl');
+      slot.innerHTML = escH(label) + ' ' + DL_ICON; a.setAttribute('aria-label', `${label} (PDF)`);
+    } else if (a.classList.contains('cv')) {   // the header link explains instead of opening a mail app
+      a.href = '#resume'; slot.textContent = label;
+      a.addEventListener('click', e => { e.preventDefault(); openResume(); });
+    } else { a.href = cvMailto(); a.removeAttribute('download'); slot.textContent = label; a.setAttribute('aria-label', `${label} by email`); }
+  });
+  if (SITE.resumePdf) {
+    $('#rcardText').textContent = 'Experience, projects and skills. Saves as ' + SITE.resumeDownloadName + '.';
+    $('#rcardMeta').textContent = 'PDF';
+    fetch(SITE.resumePdf, { method: 'HEAD' }).then(r => { const n = +r.headers.get('content-length'); if (r.ok && n) $('#rcardMeta').textContent = `PDF · ${Math.max(1, Math.round(n / 1024))} KB`; }).catch(() => {});
+  } else {
+    $('#rcardText').textContent = 'My latest résumé is available on request. Email me and I’ll send you the PDF.';
+    $('#rcardMeta').textContent = 'PDF · on request';
+  }
+
   /* ================= UI: sheet, nav, text mode ================= */
   const sheet = $('#sheet'), sheetBody = $('#sheetBody'), chapter = $('#chapter');
   let current = null, room = null;
@@ -1093,6 +1249,7 @@
   }
   function showSection(sec) {
     if (current !== sec && typeof openCase === 'function' && cases) openCase(-1, false);   // a section always opens on its overview
+    if (sec === 'work') loadRepos();
     current = sec;
     $$('.sec').forEach(s => { s.hidden = s.dataset.section !== sec; });
     const i = ORDER.indexOf(sec);
@@ -1129,8 +1286,9 @@
 
   function setTextMode(on) {
     root.classList.toggle('text-mode', on);
-    $('#modeBtn').innerHTML = on ? '3D desk' : 'Text<span class="long"> version</span>';
-    if (on) { hideSheet(); $$('.sec').forEach(s => { s.hidden = false; }); sheet.setAttribute('aria-hidden', 'false'); }
+    $('#modeBtn').innerHTML = on ? '3D desk' : '<span class="long">Quick read</span><span class="short">Read</span>';
+    $('#modeBtn').setAttribute('aria-label', on ? 'Back to the 3D desk' : 'Quick read: the whole portfolio as one page');
+    if (on) { hideSheet(); $$('.sec').forEach(s => { s.hidden = false; }); sheet.setAttribute('aria-hidden', 'false'); loadRepos(); }
     if (room) room.setPaused(on);
     if (!on) fromHash();
   }
@@ -1166,6 +1324,36 @@
   $('#caseBack').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase(-1); if (i >= 0) cases[i].querySelector('.case-open').focus({ preventScroll: true }); });
   $('#caseNext').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase((i + 1) % cases.length); });
 
+  /* ================= GitHub: public repositories, read live from api.github.com when Projects opens (cached 6 h).
+     Only what GitHub returns is shown: name, description, language, stars, last update. Forks are skipped. ================= */
+  let ghLoaded = false;
+  async function loadRepos() {
+    if (ghLoaded || !SITE.githubUser) return; ghLoaded = true;
+    const list = $('#ghList'), key = 'desk-gh-' + SITE.githubUser;
+    let repos = null;
+    try { const c = JSON.parse(localStorage.getItem(key) || 'null'); if (c && Date.now() - c.at < 6 * 36e5) repos = c.repos; } catch (e) {}
+    if (!repos) {
+      list.innerHTML = '<li class="gh-msg">Loading repositories…</li>';
+      try {
+        const ac = new AbortController(), to = setTimeout(() => ac.abort(), 8000);
+        const r = await fetch(`https://api.github.com/users/${encodeURIComponent(SITE.githubUser)}/repos?per_page=100&sort=updated`, { headers: { Accept: 'application/vnd.github+json' }, signal: ac.signal, credentials: 'omit' });
+        clearTimeout(to);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        repos = (await r.json()).filter(x => !x.fork && !x.private).map(x => ({ name: x.name, desc: x.description, lang: x.language, stars: x.stargazers_count, url: x.html_url, updated: x.pushed_at || x.updated_at }));
+        try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), repos })); } catch (e) {}
+      } catch (e) {
+        ghLoaded = false;   // try again next time the section opens
+        list.innerHTML = `<li class="gh-msg">GitHub can’t be reached right now. <a href="${escH(SITE.github)}" target="_blank" rel="noopener">See the profile ↗</a></li>`;
+        return;
+      }
+    }
+    const pin = SITE.githubPinned || [], rank = n => { const i = pin.indexOf(n); return i < 0 ? 99 : i; };
+    repos.sort((a, b) => rank(a.name) - rank(b.name) || String(b.updated).localeCompare(String(a.updated)));
+    if (!repos.length) { list.innerHTML = '<li class="gh-msg">No public repositories yet.</li>'; return; }
+    const when = d => { try { return new Date(d).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }); } catch (e) { return ''; } };
+    list.innerHTML = repos.filter(x => /^https:\/\/github\.com\//.test(x.url)).map(x => `<li><a href="${escH(x.url)}" target="_blank" rel="noopener"><span class="gh-name">${escH(x.name)}</span>${x.desc ? `<span class="gh-desc">${escH(x.desc)}</span>` : ''}<span class="gh-facts">${x.lang ? `<span class="lang">${escH(x.lang)}</span>` : ''}<span>★ ${Number(x.stars) || 0}</span>${x.updated ? `<span>Updated ${when(x.updated)}</span>` : ''}</span></a></li>`).join('');
+  }
+
   /* ================= Terminal: a small command line with fixed answers. It never runs anything: every command is a
      lookup in TERM_CMDS below, so nothing typed here reaches a server. ================= */
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -1192,9 +1380,9 @@
       'Solution Architect roles.',
     ],
     skills: () => [
-      ['hd', 'Back end   '], '  PHP · Laravel · CodeIgniter · Node.js · MySQL · Elasticsearch · REST APIs · C#',
-      ['hd', 'Front end  '], '  JavaScript · jQuery · Angular · HTML5 · CSS · Bootstrap',
-      ['hd', 'AI & LLM   '], '  Claude Code · Claude API · MCP · Figma MCP · Cline',
+      ['hd', 'Back end   '], '  PHP · Laravel · CodeIgniter · Node.js · MySQL · Elasticsearch · API development',
+      ['hd', 'Front end  '], '  JavaScript · jQuery · HTML · CSS',
+      ['hd', 'AI tooling '], '  Claude Code · Claude API · MCP · Figma MCP · Cline',
       ['hd', 'Learning   '], '  System design · RAG · vector databases',
     ],
     experience: () => [
@@ -1212,12 +1400,14 @@
       ['dim', 'Run "open projects" for the full case studies.'],
     ],
     contact: () => [
-      ['html', 'Email      <a href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a>'],
-      ['html', 'LinkedIn   <a href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">linkedin.com/in/prathu123</a>'],
-      ['html', 'GitHub     <a href="https://github.com/er-prathu" target="_blank" rel="noopener">github.com/er-prathu</a>'],
+      ['html', `Email      <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>`],
+      ['html', `LinkedIn   <a href="${esc(SITE.linkedin)}" target="_blank" rel="noopener">${esc(SITE.linkedin.replace(/^https?:\/\/(www\.)?/, ''))}</a>`],
+      ['html', `GitHub     <a href="${esc(SITE.github)}" target="_blank" rel="noopener">${esc(SITE.github.replace(/^https?:\/\//, ''))}</a>`],
       ['dim', 'Or run "open contact" to send a message from the form.'],
     ],
-    resume: () => [['html', 'Résumé: <a href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">download PDF</a> · <a href="resume.html" target="_blank" rel="noopener">view online</a>']],
+    resume: () => SITE.resumePdf
+      ? [['html', `Résumé: <a href="${esc(SITE.resumePdf)}" download="${esc(SITE.resumeDownloadName)}">download the PDF</a>`]]
+      : [['html', `My résumé is available on request: <a href="${esc(cvMailto())}">email me</a> or message me on <a href="${esc(SITE.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>.`]],
   };
   const TERM_ALIAS = { stack: 'skills', work: 'projects', timeline: 'experience', career: 'experience', cv: 'resume', whoami: 'about', ls: 'help', '?': 'help' };
   const SECTION_OF = { about: 'about', experience: 'timeline', timeline: 'timeline', projects: 'work', work: 'work', stack: 'stack', skills: 'stack', contact: 'contact' };
@@ -1294,7 +1484,8 @@
 
   /* résumé card (the floppy disk opens it; the nav and the terminal link straight to the files) */
   const rcard = $('#rcard');
-  function openResume() { rcard.hidden = false; setTimeout(() => rcard.querySelector('a').focus({ preventScroll: true }), 30); }
+  function openResume() { if (!$('#deck').hidden) $('#deckClose').click();   // one card at a time
+    rcard.hidden = false; setTimeout(() => rcard.querySelector('a').focus({ preventScroll: true }), 30); }
   $('#rcardClose').addEventListener('click', () => { rcard.hidden = true; });
   rcard.addEventListener('pointerdown', e => e.stopPropagation());
   addEventListener('keydown', e => { if (e.key === 'Escape' && !rcard.hidden) rcard.hidden = true; });
@@ -1848,7 +2039,7 @@
     // the VCR's blue input screen: the set glows like a lamp of its own
     const bg = g.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, w * .72); bg.addColorStop(0, '#3d5cf2'); bg.addColorStop(.6, '#2a43cf'); bg.addColorStop(1, '#0d1a6e');
     g.fillStyle = bg; g.fillRect(0, 0, w, h);
-    const CH = { home: ['01', ''], about: ['01', 'ABOUT'], timeline: ['02', 'CAREER'], work: ['03', 'PROJECTS'], stack: ['04', 'STACK'], contact: ['05', 'CONTACT'] }[tvMode] || ['01', ''];
+    const CH = { home: ['01', ''], about: ['01', 'ABOUT'], timeline: ['02', 'CAREER'], work: ['03', 'PROJECTS'], stack: ['04', 'SKILLS'], contact: ['05', 'CONTACT'] }[tvMode] || ['01', ''];
     g.textAlign = 'center';
     if (tvMode === 'home') {
       // a bold title card, left-aligned and filling the picture (the reference's screen reads from across the room)
@@ -1983,7 +2174,7 @@
   // the sequence: tape loads (0–1.7 s) · PRATHAMESH.EXE boots (1.75–3.7) · the introduction (3.8–8.6) · the menu (8.8 →)
   const MENU_AT = 8.8, INTRO_LEN = 9.3;                    // sequence time of the title sequence (a video uses its own length, then the menu)
   const INTRO_RATE = 1.25;                                  // the sequence plays a little faster than it is written: about 7 s to the menu
-  const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['TECH STACK', 'stack'], ['CONTACT', 'contact']];
+  const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['SKILLS', 'stack'], ['CONTACT', 'contact']];
   const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
   const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
   const introTex = canvasTex(640, 480, g => { g.fillStyle = '#000'; g.fillRect(0, 0, 640, 480); });
@@ -2336,6 +2527,7 @@
     if (tvSet.tl) tvSet.tl.kill();
     if (tvSet.state !== 'LOADING_TAPE') { tvSet.fromIdle = tvSet.state === 'IDLE'; if (current) setHash('home'); prepareVideo(); setTimeout(() => focus('tv'), current ? 80 : 0); }
     showControls(true);
+    if (!deckEl.hidden) closeDeck(); rcard.hidden = true;   // the TV takes the stage: no card left open (or tape playing) behind it
     G.fromTo(vcrPowerKey.position, { z: VF + .007 }, { z: VF + .0025, duration: .09, ease: 'power2.in', yoyo: true, repeat: 1 });   // the power key goes in and springs back
     const fromIdle = tvSet.fromIdle, k = reduce ? .35 : 1, u = crt.uniforms;
     setState('POWERING_ON'); tvSet.introT = 0; tvSet.osdKey = ''; drawOSD({});
@@ -2583,7 +2775,7 @@
     const b = mesh(new T.BoxGeometry(w, th, d), mats); b.rotation.y = (i % 2 ? -1 : 1) * .05 * i;
     books.add(put(b, 0, by + th / 2, 0)); by += th;
   });
-  hotspot(books, 'stack', 'Books · <b>Tech stack</b>');
+  hotspot(books, 'stack', 'Books · <b>Skills</b>');
 
   /* ---------- mug, pen cup, notebook, remote ---------- */
   const MUGX = -.12, MUGZ = DZ + .26;
@@ -2739,7 +2931,7 @@
   flop.add(put(box(.05, .0037, .032, std(0xbfc2c6, .28, .9), .0008), .006, .00185, -.031));        // sliding metal shutter
   const flopTex = canvasTex(256, 200, g => { g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 256, 200); g.fillStyle = '#E8913C'; g.fillRect(0, 0, 256, 18); g.strokeStyle = 'rgba(46,107,114,.35)'; for (let y = 64; y < 200; y += 30) { g.beginPath(); g.moveTo(12, y); g.lineTo(244, y); g.stroke(); } g.fillStyle = '#1d1a16'; g.font = '700 34px "JetBrains Mono", monospace'; g.fillText('RESUME', 16, 88); g.font = '500 22px "JetBrains Mono", monospace'; g.fillText('P. PATIL · 2026', 16, 148); }, true);
   const flopLabel = new T.Mesh(new T.PlaneGeometry(.07, .052), std(0xffffff, .85, 0, { map: flopTex.t })); flopLabel.rotation.x = -Math.PI / 2; flop.add(put(flopLabel, 0, .00345, .018));
-  hitPad(flop, .13, .035, .13); act(flop, 'Floppy disk · <b>Résumé</b>', () => openResume());
+  hitPad(flop, .096, .02, .1);   /* just the disk: it lies on the notebook, which opens Experience */ act(flop, 'Floppy disk · <b>Résumé</b>', () => openResume());
   /* the Walkman's panel: three "tracks" (what I'm building, exploring, learning), play/pause turns the reels and, only if
      the visitor has switched sound on, plays a quiet synthesized tape loop (original: oscillators and noise, no recording) */
   const deckEl = $('#deck'), deckTracks = [...$('#deckTracks').children];

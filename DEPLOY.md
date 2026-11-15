@@ -68,12 +68,15 @@ If it fails: Worker → **Observability → Logs**. Log lines are events like `c
 
 ## Résumé
 
-`resume.html` is the source; `resume.pdf` is printed from it. After editing the page, regenerate the PDF with
-Microsoft Edge while `npm start` is running:
+Only your own PDF is published. Put it in `resume/` and set `resumePdf` in `site.config.js`, for example
+`resumePdf: 'resume/Prathamesh-Patil-Resume.pdf'`. Visitors download it as `resumeDownloadName`.
 
-```bash
-"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --no-pdf-header-footer --virtual-time-budget=8000 --print-to-pdf="%CD%\resume.pdf" http://localhost:3000/resume.html
-```
+- With a PDF: every "Download résumé" button, the header link, the floppy disk and the terminal's `resume`
+  command download it.
+- Without one: those places say "résumé on request" and link to email. Nothing links to a missing file.
+- `npm run build` fails if `resumePdf` points at a file that doesn't exist.
+
+Email, LinkedIn, GitHub and the GitHub username for the repository list are in the same file.
 
 ## Known limits
 
