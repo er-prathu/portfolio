@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+.dev.vars
+node_modules/
+public/
+.wrangler/
+# development screenshots and local tool settings
+validation/
+.claude/

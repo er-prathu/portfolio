@@ -1,0 +1,49 @@
+'use strict';
+/*
+ * npm run build → public/ : only the files visitors need, ready to deploy to Cloudflare Pages (or any static host).
+ * Server code, tests, .env and tooling are never copied, so they can't be published by accident.
+ * The 3D room is the home page (public/index.html); /room.html keeps working too.
+ */
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.join(__dirname, '..');
+const OUT = path.join(ROOT, 'public');
+
+const copy = (from, to = from) => {
+  const dest = path.join(OUT, to);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(path.join(ROOT, from), dest);
+};
+
+fs.rmSync(OUT, { recursive: true, force: true });
+fs.mkdirSync(OUT);
+
+copy('room.html', 'index.html');
+copy('room.html');
+copy('tv.config.js');
+copy('weather.config.js');
+
+// models: the glTF JSON (buffer embedded) and its textures; the .gltf/.bin originals aren't loaded by the page
+for (const id of fs.readdirSync(path.join(ROOT, 'models'))) {
+  const dir = path.join('models', id);
+  if (!fs.statSync(path.join(ROOT, dir)).isDirectory()) continue;
+  copy(path.join(dir, `${id}_1k.json`));
+  const tex = path.join(dir, 'textures');
+  if (fs.existsSync(path.join(ROOT, tex))) for (const f of fs.readdirSync(path.join(ROOT, tex))) copy(path.join(tex, f));
+}
+
+// Cloudflare Pages response headers
+fs.writeFileSync(path.join(OUT, '_headers'), [
+  '/*',
+  '  X-Content-Type-Options: nosniff',
+  '  Referrer-Policy: strict-origin-when-cross-origin',
+  '  X-Frame-Options: SAMEORIGIN',
+  '/models/*',
+  '  Cache-Control: public, max-age=604800',
+  '',
+].join('\n'));
+
+let files = 0, bytes = 0;
+(function walk(d) { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); const s = fs.statSync(p); if (s.isDirectory()) walk(p); else { files++; bytes += s.size; } } })(OUT);
+console.log(`public/ ready: ${files} files, ${(bytes / 1048576).toFixed(1)} MB`);
