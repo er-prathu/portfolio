@@ -120,6 +120,9 @@
   .links { display: flex; gap: 26px; list-style: none; align-items: center; }
   .links a { font: 500 10.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .15em; color: var(--ink-2); transition: color .2s; padding: 8px 0; }
   .links a:hover, .links a[aria-current="true"] { color: var(--amber); }
+  .links a.cv { color: var(--ink); padding: 8px 12px; border: 1px solid rgba(237,231,220,.22); border-radius: 999px; margin-left: -8px; }
+  .links a.cv span { color: var(--amber); }
+  .links a.cv:hover { border-color: var(--amber); color: var(--amber); }
   .pill {
     font: 500 10.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .13em;
     padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); transition: border-color .2s, color .2s;
@@ -133,6 +136,12 @@
     .wxi { padding: 0 8px 0 7px; gap: 4px; letter-spacing: 0; }
     .nav .pill { padding-left: 10px; padding-right: 10px; }
     .nav .switch { width: 52px; } .nav .switch[aria-pressed="true"] .knob { transform: translateX(22px); }
+  }
+  @media (max-width: 374px) {   /* small Android phones (360 px): a little tighter still, so the Text pill isn't cut off */
+    .brand { font-size: 11px; }
+    .nav-right { gap: 4px; }
+    .wxi { padding: 0 7px 0 6px; font-size: 11px; }
+    .nav .pill { padding-left: 8px; padding-right: 8px; }
   }
 
   /* Day / night switch */
@@ -250,6 +259,12 @@
     animation: menu-in .5s cubic-bezier(.2,.8,.2,1) both;
   }
   .tvmenu[hidden] { display: none; }
+  .tvskip { position: fixed; z-index: 19; left: 50%; bottom: calc(34px + env(safe-area-inset-bottom, 0px)); translate: -50% 0; height: 38px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(237,231,220,.22); background: rgba(10,9,8,.6); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font: 500 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); animation: menu-in .5s .6s cubic-bezier(.2,.8,.2,1) both; transition: border-color .2s, color .2s; }
+  .tvskip span { color: var(--amber); margin-left: 4px; letter-spacing: 0; }
+  .tvskip:hover { border-color: var(--amber); color: var(--amber); }
+  .tvskip[hidden] { display: none; }
+  html.text-mode .tvskip { display: none !important; }
+  @media (max-width: 760px) { .tvskip { left: max(16px, env(safe-area-inset-left, 0px)); translate: none; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } }
   .tvmenu .label { margin: 0 4px 6px; font-family: var(--mono); letter-spacing: .12em; }
   .tvmenu button { text-align: left; padding: 9px 12px; border-radius: 8px; font: 600 14px/1.2 var(--display); letter-spacing: .02em; color: var(--ink); transition: background .2s, color .2s; }
   .tvmenu button::before { content: "▶"; display: inline-block; width: 0; margin-right: 0; overflow: hidden; vertical-align: 1px; font-size: 9px; transition: width .2s, margin .2s; }
@@ -261,7 +276,18 @@
     .tvmenu { left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(66px + env(safe-area-inset-bottom, 0px)); width: min(190px, calc(100vw - 150px)); padding: 10px 8px 8px; }
     .tvmenu button { padding: 10px 10px; font-size: 13px; }
     .tvmenu-keys { display: none; }
+    /* phones: once the menu is up, the remote steps away and the menu becomes a compact panel under the set */
+    body.tv-menu .remote { display: none; }
+    .tvmenu { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; }
+    .tvmenu .label { grid-column: 1 / -1; margin-bottom: 2px; }
+    .tvmenu button[role="menuitem"] { border: 1px solid var(--line); padding: 11px 10px; }
+    .tvmenu button[role="menuitem"]:last-of-type { grid-column: 1 / -1; }
+    .tvmenu-ph { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 4px; }
+    .tvmenu-ph button { flex: 1; height: 38px; border-radius: 8px; background: rgba(237,231,220,.06); font: 500 12px/1 var(--sans); color: var(--ink-2); }
+    .tvmenu-ph button[aria-pressed="true"] { color: var(--amber); }
   }
+  .tvmenu-ph { display: none; }
+  @media (max-width: 760px) { .tvmenu-ph { display: flex; } }
   @media (prefers-reduced-motion: reduce) { .tvmenu { animation: none; } }
   html.text-mode .tvmenu { display: none !important; }
   .skip { position: fixed; z-index: 60; left: 16px; top: -60px; padding: 10px 16px; border-radius: 999px; background: var(--amber); color: #1a1108; font: 600 13px/1 var(--sans); transition: top .2s; }
@@ -326,6 +352,10 @@
   .deck-note { margin: 12px 0 0; font-size: 12px !important; }
   .deck-note button { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; font-size: inherit; }
   .rcard .cta-row { margin-top: 16px; }
+  .rc-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: start; }
+  .rc-thumb { display: block; border-radius: 6px; overflow: hidden; box-shadow: 0 10px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(237,231,220,.12); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .rc-thumb:hover { transform: translateY(-3px) rotate(-1deg); }
+  .rc-thumb img { display: block; width: 100%; height: auto; background: #fbf8f2; }
   body.tv-on .deck { display: none; }
   @media (max-width: 760px) {
     .deck { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); padding: 14px 16px 16px; }
@@ -351,6 +381,28 @@
   .vignette, .grain { transition: opacity 2s; }
   body.is-day .vignette { opacity: .45; }
   body.is-day .grain { opacity: .3; }
+
+  /* Tablets and small laptops (761–1200 px): the section links move to a bottom bar, as on phones, so the header never overflows */
+  @media (min-width: 1201px) and (max-width: 1400px) { .links { gap: 18px; } .nav-right { gap: 14px; } }
+  @media (min-width: 761px) and (max-width: 1200px) {
+    .nav .links { display: none; }
+    .dock {
+      display: flex !important; position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; justify-content: center; gap: 4px;
+      padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+      background: rgba(8,10,12,.72); -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2); border-top: 1px solid var(--line);
+      transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s;
+    }
+    .dock a { padding: 15px 22px; font: 500 10.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-2); }
+    .dock a[aria-current="true"] { color: var(--amber); }
+    body.sheet-open .dock { transform: translateY(110%); opacity: 0; }
+    html:not(.text-mode) .intro .hint { display: none; }
+    .remote { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .tvmenu, .deck { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .tvskip { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+    .reset { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+    .sheet .facts { grid-template-columns: 1fr; gap: 14px; }
+  }
+  html.text-mode .dock { display: none !important; }
 
   /* Phone dock replaces the top links */
   .dock { display: none; }
@@ -392,6 +444,14 @@
     .intro .label { font-size: 9.5px; }
     .intro .hint { font-size: 12.5px; line-height: 1.5; }
     #clock { margin-bottom: 4px !important; }
+    /* phones: the quick buttons sit on one line that scrolls sideways, so the caption stays low and the desk stays clear */
+    .quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 24px; -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
+    .quick::-webkit-scrollbar { display: none; }
+    .quick button { flex: none; }
+  }
+  @media (max-width: 760px) and (max-height: 760px) {   /* short phones: the buttons carry the how-to, so the hint line steps aside */
+    .intro .hint { display: none; }
+    .intro h1 { font-size: 24px !important; margin: 4px 0 6px !important; }
   }
   html, body { overscroll-behavior: none; }
   #gl { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
@@ -487,32 +547,57 @@
   .jobs h3 { font-size: 18px; }
   .jobs .co { color: var(--ink-2); font-size: 14px; }
   .sec h3.sub { font: 500 10.5px/1.4 var(--sans); text-transform: uppercase; letter-spacing: .15em; color: var(--ink-2); margin: 26px 0 10px; }
-  .facts { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; margin: 22px 0 4px; padding: 18px 0; border-block: 1px solid var(--line); }
+  .facts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: center; margin: 22px 0 4px; padding: 18px 0; border-block: 1px solid var(--line); }
   .facts .stat { margin: 0; }
   .kv { display: grid; gap: 8px; }
-  .kv div { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 13.5px; }
+  .kv div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; font-size: 13.5px; }
   .kv dt { color: var(--muted); } .kv dd { color: var(--ink); }
   .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
   .chips li { padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; font: 500 12.5px/1.2 var(--sans); color: var(--ink); background: rgba(237,231,220,.03); }
   .chips.sm li { padding: 4px 9px; font-size: 11.5px; color: var(--ink-2); }
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+  /* projects: cards that open into a full case study inside the sheet (all of them shown open in the text version) */
+  .cases-intro { font-size: 13.5px !important; }
   .cases { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
-  .case { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(237,231,220,.035), rgba(237,231,220,.01)); transition: border-color .25s, background-color .25s; }
-  .case:hover, .case:has(details[open]) { border-color: rgba(232,145,60,.45); }
-  .case summary { list-style: none; cursor: pointer; display: grid; gap: 6px; padding: 16px 18px; border-radius: 14px; }
-  .case summary::-webkit-details-marker { display: none; }
-  .case summary .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .case h3 { font-size: 19px; }
+  .case { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(237,231,220,.035), rgba(237,231,220,.01)); transition: border-color .25s, background-color .25s, opacity .3s; }
+  .case:hover { border-color: rgba(232,145,60,.45); }
+  .case-open { width: 100%; text-align: left; display: grid; gap: 7px; padding: 16px 18px; border-radius: 14px; }
+  .case .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .case-h { display: block; font: 700 19px/1.15 var(--display); letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
   .case .lede { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
-  .case .more { justify-self: start; margin-top: 4px; font: 600 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
-  .case .more::after { content: " +"; }
-  .case details[open] .more::after { content: " −"; }
-  .cs { display: grid; gap: 12px; padding: 4px 18px 18px; animation: cs-in .45s cubic-bezier(.2,.8,.2,1); }
-  .cs div { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13.5px; line-height: 1.6; }
-  .cs dt { font: 500 10px/1.8 var(--sans); text-transform: uppercase; letter-spacing: .13em; color: var(--muted); }
-  .cs dd { color: var(--ink); min-width: 0; }
-  .cs .ln { color: var(--amber); border-bottom: 1px solid rgba(232,145,60,.4); }
-  @keyframes cs-in { from { opacity: 0; transform: translateY(-6px); } }
+  .case .tags { font: 500 11px/1.4 var(--mono); color: var(--muted); }
+  .badge { padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); font: 500 9.5px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+  .badge.open { color: var(--teal-type); border-color: rgba(95,163,171,.4); }
+  .case .more { justify-self: start; margin-top: 2px; font: 600 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); transition: letter-spacing .25s; }
+  .case-open:hover .more { letter-spacing: .2em; }
+  .case-body { display: none; padding: 2px 18px 20px; }
+  .cs-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }   /* the case's heading, for screen readers; the card shows the title */
+  .cs-block { padding: 14px 0 0; margin-top: 14px; border-top: 1px solid var(--line); }
+  .cs-block p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink); max-width: 62ch; }
+  .cs-block p.cs-k { font: 500 10px/1.4 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-bottom: 8px; }
+  .cs-block.result p:not(.cs-k) { color: var(--amber); font-weight: 600; }
+  .cs-block code { font: 500 12px/1 var(--mono); color: var(--ink); background: rgba(237,231,220,.07); padding: 2px 5px; border-radius: 4px; }
+  .cs-note { margin: 16px 0 0 !important; padding: 10px 12px; border-radius: 10px; background: rgba(237,231,220,.04); font-size: 12.5px !important; color: var(--ink-2) !important; }
+  .cs-block .ln { color: var(--amber); border-bottom: 1px solid rgba(232,145,60,.4); }
+  /* the flow: numbered steps joined by a rule, wrapping on narrow screens */
+  .flow { list-style: none; counter-reset: step; display: flex; flex-wrap: wrap; gap: 8px 6px; align-items: center; }
+  .flow li { counter-increment: step; position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; border: 1px solid var(--line); background: rgba(237,231,220,.03); font-size: 12.5px; line-height: 1.35; color: var(--ink); }
+  .flow li::before { content: counter(step, decimal-leading-zero); font: 500 10px/1 var(--mono); color: var(--amber); }
+  .flow li:not(:last-child)::after { content: "→"; position: absolute; right: -11px; top: 50%; translate: 0 -50%; font-size: 11px; color: var(--muted); }
+  .flow li:not(:last-child) { margin-right: 8px; }
+  .case-back, .case-next { font: 600 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); padding: 12px 0; }
+  .case-back[hidden], .case-next[hidden] { display: none; }
+  .case-next { margin-top: 14px; }
+  /* reading one case study: the others step out, the chosen card becomes the page */
+  #work.reading .case:not(.open), #work.reading .cases-intro, #work.reading > h2 { display: none; }
+  #work.reading .case.open { border-color: rgba(232,145,60,.35); background: linear-gradient(180deg, rgba(232,145,60,.05), rgba(237,231,220,.01)); }
+  .case.open .case-body { display: block; animation: cs-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  .case.open .more { display: none; }
+  .case.open .case-open { cursor: default; padding-bottom: 6px; }
+  @keyframes cs-in { from { opacity: 0; transform: translateY(10px); } }
+  html.text-mode .case-body { display: block; }
+  html.text-mode .case .more, html.text-mode .case-back, html.text-mode .case-next { display: none; }
+  @media (prefers-reduced-motion: reduce) { .case.open .case-body { animation: none; } }
   .case.bench { padding: 16px 18px; display: grid; gap: 6px; border-style: dashed; }
   .case.bench p { margin: 0; font-size: 14px; }
   .stack { display: grid; gap: 4px; }
@@ -632,6 +717,7 @@
       <li><a href="#work">Projects</a></li>
       <li><a href="#stack">Stack</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a class="cv" href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">Résumé <span aria-hidden="true">↓</span></a></li>
     </ul>
     <button class="switch" id="dayBtn" type="button" aria-pressed="false" aria-label="Switch to day">
       <span class="knob" aria-hidden="true"></span>
@@ -686,6 +772,7 @@
 
 <div class="tip" id="tip" aria-hidden="true"></div>
 
+<button type="button" class="tvskip" id="tvSkip" hidden>Skip intro <span aria-hidden="true">▸▸</span></button>
 <div class="tvmenu" id="tvMenu" role="menu" aria-label="TV menu" hidden>
   <p class="label amber" aria-hidden="true">PRATHAMESH.EXE · Menu</p>
   <button type="button" role="menuitem" data-i="0">About me</button>
@@ -694,6 +781,7 @@
   <button type="button" role="menuitem" data-i="3">Tech stack</button>
   <button type="button" role="menuitem" data-i="4">Contact</button>
   <p class="tvmenu-keys" aria-hidden="true">↑ ↓ choose · Enter open · Esc exit</p>
+  <div class="tvmenu-ph"><button type="button" id="tmSound" aria-pressed="false">♪ Sound off</button><button type="button" id="tmExit">✕ Exit TV</button></div>
 </div>
 <div class="remote" id="tvCtl" role="toolbar" aria-label="TV remote" hidden>
   <span class="ir" aria-hidden="true"></span>
@@ -748,8 +836,10 @@
 
 <aside class="deck rcard" id="rcard" aria-labelledby="rcardTitle" hidden>
   <div class="deck-head"><span class="label amber">Floppy · 1.44 MB</span><button type="button" id="rcardClose" class="deck-x" aria-label="Close">✕</button></div>
-  <h2 id="rcardTitle">Résumé</h2>
-  <p>One page: experience, projects, skills and education.</p>
+  <div class="rc-row">
+    <a class="rc-thumb" href="resume.html" target="_blank" rel="noopener" aria-label="Open the résumé online"><img src="resume-preview.jpg" width="120" height="170" alt="First page of the résumé" loading="lazy" decoding="async"></a>
+    <div><h2 id="rcardTitle">Résumé</h2><p>One page: experience, projects, skills and education. PDF, A4.</p></div>
+  </div>
   <div class="cta-row"><a class="btn solid" href="resume.pdf" download="Prathamesh-Patil-Resume.pdf">Download PDF</a><a class="btn" href="resume.html" target="_blank" rel="noopener">View online ↗</a></div>
 </aside>
 
@@ -763,9 +853,9 @@
     <section class="sec" id="about" data-section="about">
       <p class="label amber text-only">01 — About</p>
       <h2>Hi, I'm Prathamesh.</h2>
-      <p class="big">Nine years shipping web software in PHP and JavaScript. Now I put <em>LLMs into production</em> at WebMD.</p>
-      <p>I'm a Senior Software Engineer on the Nolo legal team at WebMD, working full-stack. I use Claude Code, the Claude API and MCP in production work every day.</p>
-      <p>Right now I'm going deeper into system design and RAG / vector databases, on the way to Tech Lead and Solution Architect roles.</p>
+      <p class="big">I build web applications and backend systems that hold up in production, and I bring <em>LLM features</em> into real products at WebMD.</p>
+      <p>Senior Software Engineer on WebMD's Nolo legal team, working across the stack. Nine years of PHP, Laravel and JavaScript across five companies. AI-assisted development is part of how I work every day: Claude Code, the Claude API and MCP.</p>
+      <p>Next: system design, RAG and vector databases, on the way to Tech Lead and Solution Architect roles.</p>
       <div class="facts">
         <div class="stat"><b>9+</b><span class="label">Years shipping,<br>since Aug 2017</span></div>
         <dl class="kv">
@@ -776,7 +866,7 @@
       </div>
       <h3 class="sub">What I care about</h3>
       <ul class="chips">
-        <li>Backend engineering</li><li>Full-stack development</li><li>AI-powered applications</li><li>LLM integrations</li><li>Developer productivity</li><li>Application architecture</li>
+        <li>Backend engineering</li><li>Application architecture</li><li>Full-stack development</li><li>LLM integrations</li><li>AI-assisted development</li><li>MCP</li><li>Developer productivity</li>
       </ul>
       <div class="cta-row"><a class="btn solid" href="#work">See projects</a><a class="btn" href="resume.html" target="_blank" rel="noopener">Résumé ↗</a></div>
     </section>
@@ -798,79 +888,89 @@
     <section class="sec" id="work" data-section="work" hidden>
       <p class="label amber text-only">03 — Projects</p>
       <h2>Projects.</h2>
-      <p>Work built at WebMD is internal, so it has no public demo or code. Open a project for the details.</p>
-      <ul class="cases">
-        <li class="case">
-          <details>
-            <summary>
-              <span class="row"><span class="label amber">PP—01</span><span class="label">LLM in production · WebMD</span></span>
-              <h3>AI lead qualification engine</h3>
-              <span class="lede">An LLM asks users follow-up questions, tells strong leads from weak ones and scores them, so Nolo gets better-qualified leads.</span>
-              <span class="more" aria-hidden="true">Case study</span>
-            </summary>
-            <dl class="cs">
-              <div><dt>Problem</dt><dd>Nolo needed to tell strong leads from weak ones, so the leads it passes on are better qualified.</dd></div>
-              <div><dt>What it does</dt><dd>An LLM asks the user follow-up questions, then classifies and scores the lead from the answers.</dd></div>
-              <div><dt>Built with</dt><dd><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></dd></div>
-              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
-            </dl>
-          </details>
+      <p class="cases-intro">Production work at WebMD is confidential, so those case studies cover only what can be shared publicly: no internal code, data or figures.</p>
+      <button type="button" class="case-back" id="caseBack" hidden>← All projects</button>
+      <ul class="cases" id="cases">
+        <li class="case" data-case="0">
+          <button type="button" class="case-open" aria-expanded="false" aria-controls="case0">
+            <span class="row"><span class="label amber">PP—01</span><span class="badge">Confidential · WebMD</span></span>
+            <span class="case-h">AI lead qualification engine</span>
+            <span class="lede">An LLM asks users follow-up questions, tells strong leads from weak ones and scores them, so Nolo gets better-qualified leads.</span>
+            <span class="tags">LLM in production · Lead scoring</span>
+            <span class="more" aria-hidden="true">Read case study →</span>
+          </button>
+          <div class="case-body" id="case0" role="region" aria-label="AI lead qualification engine, case study">
+            <h3 class="cs-h" tabindex="-1">AI lead qualification engine</h3>
+            <div class="cs-block"><p class="cs-k">Problem</p><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></div>
+            <div class="cs-block"><p class="cs-k">Solution</p><p>Instead of a fixed form, an LLM asks each user follow-up questions, then classifies and scores the lead from what they say.</p></div>
+            <div class="cs-block"><p class="cs-k">How it flows</p>
+              <ol class="flow"><li>User's request</li><li>LLM asks follow-up questions</li><li>Strong / weak classification</li><li>Lead score</li><li>Better-qualified leads for Nolo</li></ol></div>
+            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></div>
+            <p class="cs-note">Internal WebMD product: no public demo, code or metrics.</p>
+          </div>
         </li>
-        <li class="case">
-          <details>
-            <summary>
-              <span class="row"><span class="label amber">PP—02</span><span class="label">Figma MCP · Claude Code · WebMD</span></span>
-              <h3>Figma-to-HTML skill</h3>
-              <span class="lede">Integrated the Figma MCP with Claude Code and Cline, then built a skill that turns Figma designs into HTML.</span>
-              <span class="more" aria-hidden="true">Case study</span>
-            </summary>
-            <dl class="cs">
-              <div><dt>Problem</dt><dd>Turning Figma designs into HTML by hand is slow and repetitive.</dd></div>
-              <div><dt>What I built</dt><dd>Connected the Figma MCP server to Claude Code and Cline, then wrote a skill that converts a Figma design into HTML.</dd></div>
-              <div><dt>Built with</dt><dd><ul class="chips sm"><li>Figma MCP</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></dd></div>
-              <div><dt>Impact</dt><dd>Used across the entire IB team.</dd></div>
-              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
-            </dl>
-          </details>
+        <li class="case" data-case="1">
+          <button type="button" class="case-open" aria-expanded="false" aria-controls="case1">
+            <span class="row"><span class="label amber">PP—02</span><span class="badge">Confidential · WebMD</span></span>
+            <span class="case-h">Figma-to-HTML skill</span>
+            <span class="lede">Integrated the Figma MCP with Claude Code and Cline, then built a skill that turns Figma designs into HTML. Used across the entire IB team.</span>
+            <span class="tags">MCP · Claude Code · Developer productivity</span>
+            <span class="more" aria-hidden="true">Read case study →</span>
+          </button>
+          <div class="case-body" id="case1" role="region" aria-label="Figma-to-HTML skill, case study">
+            <h3 class="cs-h" tabindex="-1">Figma-to-HTML skill</h3>
+            <div class="cs-block"><p class="cs-k">Problem</p><p>Turning Figma designs into HTML by hand is slow and repetitive work for every page.</p></div>
+            <div class="cs-block"><p class="cs-k">Solution</p><p>Connect the design file straight to the coding agent: the Figma MCP server gives Claude Code and Cline the design, and a purpose-built skill turns it into HTML.</p></div>
+            <div class="cs-block"><p class="cs-k">How it flows</p>
+              <ol class="flow"><li>Figma design</li><li>Figma MCP server</li><li>Claude Code / Cline</li><li>Figma-to-HTML skill</li><li>HTML</li></ol></div>
+            <div class="cs-block"><p class="cs-k">My contribution</p><p>Integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></div>
+            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></div>
+            <div class="cs-block result"><p class="cs-k">Result</p><p>Used across the entire IB team.</p></div>
+            <p class="cs-note">Internal WebMD tooling: no public demo or code.</p>
+          </div>
         </li>
-        <li class="case">
-          <details>
-            <summary>
-              <span class="row"><span class="label amber">PP—03</span><span class="label">Full-stack · solo developer · WebMD</span></span>
-              <h3>Nolo CMS</h3>
-              <span class="lede">The only developer on a full-stack CMS for the Nolo legal product, built with AI-assisted tooling.</span>
-              <span class="more" aria-hidden="true">Case study</span>
-            </summary>
-            <dl class="cs">
-              <div><dt>Problem</dt><dd>The Nolo legal product needed its own content management system.</dd></div>
-              <div><dt>My role</dt><dd>Sole developer, across the full stack.</dd></div>
-              <div><dt>How</dt><dd>Built with AI-assisted development tools.</dd></div>
-              <div><dt>Links</dt><dd>Internal to WebMD: no public demo or code.</dd></div>
-            </dl>
-          </details>
+        <li class="case" data-case="2">
+          <button type="button" class="case-open" aria-expanded="false" aria-controls="case2">
+            <span class="row"><span class="label amber">PP—03</span><span class="badge">Confidential · WebMD</span></span>
+            <span class="case-h">Nolo CMS</span>
+            <span class="lede">The only developer on a full-stack CMS for the Nolo legal product, built with AI-assisted tooling.</span>
+            <span class="tags">Full-stack · Sole developer · AI-assisted development</span>
+            <span class="more" aria-hidden="true">Read case study →</span>
+          </button>
+          <div class="case-body" id="case2" role="region" aria-label="Nolo CMS, case study">
+            <h3 class="cs-h" tabindex="-1">Nolo CMS</h3>
+            <div class="cs-block"><p class="cs-k">Problem</p><p>The Nolo legal product needed its own content management system.</p></div>
+            <div class="cs-block"><p class="cs-k">My contribution</p><p>Sole developer, responsible for the whole stack, from back end to interface.</p></div>
+            <div class="cs-block"><p class="cs-k">How</p><p>Built with AI-assisted development tools.</p></div>
+            <p class="cs-note">Internal WebMD product: no public demo, code or metrics.</p>
+          </div>
         </li>
-        <li class="case">
-          <details>
-            <summary>
-              <span class="row"><span class="label amber">PP—04</span><span class="label">Open source · live</span></span>
-              <h3>Prathamesh's Desk (this site)</h3>
-              <span class="lede">A portfolio you explore as a 3D desk: a working CRT television, live local weather in the window, and a contact form that really sends.</span>
-              <span class="more" aria-hidden="true">Case study</span>
-            </summary>
-            <dl class="cs">
-              <div><dt>Problem</dt><dd>A portfolio people remember, that is still fast, accessible and easy for recruiters to scan.</dd></div>
-              <div><dt>What I built</dt><dd>A three.js room rendered in the browser, with no build step. The TV's picture is a single GPU shader: curvature, scanlines, static and VHS tracking. Weather comes from Open-Meteo and drives rain, fog and snow outside. A Cloudflare Worker serves the site and sends contact messages through Resend, with validation, rate limiting and a honeypot. A text version is always one click away.</dd></div>
-              <div><dt>Built with</dt><dd><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL shaders</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Node.js tests</li></ul></dd></div>
-              <div><dt>Links</dt><dd><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></dd></div>
-            </dl>
-          </details>
+        <li class="case" data-case="3">
+          <button type="button" class="case-open" aria-expanded="false" aria-controls="case3">
+            <span class="row"><span class="label amber">PP—04</span><span class="badge open">Open source · Live</span></span>
+            <span class="case-h">Prathamesh's Desk (this site)</span>
+            <span class="lede">A portfolio you explore as a 3D desk: a working CRT television, live weather in the window, and a contact form that really sends.</span>
+            <span class="tags">three.js · GLSL · Cloudflare Workers</span>
+            <span class="more" aria-hidden="true">Read case study →</span>
+          </button>
+          <div class="case-body" id="case3" role="region" aria-label="Prathamesh's Desk, case study">
+            <h3 class="cs-h" tabindex="-1">Prathamesh's Desk</h3>
+            <div class="cs-block"><p class="cs-k">Problem</p><p>A portfolio people remember that is still fast, accessible and quick for a recruiter to scan.</p></div>
+            <div class="cs-block"><p class="cs-k">Solution</p><p>The portfolio is a room: every object on the desk opens part of it, and a plain text version is always one click away.</p></div>
+            <div class="cs-block"><p class="cs-k">Architecture</p>
+              <ol class="flow"><li>Browser: three.js scene, one GLSL pass for the CRT</li><li>Cloudflare Worker: static files, <code>/api/contact</code>, <code>/api/geo</code></li><li>Resend (email) · Open-Meteo (weather)</li></ol></div>
+            <div class="cs-block"><p class="cs-k">Implementation</p><p>No build step and no framework: three.js and GSAP from a CDN. The TV picture (curvature, scanlines, static, VHS tracking) is a single shader. Sound is synthesized in the browser. The contact endpoint validates input, rate-limits and uses a honeypot, and only reports success when the email provider accepts the message. Weather is cached so the page makes as few requests as possible.</p></div>
+            <div class="cs-block"><p class="cs-k">Stack</p><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Node test runner</li></ul></div>
+            <div class="cs-block"><p class="cs-k">Links</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></div>
+          </div>
         </li>
         <li class="case bench">
           <span class="row"><span class="label amber">PP—05</span><span class="label">In progress</span></span>
-          <h3>On the bench</h3>
+          <span class="case-h">On the bench</span>
           <p>Studying system design, RAG and vector databases to design AI systems end to end.</p>
         </li>
       </ul>
+      <button type="button" class="case-next" id="caseNext" hidden>Next project →</button>
     </section>
 
     <section class="sec" id="stack" data-section="stack" hidden>
@@ -992,6 +1092,7 @@
     $$('.links a, .dock a').forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + sec ? 'true' : 'false'));
   }
   function showSection(sec) {
+    if (current !== sec && typeof openCase === 'function' && cases) openCase(-1, false);   // a section always opens on its overview
     current = sec;
     $$('.sec').forEach(s => { s.hidden = s.dataset.section !== sec; });
     const i = ORDER.indexOf(sec);
@@ -1048,6 +1149,22 @@
     $('#modeBtn').hidden = true;
     body.classList.add('ready');
   }
+
+  /* ================= Projects: one case study at a time, inside the sheet (the text version shows them all open) ================= */
+  const workSec = $('#work'), cases = $$('#cases .case[data-case]');
+  function openCase(i, focusIt = true) {
+    cases.forEach((c, k) => { const on = k === i; c.classList.toggle('open', on); c.querySelector('.case-open').setAttribute('aria-expanded', on ? 'true' : 'false'); });
+    const reading = i >= 0;
+    workSec.classList.toggle('reading', reading); $('#caseBack').hidden = !reading; $('#caseNext').hidden = !reading;
+    if (reading) {
+      $('#caseNext').textContent = 'Next: ' + cases[(i + 1) % cases.length].querySelector('.case-h').textContent + ' →';
+      sheetBody.scrollTop = 0;
+      if (focusIt) $('#caseBack').focus({ preventScroll: true });
+    }
+  }
+  cases.forEach((c, i) => c.querySelector('.case-open').addEventListener('click', () => { if (!root.classList.contains('text-mode') && !c.classList.contains('open')) openCase(i); }));
+  $('#caseBack').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase(-1); if (i >= 0) cases[i].querySelector('.case-open').focus({ preventScroll: true }); });
+  $('#caseNext').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase((i + 1) % cases.length); });
 
   /* ================= Terminal: a small command line with fixed answers. It never runs anything: every command is a
      lookup in TERM_CMDS below, so nothing typed here reaches a server. ================= */
@@ -1864,7 +1981,8 @@
      ===================================================================================================================== */
   const TVC = Object.assign({ introVideo: '', introVideoWebm: '', soundDefault: false, volume: .6 }, window.DESK_TV_CONFIG || {});
   // the sequence: tape loads (0–1.7 s) · PRATHAMESH.EXE boots (1.75–3.7) · the introduction (3.8–8.6) · the menu (8.8 →)
-  const MENU_AT = 8.8, INTRO_LEN = 9.3;                    // seconds of title sequence (a video uses its own length, then the menu)
+  const MENU_AT = 8.8, INTRO_LEN = 9.3;                    // sequence time of the title sequence (a video uses its own length, then the menu)
+  const INTRO_RATE = 1.25;                                  // the sequence plays a little faster than it is written: about 7 s to the menu
   const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['TECH STACK', 'stack'], ['CONTACT', 'contact']];
   const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
   const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
@@ -2046,7 +2164,7 @@
     const t0 = c.currentTime, seg = INTRO_LEN / CHORDS.length;
     CHORDS.forEach((ch, i) => {
       const s = i * seg, e = s + seg; if (e <= t) return;
-      const at = t0 + Math.max(0, s - t), dur = e - Math.max(s, t);
+      const at = t0 + Math.max(0, s - t) / INTRO_RATE, dur = (e - Math.max(s, t)) / INTRO_RATE;   // sequence time → real seconds
       const g = c.createGain(), lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200;
       g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.13, at + Math.min(.9, dur * .4)); g.gain.setValueAtTime(.13, at + dur - .5); g.gain.linearRampToValueAtTime(0, at + dur + .2);
       lp.connect(g).connect(sfx.master);
@@ -2062,6 +2180,7 @@
   function musicStop() { sfx.music.forEach(o => { try { o.stop(); } catch (e) {} }); sfx.music = []; }
   function setSound(on, uiOnly) {
     sfx.on = on; $('#tvSound').setAttribute('aria-pressed', on ? 'true' : 'false'); $('#tvSound').setAttribute('aria-label', on ? 'Sound on' : 'Sound off'); volBar();
+    const tm = $('#tmSound'); if (tm) { tm.setAttribute('aria-pressed', on ? 'true' : 'false'); tm.textContent = on ? '♪ Sound on' : '♪ Sound off'; }
     if (tvSet.video) { tvSet.video.muted = !on; tvSet.video.volume = sfx.vol; }
     if (uiOnly) return;                                   // page load: no audio before the visitor's first click
     if (on) { audio(); if (sfx.master) sfx.master.gain.value = sfx.vol * .8; if (['PLAYING_INTRO', 'SIGNAL_STATIC', 'ENDED', 'PAUSED'].includes(tvSet.state)) humOn(); if (tvSet.state === 'PLAYING_INTRO') musicFrom(tvSet.introT); }
@@ -2114,11 +2233,12 @@
     play.textContent = s === 'PLAYING_INTRO' ? '❚❚' : s === 'ENDED' ? '↻ ▶' : '▶';
     play.setAttribute('aria-label', s === 'PLAYING_INTRO' ? 'Pause the introduction' : s === 'ENDED' ? 'Replay the introduction' : 'Resume the introduction');
     ctl.dataset.state = s;
-    const menuWas = !tvMenuEl.hidden; tvMenuEl.hidden = s !== 'ENDED';
+    const menuWas = !tvMenuEl.hidden; tvMenuEl.hidden = s !== 'ENDED'; body.classList.toggle('tv-menu', s === 'ENDED');
+    $('#tvSkip').hidden = !['LOADING_TAPE', 'POWERING_ON', 'SIGNAL_STATIC', 'PLAYING_INTRO', 'PAUSED'].includes(s) || !!tvSet.skipAsked;
     if (!tvMenuEl.hidden && !menuWas) { markMenu(); }
   }
   /* ---- the TV menu: the picture draws it; the HTML list mirrors it for taps, keyboards and screen readers ---- */
-  const tvMenuEl = $('#tvMenu'), tvMenuBtns = [...tvMenuEl.querySelectorAll('button')];
+  const tvMenuEl = $('#tvMenu'), tvMenuBtns = [...tvMenuEl.querySelectorAll('button[role="menuitem"]')];
   function markMenu() { tvMenuBtns.forEach((b, i) => { b.classList.toggle('sel', i === tvSet.menu); b.tabIndex = i === tvSet.menu ? 0 : -1; }); }
   function blip(f = 660) { const c = audio(); if (!c) return; const o = c.createOscillator(), g = c.createGain(); o.type = 'square'; o.frequency.value = f; env(g, c.currentTime, .002, .05, .06); o.connect(g).connect(sfx.master); o.start(); o.stop(c.currentTime + .1); }
   function menuSel(i, moveFocus) {
@@ -2134,6 +2254,7 @@
     G.timeline().to(crt.uniforms.uStatic, { value: .7, duration: .08 }).to(crt.uniforms.uTrack, { value: 1, duration: .08 }, '<').add(() => setHash(sec), reduce ? 0 : .12);
   }
   function skipToMenu() {
+    if (['LOADING_TAPE', 'POWERING_ON', 'SIGNAL_STATIC'].includes(tvSet.state)) { tvSet.skipAsked = true; syncControls(); return; }   // still warming up: go straight to the menu once the picture is on
     if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED') {
       if (tvSet.videoOk) { tvSet.video.pause(); endIntro(); return; }
       tvSet.introT = Math.max(tvSet.introT, MENU_AT); tvSet.menuShownAt = performance.now() / 1000; if (tvSet.state === 'PAUSED') startIntro(tvSet.introT); musicStop();
@@ -2232,6 +2353,7 @@
       .add(() => startIntro(0));
   }
   function startIntro(from) {
+    if (tvSet.skipAsked) { tvSet.skipAsked = false; from = Math.max(from, MENU_AT); tvSet.menuShownAt = performance.now() / 1000; }   // Skip intro pressed while the set was still warming up
     tvSet.introT = from; setState('PLAYING_INTRO'); tvSet.warm = 1;
     if (tvSet.videoOk) { const v = tvSet.video; v.currentTime = from; v.muted = !sfx.on; const p = v.play(); if (p && p.catch) p.catch(() => { tvSet.videoOk = false; }); }
     else musicFrom(from);
@@ -2261,7 +2383,7 @@
   }
   function powerOff(silent) {
     if (!isOn() && tvSet.state !== 'POWERING_ON') return;
-    if (tvSet.tl) tvSet.tl.kill();
+    if (tvSet.tl) tvSet.tl.kill(); tvSet.skipAsked = false;
     musicStop(); humOff(); if (tvSet.video) tvSet.video.pause();
     const u = crt.uniforms, k = reduce ? .35 : 1;
     setState('POWERING_OFF'); drawOSD({}); u.uStatic.value = 0;
@@ -2310,6 +2432,10 @@
   press('#tvOff', () => powerOff(false));
   press('#tvAbout', () => { if (tvSet.state === 'ENDED') tvMenuBtns[tvSet.menu].focus(); else skipToMenu(); });
   press('#tvExit', () => powerOff(false));
+  $('#tmExit').addEventListener('click', () => powerOff(false));
+  $('#tmSound').addEventListener('click', () => { setSound(!sfx.on); volOSD(); });
+  $('#tvSkip').addEventListener('click', () => { skipToMenu(); setTimeout(() => { if (!tvMenuEl.hidden) tvMenuBtns[tvSet.menu].focus({ preventScroll: true }); }, 400); });
+  $('#tvSkip').addEventListener('pointerdown', e => e.stopPropagation());
   press('#tvUp', () => menuMove(-1));
   press('#tvDown', () => menuMove(1));
   press('#tvOk', () => menuOpen());
@@ -2352,7 +2478,7 @@
       introTape.position.y = TAPE_HOME.y + .006 * nudge * Math.abs(Math.sin(t * 11));
     }
     if (s === 'PLAYING_INTRO') {
-      tvSet.introT = tvSet.videoOk ? tvSet.video.currentTime : tvSet.introT + dt;
+      tvSet.introT = tvSet.videoOk ? tvSet.video.currentTime : tvSet.introT + dt * INTRO_RATE;
       if (tvSet.introT >= introLen()) { endIntro(); return; }
       // VHS tracking: a calm baseline, a roll at each cut, and the odd stray band
       const cuts = [0, 1.72, 3.75, MENU_AT].map(c => Math.exp(-((tvSet.introT - c) ** 2) * 18)), stray = Math.max(0, Math.sin(t * .9) * Math.sin(t * 2.3) - .82) * 3;
@@ -3442,7 +3568,7 @@
                 p: { pos: [-.42, 1.2, 1.0], look: [-.62, .86, -.42] } },     // the book stack on the desk, with the lamp and plant behind
     contact:  { pos: [.35, .99, .23],    look: [.49, .87, -.2] },
     tv:       { pos: [0, 1.14, .44],     look: [0, 1.1, -.5],
-                p: { pos: [0, 1.13, .9], look: [0, 1.06, -.5] } },          // in front of the set while it plays (no sheet)
+                p: { pos: [0, 1.13, .9], look: [0, .99, -.5] } },           // in front of the set while it plays; on phones the set sits high, above the menu panel
   };
   const camPos = new T.Vector3(), camLook = new T.Vector3();
   function shot(name) {
@@ -4050,7 +4176,8 @@
   }
   function accept(cur, place, source) {
     const mock = source === 'mock';
-    wx.rec = { cur, place, source, isFallback: source !== 'gps' && source !== 'manual', mock, fetchedAt: Date.now() };
+    const co = lastCoords && lastCoords.coords;
+    wx.rec = { cur, place, source, isFallback: source !== 'gps' && source !== 'manual', mock, fetchedAt: Date.now(), coords: co ? { latitude: round(co.latitude), longitude: round(co.longitude) } : null };
     wx.status = mock ? 'mock' : 'live';
     if (!mock) store.set('desk-wx-cache', wx.rec);
     renderWx(); applyScene(wx.rec, false);
@@ -4106,6 +4233,14 @@
     renderWx();
     if (WX_MOCK) { const m = MOCKS[WX_MOCK] || MOCKS['clear-night']; wx.geo = 'granted'; accept(Object.assign({ tz: 'UTC' }, m), 'Test city', 'mock'); return; }
     const picked = store.get('desk-wx-place');
+    // a reading from the last few minutes is still current: show it without calling the API again
+    const fresh = cached && cached.cur && cached.coords && Date.now() - cached.fetchedAt < WXC.refreshMinutes * 60e3;
+    if (fresh && (picked ? cached.source === 'manual' && cached.place === picked.name : cached.source !== 'manual')) {
+      wx.status = 'live'; lastCoords = { coords: cached.coords, place: cached.place, source: cached.source }; renderWx();
+      const geoNo = store.get('desk-wx-geo') === 'denied';
+      if (cached.source !== 'gps' && !picked && WXC.askForLocation && !geoNo && 'geolocation' in navigator) setTimeout(() => askLocation(false), WXC.askDelaySeconds * 1000);
+      return;
+    }
     if (picked && isFinite(picked.latitude)) return load(picked, picked.name, 'manual');
     let state = WX_GEO_TEST ? null : store.get('desk-wx-geo');
     if (!WX_GEO_TEST && navigator.permissions && navigator.permissions.query) {

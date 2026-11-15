@@ -21,7 +21,7 @@
   .bar a:focus-visible { outline: 2px solid #E8913C; outline-offset: 3px; }
   .page { max-width: 210mm; min-height: 297mm; margin: 0 auto; background: var(--paper); padding: 16mm 16mm 14mm; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
   header { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: end; padding-bottom: 6mm; border-bottom: 2px solid var(--ink); }
-  h1 { font: 800 24pt/1 "Syne", sans-serif; white-space: nowrap; letter-spacing: -.02em; }
+  h1 { font: 800 22pt/1 "Syne", sans-serif; white-space: nowrap; letter-spacing: -.02em; }
   h1 i { color: var(--amber); font-style: normal; }
   .role { margin-top: 2mm; font: 600 11pt/1.3 "Sora", sans-serif; }
   .contact { text-align: right; font-size: 8.8pt; color: var(--ink-2); line-height: 1.6; white-space: nowrap; }
@@ -56,6 +56,7 @@
     h1 { white-space: normal; font-size: 22pt; } .contact { white-space: normal; }
     .cols { grid-template-columns: 1fr; gap: 0; }
   }
+  html.shot body { padding: 0; background: var(--paper); } html.shot .bar { display: none; } html.shot .page { box-shadow: none; }
   @page { size: A4; margin: 0; }
   @media print {
     body { background: #fff; padding: 0; }
@@ -71,6 +72,7 @@
     footer { margin-top: 4mm; }
   }
 </style>
+<script>if (/[?&]shot\b/.test(location.search)) document.documentElement.classList.add('shot');</script>
 </head>
 <body>
 <nav class="bar" aria-label="Résumé actions">
@@ -84,9 +86,9 @@
       <p class="role">Senior Software Engineer · WebMD</p>
     </div>
     <p class="contact">
-      Navi Mumbai, India · open to relocation<br>
+      Navi Mumbai · open to relocation<br>
       <a href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a><br>
-      <a href="https://www.linkedin.com/in/prathu123">linkedin.com/in/prathu123</a> · <a href="https://github.com/er-prathu">github.com/er-prathu</a><br>
+      <a href="https://www.linkedin.com/in/prathu123">linkedin.com/in/prathu123</a><br><a href="https://github.com/er-prathu">github.com/er-prathu</a><br>
       <a href="https://portfolio.prathpatil3.workers.dev/">portfolio.prathpatil3.workers.dev</a>
     </p>
   </header>
@@ -125,7 +127,7 @@
       <h2>Interests</h2>
       <ul class="plain">
         <li>Backend engineering and application architecture</li>
-        <li>AI-powered applications and LLM integrations</li>
+        <li>AI-assisted development, LLM integrations and MCP</li>
         <li>Developer productivity</li>
       </ul>
       <h2>Education</h2>
