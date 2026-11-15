@@ -17,7 +17,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || '127.0.0.1';
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.mp4': 'video/mp4', '.webm': 'video/webm', '.ico': 'image/x-icon' };
 // never serve server code, secrets or tooling as static files
-const PRIVATE = /^(\.env[^/]*|\.git[^/]*|\.claude|node_modules|lib|api|functions|scripts|public|test|server\.js|package(-lock)?\.json)(\/|$)/i;
+const PRIVATE = /^(\.env[^/]*|\.git[^/]*|\.claude|node_modules|lib|api|functions|scripts|public|src|test|server\.js|wrangler\.jsonc|package(-lock)?\.json)(\/|$)/i;
 
 function loadEnv(file) {
   let text; try { text = fs.readFileSync(file, 'utf8'); } catch (_) { return; }

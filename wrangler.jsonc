@@ -1,0 +1,15 @@
+{
+  // Cloudflare Worker: serves the built site (public/, made by `npm run build`) and the contact form at /api/contact.
+  // "name" must match the Worker's name in the Cloudflare dashboard.
+  "name": "portfolio",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  // RESEND_API_KEY, CONTACT_EMAIL, CONTACT_FROM_EMAIL (and optional ALLOWED_ORIGIN) are set in the dashboard:
+  // Worker → Settings → Variables and Secrets. keep_vars stops a deploy from wiping them.
+  "keep_vars": true,
+  "observability": { "enabled": true }
+}

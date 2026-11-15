@@ -1,83 +1,63 @@
-# Deploying to Cloudflare Pages (free)
+# Deploying to Cloudflare (free)
 
-The site goes live at `https://<project-name>.pages.dev`. The contact form runs as a Pages Function
-(`functions/api/contact.js`) and emails you through Resend.
+The site runs as a **Cloudflare Worker** connected to GitHub (`er-prathu/portfolio`), at
+`https://portfolio.<your-subdomain>.workers.dev`. Every push to `main` rebuilds and redeploys it.
 
-## What gets published
+- `npm run build` creates `public/` with only what visitors need: the 3D room (as `index.html`, also at
+  `/room.html`), its two config files and the 3D models. Server code, tests and `.env` are never copied into it.
+- `wrangler.jsonc` tells Cloudflare to serve `public/` and to run `src/worker.js` for anything that isn't a file.
+- `src/worker.js` sends `/api/contact` to the contact form (`functions/api/contact.js` → `lib/contact.js`).
 
-`npm run build` creates `public/` with only what visitors need: the 3D room (as `index.html`, and also at
-`/room.html`), its two config files, and the 3D models. Server code, tests and `.env` are never copied into it.
+## 1. Resend (free)
 
-Cloudflare publishes two things: the `public/` folder as the website, and the `functions/` folder as the
-contact endpoint (`functions/` pulls in `lib/contact.js` when Cloudflare builds it).
+resend.com → sign up → **API Keys → Create API Key** with "Sending access". Copy the key (starts with `re_`);
+it is shown only once.
 
-> Cloudflare's **drag-and-drop upload does not run Functions**, so the contact form would not work that way.
-> Use one of the two options below.
+## 2. Cloudflare build settings
 
-## 1. Accounts (free)
+Worker → **Settings → Build**:
 
-1. **Resend** (resend.com): sign up, then **API Keys → Create API Key** with "Sending access". Copy the key
-   (starts with `re_`); it is shown only once.
-2. **Cloudflare** (dash.cloudflare.com): sign up.
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
 
-## 2. Deploy, option A: GitHub (redeploys on every push)
-
-1. Put this folder in a GitHub repository. `.gitignore` already keeps `.env` and `public/` out of it.
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**, pick the repository.
-3. Build settings:
-   - Framework preset: **None**
-   - Build command: `npm run build`
-   - Build output directory: `public`
-   - Environment variable `NODE_VERSION` = `20`
-4. Save and deploy.
-
-## 2. Deploy, option B: from this computer with Wrangler
-
-```bash
-npm run build
-```
-
-```bash
-npx wrangler pages deploy public --project-name prathameshpatil
-```
-
-Run it from this folder (so Wrangler finds `functions/`). The first run asks you to log in to Cloudflare in
-the browser and offers to create the project.
+The Worker must be named **portfolio**, matching `"name"` in `wrangler.jsonc`. If yours has another name,
+change that line to match it.
 
 ## 3. Contact form settings
 
-Cloudflare dashboard → your Pages project → **Settings → Variables and Secrets** (Production):
+Worker → **Settings → Variables and Secrets** → Add:
 
 | Name | Type | Value |
 |---|---|---|
 | `RESEND_API_KEY` | **Secret** | your `re_...` key |
-| `CONTACT_EMAIL` | Text | the inbox that should receive messages |
-| `CONTACT_FROM_EMAIL` | Text | `Portfolio <onboarding@resend.dev>` for now |
-| `ALLOWED_ORIGIN` | Text (optional) | `https://<project-name>.pages.dev` |
+| `CONTACT_EMAIL` | Text | the email address your Resend account uses (see below) |
+| `CONTACT_FROM_EMAIL` | Text | `Portfolio <onboarding@resend.dev>` |
+| `ALLOWED_ORIGIN` | Text (optional) | `https://portfolio.<your-subdomain>.workers.dev` |
 
-**Without your own domain**, Resend's test sender `onboarding@resend.dev` only delivers to the email address
-your Resend account was created with, so `CONTACT_EMAIL` must be that address. Messages from the test sender are
-more likely to land in spam; check there the first time.
+**Without your own domain**, Resend's test sender `onboarding@resend.dev` only delivers to the address your Resend
+account was created with, so `CONTACT_EMAIL` must be that address. Check spam the first time.
 
-**Redeploy after changing variables** (Deployments → latest → Retry deployment, or deploy again); they apply
-only to new deployments.
+Saving variables in the dashboard deploys them; `keep_vars` in `wrangler.jsonc` stops later deploys from
+wiping them.
 
 ## 4. Prove delivery
 
-Open the live site, go to **Contact**, send a real message, and check your inbox (and spam). The form only
-shows "Message sent." when Resend has accepted the email; any failure shows an error and keeps the text.
+Open the live site, go to **Contact**, send a real message, and check your inbox (and spam). The form only says
+"Message sent." when Resend has accepted the email; any failure shows an error and keeps the text.
 
-If it fails: Pages project → **Deployments → latest → Functions → Real-time logs**. Log lines are events
-like `contact.send_failed` with Resend's status code; they never contain the key, addresses or messages.
+If it fails: Worker → **Observability → Logs**. Log lines are events like `contact.send_failed` or
+`contact.not_configured` with Resend's status code; they never contain the key, addresses or messages.
 
 ## Later: your own domain
 
 1. Buy the domain (e.g. `prathameshpatil.dev`).
-2. Pages project → **Custom domains → Set up a domain**.
-3. Resend → **Domains → Add Domain**, then add the DNS records it lists (in Cloudflare DNS if the domain is
-   there) and wait for "Verified".
-4. Change `CONTACT_FROM_EMAIL` to e.g. `Portfolio <contact@prathameshpatil.dev>`, set `CONTACT_EMAIL` to any
-   inbox you like, update `ALLOWED_ORIGIN`, and redeploy.
+2. Worker → **Settings → Domains & Routes → Add → Custom domain**.
+3. Resend → **Domains → Add Domain**, add the DNS records it lists, wait for "Verified".
+4. Set `CONTACT_FROM_EMAIL` to e.g. `Portfolio <contact@prathameshpatil.dev>`, `CONTACT_EMAIL` to any inbox,
+   update `ALLOWED_ORIGIN`.
 
 ## Known limits
 
