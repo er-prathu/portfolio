@@ -2190,7 +2190,8 @@
   const curtainTex = canvasTex(64, 256, g => { g.fillStyle = 'rgb(205,200,190)'; g.fillRect(0, 0, 64, 256); for (let i = 0; i < 500; i++) { g.fillStyle = `rgba(0,0,0,${Math.random() * .06})`; g.fillRect(Math.random() * 64, Math.random() * 256, 1, 3 + Math.random() * 10); } });
   curtainTex.t.wrapS = curtainTex.t.wrapT = T.RepeatWrapping; curtainTex.t.repeat.set(4, 2);
   const curtainMat = new T.MeshStandardMaterial({ color: 0xc9b499, map: curtainTex.t, roughness: .95, side: T.DoubleSide, emissive: 0x3a2412, emissiveIntensity: .3 });   // cream linen glowing with the room's warm light (reference curtains read bright)
-  [-1, 1].forEach(s => { const c = mesh(curtainGeo, curtainMat); scene.add(put(c, s * (OX + .16), 1.78, WZ + .14)); });
+  const curtainHot = new T.Group(); scene.add(curtainHot);   // both curtains are one thing to click (see the window block by the plant)
+  const curtains = [-1, 1].map(s => { const c = mesh(curtainGeo, curtainMat); curtainHot.add(put(c, s * (OX + .16), 1.78, WZ + .14)); c.userData.side = s; return c; });
   const crod = mesh(new T.CylinderGeometry(.012, .012, OX * 2 + 1.7, 12), std(0x2a2522, .4, .6)); crod.rotation.z = Math.PI / 2; scene.add(put(crod, 0, 3.17, WZ + .14));
   const cityReady = Promise.resolve();
 
@@ -3362,6 +3363,18 @@
     tip.innerHTML = winHot.userData.hot.label;
   });
   winHot.userData.hot.still = true;
+  /* the curtains draw: click either one. Each keeps its outer edge on the wall and stretches across to meet the other in
+     the middle, so the folds open out as the linen is pulled, as they would. */
+  const curtainState = { closed: false, at: 0, k: 1 };
+  const setCurtains = () => { curtains.forEach(c => { c.scale.x = curtainState.k; c.position.x = c.userData.side * (OX + .33 - .17 * curtainState.k); }); shadowDirty = Math.max(shadowDirty, 2); };
+  act(curtainHot, 'Curtains · <b>Close</b>', () => {
+    const now = performance.now(); if (now - curtainState.at < 450) return;
+    curtainState.at = now; curtainState.closed = !curtainState.closed; sndClick();
+    G.to(curtainState, { k: curtainState.closed ? 3 : 1, duration: reduce ? 0 : 1.4, ease: 'power2.inOut', overwrite: true, onUpdate: setCurtains });
+    curtainHot.userData.hot.label = curtainState.closed ? 'Curtains · <b>Open</b>' : 'Curtains · <b>Close</b>';
+    tip.innerHTML = curtainHot.userData.hot.label;
+  });
+  curtainHot.userData.hot.still = true;
   // how hard the breeze blows: the live wind (km/h) when there is a reading, a light breeze otherwise; storms gust harder
   const windTarget = () => {
     if (!winState.open || reduce) return 0;
@@ -3375,7 +3388,7 @@
     if (plant.visible && breeze.uWind.value > .001) plant.children.forEach((c, i) => { if (c.userData.a0 !== undefined) c.rotation.y = c.userData.a0 + breeze.uWind.value * .06 * Math.sin(t * 1.7 + i); });
   });
   breezeLeaves(leafMat);
-  window.__deskWindow = { toggle: () => winHot.userData.hot.action(), state: winState, breeze, sashes };   // for testing
+  window.__deskWindow = { toggle: () => winHot.userData.hot.action(), state: winState, breeze, sashes, curtains: () => curtainHot.userData.hot.action(), curtainState };   // for testing
 
   /* ---------- CC0 models from Poly Haven (polyhaven.com, public domain): the set, the lamp and the plant ----------
      the procedural versions above stay in the scene until each model arrives, so a failed load never leaves a gap */
