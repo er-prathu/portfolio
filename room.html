@@ -405,6 +405,19 @@
   @media (max-width: 760px) { .quick { gap: 5px; margin: 10px 0 8px; } .quick button { height: 34px; padding: 0 10px; font-size: 11.5px; } }
   html.text-mode .deck { display: none !important; }
   body.tv-on .intro, body.tv-on .reset { opacity: 0 !important; pointer-events: none; }
+  /* ---- the game pad: shown while Cookie Chase is on the set ---- */
+  .gpad { position: fixed; z-index: 22; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px); padding: 10px 14px; border-radius: 16px; background: rgba(10,9,8,.78); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--ink); font: 500 11px/1.4 "JetBrains Mono", ui-monospace, monospace; -webkit-user-select: none; user-select: none; touch-action: none; animation: menu-in .4s cubic-bezier(.2,.8,.2,1) both; }
+  .gpad[hidden] { display: none; }
+  .gpad p { margin: 0; color: var(--ink-2); }
+  .gpad button { min-width: 44px; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(237,231,220,.22); background: #1b1d20; color: var(--ink); font: 600 12px/1 var(--sans); touch-action: none; }
+  .gpad button:active, .gpad button.down { background: var(--amber); color: #1a1108; }
+  .gpad-d { display: none; grid-template: repeat(3, 44px) / repeat(3, 44px); gap: 4px; }
+  .gpad-d button { padding: 0; }
+  #gUp { grid-area: 1 / 2; } #gLeft { grid-area: 2 / 1; } #gOk { grid-area: 2 / 2; font-size: 10px; } #gRight { grid-area: 2 / 3; } #gDown { grid-area: 3 / 2; }
+  @media (pointer: coarse) { .gpad-d { display: grid; } .gpad-keys { display: none; } }
+  body.game-on .intro, body.game-on .reset { opacity: 0 !important; pointer-events: none; }
+  body.game-on .dock { transform: translateY(110%); opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .gpad { animation: none; } }
   @media (max-width: 760px) {
     .remote { right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(66px + env(safe-area-inset-bottom, 0px)); width: 104px; transform-origin: 100% 100%; scale: .84; }   /* above the section menu */
     .remote button { width: 40px; height: 40px; }   /* thumb-sized */
@@ -993,6 +1006,11 @@
 </div>
 
 <div class="tip" id="tip" aria-hidden="true"></div>
+<div class="gpad" id="gameCtl" role="group" aria-label="Game controls" hidden>
+  <div class="gpad-d"><button type="button" id="gUp" aria-label="Move up">▲</button><button type="button" id="gLeft" aria-label="Move left">◀</button><button type="button" id="gOk" aria-label="Start or restart the game">OK</button><button type="button" id="gRight" aria-label="Move right">▶</button><button type="button" id="gDown" aria-label="Move down">▼</button></div>
+  <p class="gpad-keys" aria-hidden="true">Arrows or WASD move · Enter start · Esc exit</p>
+  <button type="button" id="gExit">✕ Exit game</button>
+</div>
 
 <button type="button" class="tvskip" id="tvSkip" hidden>Skip intro <span aria-hidden="true">▸▸</span></button>
 <div class="tvmenu" id="tvMenu" role="menu" aria-label="TV menu" hidden>
@@ -1535,6 +1553,7 @@
       '  about        who I am',
       '  skills       languages, frameworks and tools',
       '  lab          the interactive skills lab',
+      '  game         play Cookie Chase on the TV',
       '  experience  where I have worked',
       '  projects     what I have built',
       '  contact      how to reach me',
@@ -1620,6 +1639,7 @@
       termPrint([['dim', `Opening ${NAMES[sec]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash(sec); }, reduce ? 0 : 350));
       return;
     }
+    if (cmd === 'game' || cmd === 'play') { termPrint([['dim', 'Switching the TV to the console…']]).then(() => setTimeout(() => { closeTerm(true); if (window.DESK_GAME) window.DESK_GAME.start(); }, reduce ? 0 : 350)); return; }
     if (cmd === 'lab') {
       const L = window.__lab; if (!L) return termPrint([['err', 'lab: not available on this page']]);
       const i = L.find(rest.join(' '));
@@ -2435,6 +2455,14 @@
   const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['SKILLS', 'stack'], ['CONTACT', 'contact']];
   const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
   const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
+  const game = { mode: 'title', keys: {}, score: 0, best: 0, time: 0, px: 320, py: 260, dx: 1, dy: 0, walk: 0, chomp: 0, clock: 0, cookies: [], crumbs: [], led: null };
+  try { game.best = Math.max(0, parseInt(localStorage.getItem('desk-cookie-best'), 10) || 0); } catch (e) {}
+  function gameUi(on) {   // the pad under the set, and the console's light
+    const el = document.getElementById('gameCtl'); if (el) el.hidden = !on;
+    document.body.classList.toggle('game-on', on);
+    if (!on) game.keys = {};
+    if (game.led) game.led.color.setHex(on ? 0x5dff9a : 0x7a1408);
+  }
   const introTex = canvasTex(640, 480, g => { g.fillStyle = '#000'; g.fillRect(0, 0, 640, 480); });
   // standby LED on the set's bezel: green when on, amber while warming up, a dim red at standby
   const ledMat = new T.MeshBasicMaterial({ color: 0x5dff9a, toneMapped: false });
@@ -2720,7 +2748,7 @@
   /* ---- the sequence ---- */
   const isOn = () => ['POWERING_ON', 'SIGNAL_STATIC', 'PLAYING_INTRO', 'PAUSED', 'ENDED'].includes(tvSet.state);
   const busy = () => ['LOADING_TAPE', 'POWERING_ON', 'SIGNAL_STATIC', 'POWERING_OFF', 'EJECTING'].includes(tvSet.state);
-  function setState(s) { tvSet.state = s; syncControls(); }
+  function setState(s) { tvSet.state = s; syncControls(); gameUi(s === 'GAME'); }
   function useIntroPicture() { crt.uniforms.uTex.value = introTex.t; crt.uniforms.uCRT.value = .6; }
 
   /* ---- the intro tape: it sits on top of the career pile; a click carries it over and loads it into the deck ---- */
@@ -2856,6 +2884,7 @@
   function tvClick() {
     audio();                                              // inside the click itself, so browsers (Safari above all) let the sound start
     if (busy()) return;                                  // mid-transition: ignore, so nothing overlaps
+    if (tvSet.state === 'GAME') { gameAction(); return; }   // a tap on the tube starts a round
     if (tvSet.state === 'PLAYING_INTRO' || tvSet.state === 'PAUSED') return skipToMenu();   // a click mid-intro jumps to the menu
     if (tvSet.state === 'ENDED') return;                  // menu rows are picked by where the tube was clicked (see the picker)
     loadTape();
@@ -2911,6 +2940,137 @@
     else { if (sfx.ctx && sfx.on) sfx.ctx.resume(); if (tvSet.videoOk && tvSet.state === 'PLAYING_INTRO') tvSet.video.play().catch(() => {}); }
   });
 
+  /* =====================================================================================================================
+     COOKIE CHASE — the console on top of the set plays a small game on the tube. Munch, a one-eyed green monster, has
+     forty seconds to catch cookies that run away on little legs. Original characters and drawing; no assets.
+     Arrows or WASD (or the pad on touch screens) move; Enter, OK or a tap on the tube starts a round; Esc leaves.
+     ===================================================================================================================== */
+  const GW = 640, GH = 480, G_TOP = 54, ROUND = 40;
+  function spawnCookie() {
+    let x, y, n = 0;
+    do { x = rnd(40, GW - 40); y = rnd(G_TOP + 34, GH - 40); } while (Math.hypot(x - game.px, y - game.py) < 150 && ++n < 20);
+    game.cookies.push({ x, y, a: rnd(0, 6.28), gold: Math.random() < .14, ph: rnd(0, 6), run: 0 });
+  }
+  function gameReset() {
+    Object.assign(game, { mode: 'play', score: 0, time: ROUND, px: GW / 2, py: GH / 2 + 30, dx: 1, dy: 0, chomp: 0, cookies: [], crumbs: [] });
+    for (let i = 0; i < 5; i++) spawnCookie();
+  }
+  function gameAction() { if (tvSet.state === 'GAME' && game.mode !== 'play') { gameReset(); blip(880); } }
+  function gameStep(dt) {
+    game.clock += dt; game.chomp = Math.max(0, game.chomp - dt);
+    game.crumbs = game.crumbs.filter(c => (c.life -= dt) > 0); game.crumbs.forEach(c => { c.x += c.vx * dt; c.y += c.vy * dt; c.vy += 260 * dt; });
+    if (game.mode !== 'play') return;
+    const k = game.keys; let ix = (k.right ? 1 : 0) - (k.left ? 1 : 0), iy = (k.down ? 1 : 0) - (k.up ? 1 : 0);
+    const l = Math.hypot(ix, iy);
+    if (l) { ix /= l; iy /= l; game.dx = ix; game.dy = iy; game.px += ix * 225 * dt; game.py += iy * 225 * dt; game.walk += dt * 11; }
+    game.px = Math.max(34, Math.min(GW - 34, game.px)); game.py = Math.max(G_TOP + 34, Math.min(GH - 36, game.py));
+    for (let i = game.cookies.length - 1; i >= 0; i--) {
+      const c = game.cookies[i], d = Math.hypot(c.x - game.px, c.y - game.py);
+      let sp;
+      if (d < 150) {   // it has seen Munch: turn away and run (never quite as fast as Munch)
+        const away = Math.atan2(c.y - game.py, c.x - game.px), turn = Math.atan2(Math.sin(away - c.a), Math.cos(away - c.a));
+        c.a += turn * Math.min(1, dt * 7); sp = c.gold ? 180 : 128; c.run = 1;
+      } else { c.a += Math.sin(game.clock * 1.3 + c.ph) * dt * 1.6; sp = c.gold ? 70 : 38; c.run = Math.max(0, c.run - dt * 2); }
+      c.x += Math.cos(c.a) * sp * dt; c.y += Math.sin(c.a) * sp * dt;
+      if (c.x < 22) { c.x = 22; c.a = Math.PI - c.a; } else if (c.x > GW - 22) { c.x = GW - 22; c.a = Math.PI - c.a; }
+      if (c.y < G_TOP + 22) { c.y = G_TOP + 22; c.a = -c.a; } else if (c.y > GH - 24) { c.y = GH - 24; c.a = -c.a; }
+      if (d < 36) {
+        game.score += c.gold ? 3 : 1; game.chomp = .28; blip(c.gold ? 1040 : 740);
+        for (let n = 0; n < 9; n++) game.crumbs.push({ x: c.x, y: c.y, vx: rnd(-120, 120), vy: rnd(-170, -20), life: rnd(.3, .6), gold: c.gold });
+        game.cookies.splice(i, 1); spawnCookie();
+      }
+    }
+    game.time -= dt;
+    if (game.time <= 0) {
+      game.time = 0; game.mode = 'over'; blip(330);
+      if (game.score > game.best) { game.best = game.score; try { localStorage.setItem('desk-cookie-best', String(game.best)); } catch (e) {} }
+    }
+  }
+  function drawCookie(g, c) {
+    const st = Math.sin(game.clock * (10 + c.run * 12) + c.ph) * 5, bob = Math.abs(st) * .25;
+    g.strokeStyle = '#3a2413'; g.lineWidth = 3; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(c.x - 5, c.y + 9); g.lineTo(c.x - 5 + st, c.y + 19); g.moveTo(c.x + 5, c.y + 9); g.lineTo(c.x + 5 - st, c.y + 19); g.stroke();
+    g.fillStyle = c.gold ? '#f2c94c' : '#c98d4b'; g.beginPath(); g.arc(c.x, c.y - bob, 14, 0, 7); g.fill();
+    g.strokeStyle = c.gold ? '#b8891c' : '#8a5a2a'; g.lineWidth = 2; g.stroke();
+    g.fillStyle = c.gold ? '#8a5a12' : '#4a2a14'; [[-6, -5], [5, -7], [7, 4], [-3, 6], [0, -1]].forEach(([x, y]) => { g.beginPath(); g.arc(c.x + x, c.y + y - bob, 2.2, 0, 7); g.fill(); });
+    if (c.run > .3) { g.fillStyle = '#fff'; [-4, 4].forEach(x => { g.beginPath(); g.arc(c.x + x, c.y - 3 - bob, 3, 0, 7); g.fill(); }); g.fillStyle = '#1a1108'; [-4, 4].forEach(x => { g.beginPath(); g.arc(c.x + x - Math.cos(c.a) * 1.2, c.y - 3 - bob - Math.sin(c.a) * 1.2, 1.4, 0, 7); g.fill(); }); }
+  }
+  function drawMunch(g, x, y) {
+    const st = Math.sin(game.walk) * 5, open = game.chomp > 0 ? Math.sin(game.chomp / .28 * Math.PI) : 0;
+    g.fillStyle = '#2f5a3a'; [-12, 12].forEach((fx, i) => { g.beginPath(); g.ellipse(x + fx, y + 30 + (i ? st : -st) * .5, 9, 5, 0, 0, 7); g.fill(); });   // feet
+    g.fillStyle = '#ece3cf'; [-1, 1].forEach(sd => { g.beginPath(); g.moveTo(x + sd * 10, y - 26); g.lineTo(x + sd * 19, y - 44); g.lineTo(x + sd * 22, y - 22); g.fill(); });   // horns
+    g.fillStyle = '#5fae6b'; g.beginPath();                                                                                   // shaggy body
+    for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2, r = (i % 2 ? 27 : 33) + Math.sin(game.clock * 6 + i) * 1.2; i ? g.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r) : g.moveTo(x + Math.cos(a) * r, y + Math.sin(a) * r); }
+    g.closePath(); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x - 6, y - 10, 14, 10, -.5, 0, 7); g.fill();
+    const ex = x + game.dx * 6, ey = y - 8 + game.dy * 4;                                                                      // the one eye looks where it is going
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(ex, ey, 11, 0, 7); g.fill();
+    g.fillStyle = '#14100c'; g.beginPath(); g.arc(ex + game.dx * 4.5, ey + game.dy * 4.5, 5, 0, 7); g.fill();
+    g.fillStyle = '#1c0d10'; g.beginPath(); g.ellipse(x + game.dx * 7, y + 14 + game.dy * 3, 13, 3 + open * 11, 0, 0, 7); g.fill();   // mouth
+    if (open > .3) { g.fillStyle = '#ece3cf'; g.fillRect(x + game.dx * 7 - 8, y + 14 + game.dy * 3 - 2 - open * 10, 5, 4); g.fillRect(x + game.dx * 7 + 3, y + 14 + game.dy * 3 - 2 - open * 10, 5, 4); }
+  }
+  const gTouch = matchMedia('(pointer: coarse)').matches;
+  function gameDraw(g) {
+    g.fillStyle = '#131019'; g.fillRect(0, 0, GW, GH);
+    for (let y = G_TOP; y < GH; y += 40) for (let x = (y / 40 | 0) % 2 ? 0 : 40; x < GW; x += 80) { g.fillStyle = 'rgba(255,255,255,.028)'; g.fillRect(x, y, 40, 40); }   // kitchen floor
+    game.crumbs.forEach(c => { g.fillStyle = c.gold ? 'rgba(242,201,76,' + Math.min(1, c.life * 3) + ')' : 'rgba(201,141,75,' + Math.min(1, c.life * 3) + ')'; g.fillRect(c.x, c.y, 4, 4); });
+    game.cookies.forEach(c => drawCookie(g, c));
+    drawMunch(g, game.px, game.py);
+    g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, 0, GW, G_TOP); g.fillStyle = 'rgba(' + AMBER + ',.8)'; g.fillRect(0, G_TOP - 2, GW, 2);
+    g.textBaseline = 'alphabetic'; g.font = '700 20px "JetBrains Mono", monospace';
+    g.textAlign = 'left'; g.fillStyle = 'rgb(' + CREAM + ')'; g.fillText('COOKIE CHASE', 24, 35);
+    g.textAlign = 'center'; g.fillStyle = 'rgb(' + AMBER + ')'; g.fillText('SCORE ' + String(game.score).padStart(2, '0'), GW / 2 + 30, 35);
+    g.textAlign = 'right'; g.fillStyle = game.mode === 'play' && game.time < 6 && Math.sin(game.clock * 12) > 0 ? '#ff6a4d' : 'rgb(' + CREAM + ')'; g.fillText('TIME ' + String(Math.ceil(game.time)).padStart(2, '0'), GW - 24, 35);
+    if (game.mode !== 'play') {
+      g.fillStyle = 'rgba(8,6,10,.72)'; g.fillRect(0, G_TOP, GW, GH - G_TOP);
+      g.textAlign = 'center'; g.fillStyle = 'rgb(' + CREAM + ')'; g.font = '800 50px Syne, sans-serif';
+      g.fillText(game.mode === 'over' ? 'TIME UP' : 'COOKIE CHASE', GW / 2, 190);
+      g.font = '700 22px "JetBrains Mono", monospace'; g.fillStyle = 'rgb(' + AMBER + ')';
+      g.fillText(game.mode === 'over' ? 'SCORE ' + game.score + '   BEST ' + game.best : 'CATCH THE COOKIES BEFORE TIME RUNS OUT', GW / 2, 240, GW - 60);
+      g.font = '500 17px "JetBrains Mono", monospace'; g.fillStyle = 'rgba(' + CREAM + ',.8)';
+      if (game.mode === 'title') g.fillText('GOLD COOKIES ARE WORTH 3' + (game.best ? '   ·   BEST ' + game.best : ''), GW / 2, 280);
+      if (Math.sin(game.clock * 4) > -.3) { g.fillStyle = 'rgb(' + CREAM + ')'; g.font = '700 19px "JetBrains Mono", monospace'; g.fillText(gTouch ? 'PRESS OK TO ' + (game.mode === 'over' ? 'PLAY AGAIN' : 'START') : 'PRESS ENTER TO ' + (game.mode === 'over' ? 'PLAY AGAIN' : 'START'), GW / 2, 350); }
+      g.font = '500 15px "JetBrains Mono", monospace'; g.fillStyle = 'rgba(' + CREAM + ',.6)';
+      g.fillText(gTouch ? 'USE THE PAD BELOW TO MOVE' : 'ARROWS OR WASD MOVE  ·  ESC EXITS', GW / 2, 392);
+    }
+    g.textAlign = 'left';
+  }
+  function startGame() {
+    audio();
+    if (busy() || tvSet.state === 'GAME' || root.classList.contains('text-mode')) return;
+    const wait = current ? 80 : 0; if (current) setHash('home');
+    if (tvSet.state !== 'IDLE') backToIdle();                      // whatever the set was doing, it goes back to its card first (and the tape comes home)
+    Object.assign(game, { mode: 'title', score: 0, time: ROUND, px: GW / 2, py: GH / 2 + 30, cookies: [], crumbs: [], keys: {} });
+    useIntroPicture(); gameDraw(introTex.g); introTex.t.needsUpdate = true; tvSet.lastDraw = -1;
+    const u = crt.uniforms; u.uBeam.value = 1; tvSet.glow = 1; tvSet.warm = .35;
+    if (tvSet.tl) tvSet.tl.kill();
+    tvSet.tl = G.timeline().set(u.uStatic, { value: .8 }).set(u.uTrack, { value: 1 }).to(u.uStatic, { value: 0, duration: reduce ? 0 : .5 }).to(u.uTrack, { value: .08, duration: reduce ? 0 : .5 }, '<');   // input switch: a burst of snow
+    setState('GAME'); sndStatic(.3); drawOSD({});
+    setTimeout(() => focus('tv'), wait);
+  }
+  function exitGame() { if (tvSet.state !== 'GAME') return; backToIdle(); if (!current) focus('home'); }
+  // keys: taken before the room's own arrow keys (which turn the camera) while a game is on
+  const GKEY = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', a: 'left', d: 'right', w: 'up', s: 'down', A: 'left', D: 'right', W: 'up', S: 'down' };
+  addEventListener('keydown', e => {
+    if (tvSet.state !== 'GAME' || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
+    const onBtn = e.target && e.target.closest && e.target.closest('button, a');
+    if (GKEY[e.key]) { game.keys[GKEY[e.key]] = true; e.preventDefault(); e.stopImmediatePropagation(); }
+    else if (e.key === 'Escape') { e.stopImmediatePropagation(); exitGame(); }
+    else if ((e.key === 'Enter' || e.key === ' ') && !onBtn) { e.preventDefault(); e.stopImmediatePropagation(); gameAction(); }
+  }, true);
+  addEventListener('keyup', e => { if (GKEY[e.key]) game.keys[GKEY[e.key]] = false; }, true);
+  addEventListener('blur', () => { game.keys = {}; });
+  [['gUp', 'up'], ['gDown', 'down'], ['gLeft', 'left'], ['gRight', 'right']].forEach(([id, dir]) => {
+    const b = document.getElementById(id), set = on => { game.keys[dir] = on; b.classList.toggle('down', on); };
+    b.addEventListener('pointerdown', e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (er) {} set(true); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, () => set(false)));
+    b.addEventListener('contextmenu', e => e.preventDefault());
+  });
+  document.getElementById('gOk').addEventListener('click', gameAction);
+  document.getElementById('gExit').addEventListener('click', exitGame);
+  document.getElementById('gameCtl').addEventListener('pointerdown', e => e.stopPropagation());
+  window.DESK_GAME = { start: startGame, exit: exitGame, state: game };
+
   /* ---- per frame: only does work while the set is on ---- */
   function tvFrame(t, dt) {
     const u = crt.uniforms, s = tvSet.state;
@@ -2935,6 +3095,10 @@
       u.uTrack.value = .12 + .9 * Math.max(...cuts) + stray;
       if (performance.now() < (tvSet.osdUntil || 0)) { /* a volume bar is showing */ }
       else if (tvSet.introT < 1.6) drawOSD({ tl: '▶ PLAY', tr: 'CH 01', bl: tcode(tvSet.introT) }); else drawOSD(tvSet.introT < MENU_AT - .3 ? { bl: tcode(tvSet.introT) } : {});   // the menu has its own header and footer
+    }
+    if (s === 'GAME' && t - tvSet.lastDraw > 1 / 30) {               // the game steps and redraws at 30 fps
+      gameStep(Math.min(.1, Math.max(0, t - tvSet.lastDraw))); tvSet.lastDraw = t;
+      gameDraw(introTex.g); introTex.t.needsUpdate = true;
     }
     const live = s === 'PLAYING_INTRO' || s === 'PAUSED' || s === 'ENDED' || s === 'SIGNAL_STATIC' || s === 'POWERING_ON';
     if (live && t - tvSet.lastDraw > 1 / 30) {                       // the picture redraws at 30 fps, and only while the set is on
@@ -3389,6 +3553,28 @@
   });
   breezeLeaves(leafMat);
   window.__deskWindow = { toggle: () => winHot.userData.hot.action(), state: winState, breeze, sashes, curtains: () => curtainHot.userData.hot.action(), curtainState };   // for testing
+
+  /* ---------- the game console: it sits on top of the set, pad beside it; click it to play Cookie Chase ---------- */
+  const gcon = new T.Group(); put(gcon, TVX - .015, 1.2715, TVZ + .075); gcon.rotation.y = .06;
+  {
+    const shell = std(0xcfc9bb, .55, .05), dark = std(0x1c1d20, .5, .15), red = std(0xb5402c, .5, .1);
+    gcon.add(put(box(.2, .03, .12, shell, .004), -.07, .015, 0));                                  // the console
+    gcon.add(put(box(.2005, .006, .1205, dark, .001), -.07, .012, 0));                             // a dark band round its waist
+    gcon.add(put(box(.09, .004, .02, dark, .001), -.07, .031, -.012));                             // cartridge slot
+    gcon.add(put(box(.078, .034, .012, std(0xe8913c, .5, .05), .002), -.07, .042, -.012));         // the cartridge
+    gcon.add(put(box(.06, .016, .0006, std(0xece3cf, .8), .0002), -.07, .046, -.0056));            // its label
+    gcon.add(put(box(.022, .005, .012, red, .001), -.14, .0325, .035)); gcon.add(put(box(.022, .005, .012, dark, .001), -.108, .0325, .035));   // power, reset
+    game.led = new T.MeshBasicMaterial({ color: 0x7a1408, toneMapped: false });
+    gcon.add(put(new T.Mesh(new T.SphereGeometry(.003, 10, 8), game.led), -.005, .031, .04));
+    const pad = new T.Group(); put(pad, .13, 0, .012); pad.rotation.y = -.35; gcon.add(pad);       // the controller
+    pad.add(put(box(.1, .012, .045, shell, .003), 0, .006, 0));
+    pad.add(put(box(.022, .003, .007, dark, .0008), -.028, .013, 0)); pad.add(put(box(.007, .003, .022, dark, .0008), -.028, .013, 0));   // d-pad
+    [.022, .038].forEach(x => { const b = mesh(new T.CylinderGeometry(.0055, .0055, .003, 14), red, false); pad.add(put(b, x, .0135, .004 - (x - .022) * .4)); });   // two buttons
+    gcon.add(rod([.02, .008, .02], [.085, .005, .002], .0022, dark));                              // its lead
+    hitPad(gcon, .34, .07, .15);
+  }
+  scene.add(gcon);
+  act(gcon, 'Console · <b>Play Cookie Chase</b>', () => startGame());
 
   /* ---------- CC0 models from Poly Haven (polyhaven.com, public domain): the set, the lamp and the plant ----------
      the procedural versions above stay in the scene until each model arrives, so a failed load never leaves a gap */
