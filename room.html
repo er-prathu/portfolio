@@ -1893,9 +1893,34 @@
   const skyMesh = new T.Mesh(new T.PlaneGeometry(26, 13), new T.MeshBasicMaterial({ map: skyTex.t, toneMapped: false, fog: false, depthWrite: false }));
   cityGroup.add(put(skyMesh, 0, 3.2, -11));
   /* a layer of towers: haze 0 = crisp & close, 1 = far & washed into the sky */
+  /* windows that switch on and off, and the odd flickering television: one Points object per building layer (so the
+     nearer layers still hide the farther ones), animated in the shader from one shared clock */
+  const twk = { uT: { value: 0 }, uO: { value: 0 }, uH: { value: 400 } };
+  const twinkles = [];
+  function twinkle(spots, parent, x, y, z, k) {
+    if (!spots.length) return;
+    const geo = new T.BufferGeometry(), pos = new Float32Array(spots.length * 3), size = new Float32Array(spots.length), seed = new Float32Array(spots.length);
+    spots.forEach(([sx, sy, sz], i) => { pos[i * 3] = sx; pos[i * 3 + 1] = sy; size[i] = sz; seed[i] = Math.random(); });
+    geo.setAttribute('position', new T.BufferAttribute(pos, 3)); geo.setAttribute('aSize', new T.BufferAttribute(size, 1)); geo.setAttribute('aSeed', new T.BufferAttribute(seed, 1));
+    const mat = new T.ShaderMaterial({
+      uniforms: { uT: twk.uT, uO: twk.uO, uH: twk.uH, uK: { value: k } }, transparent: true, depthWrite: false, blending: T.AdditiveBlending,
+      vertexShader: `attribute float aSize; attribute float aSeed; uniform float uT; uniform float uO; uniform float uH; uniform float uK; varying float vA; varying float vTv;
+        void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
+          gl_PointSize = max(1.5, aSize * projectionMatrix[1][1] * uH / -mv.z);
+          float s = fract(uT * (.008 + aSeed * .014) + aSeed * 37.0);                       // each window keeps its own slow hours
+          float on = smoothstep(0.0, .012, s) * (1.0 - smoothstep(.45, .462, s));
+          vTv = step(.86, aSeed);
+          float fl = .35 + .65 * fract(sin(floor(uT * 5.0 + aSeed * 10.0) * 12.9898 + aSeed * 78.0) * 43758.5);   // a television changes shot
+          vA = uO * uK * mix(on, fl, vTv); }`,
+      fragmentShader: `varying float vA; varying float vTv;
+        void main() { gl_FragColor = vec4(mix(vec3(1.0, .74, .42), vec3(.5, .68, 1.0), vTv), vA * mix(.9, .6, vTv)); }`,
+    });
+    const p = new T.Points(geo, mat); p.position.set(x, y, z); p.frustumCulled = false; parent.add(p); twinkles.push(p);
+  }
   const towerTops = [], nightLayers = [], dayLayers = [];
   function cityLayer(wPx, hPx, wM, z, y, count, hMin, hMax, haze, winScale) {
     const shapes = [];   // the buildings drawn at night, kept so the daylight version is the very same skyline
+    const spots = [];    // a few dark windows, which come on and go off through the evening
     const tex = canvasTex(wPx, hPx, g => {
       g.clearRect(0, 0, wPx, hPx);
       const baseC = [6 + haze * 14, 7 + haze * 14, 9 + haze * 15];   // near-black silhouettes; the lights do the talking
@@ -1916,7 +1941,7 @@
           const floorLit = Math.random() < .08;
           for (let xx = x + sx * .5; xx < x + bw - cw - 1; xx += sx) {
             const p = Math.random();
-            if (!(floorLit || p < .17)) continue;
+            if (!(floorLit || p < .17)) { if (Math.random() < .03) spots.push([xx + cw / 2, yy + ch / 2, cw]); continue; }
             const kind = Math.random(), a = (1 - haze * .5) * rnd(.4, 1);
             g.fillStyle = kind < .8 ? `rgba(255,${rnd(165, 205) | 0},${rnd(90, 130) | 0},${a})` : kind < .95 ? `rgba(255,236,210,${a * .85})` : `rgba(170,200,255,${a * .5})`;
             g.fillRect(xx, yy, cw, ch);
@@ -1935,6 +1960,7 @@
     const hM = wM * hPx / wPx;
     const m = new T.Mesh(new T.PlaneGeometry(wM, hM), new T.MeshBasicMaterial({ map: tex.t, transparent: true, toneMapped: false, fog: false, depthWrite: false }));
     cityGroup.add(put(m, 0, y + hM / 2, z)); nightLayers.push(m);
+    twinkle(spots.sort(() => Math.random() - .5).slice(0, 45).map(([px, py, c]) => [(px / wPx - .5) * wM, (.5 - py / hPx) * hM, c / wPx * wM * 1.25]), cityGroup, 0, y + hM / 2, z + .02, 1 - haze * .5);
     /* the same buildings in daylight: concrete paling into blue haze with distance, sunlit right faces, dark glass that
        sometimes catches the sky; ground haze at the base. Same plane size and depth, so parallax and occlusion are unchanged */
     const dayTex = canvasTex(wPx, hPx, g => {
@@ -2007,10 +2033,11 @@
   const signals = [-3.1, .9, 2.7, -6.2, 5.4].map((x, i) => { const s = dot(i % 2 ? 0x37ff7a : 0xff3b2a, .045); s.position.set(x, DECK + .2, RZ - .06); s.userData.ph = i * 1.7; railGroup.add(s); return s; });
   const deckLamps = Array.from({ length: 12 }, (_, i) => { const s = dot(0xffb76b, .06); s.position.set(-11 + i * 2, DECK + .14, RZ + .07); railGroup.add(s); return s; });
   /* foreground towers in front of the line: what the train passes behind */
+  const facadeDark = [];
   const facade = canvasTex(256, 512, g => {
     g.fillStyle = '#0c0e11'; g.fillRect(0, 0, 256, 512);
     for (let y = 10; y < 504; y += 12) for (let x = 8; x < 248; x += 12) {   // finer grid: residential blocks a few hundred metres off
-      const p = Math.random(); if (p > .16) { g.fillStyle = 'rgba(30,33,38,.7)'; g.fillRect(x, y, 6, 7); continue; }
+      const p = Math.random(); if (p > .16) { g.fillStyle = 'rgba(30,33,38,.7)'; g.fillRect(x, y, 6, 7); facadeDark.push([x + 3, y + 3.5]); continue; }
       g.fillStyle = p < .12 ? `rgba(255,${180 + Math.random() * 30 | 0},${110 + Math.random() * 30 | 0},${.35 + Math.random() * .45})` : 'rgba(190,210,240,.35)'; g.fillRect(x, y, 6, 7);
     }
   });
@@ -2024,6 +2051,8 @@
   const nearTowers = [[-1.22, .38, 1.5], [1.12, .32, 1.36], [.3, .34, 1.08]].map(([x, w, top]) => {
     const h = top + 2; const m = new T.Mesh(new T.BoxGeometry(w, h, .36), towerMat); m.position.set(x, top - h / 2, -3.45); railGroup.add(m); return m;
   });
+  nearTowers.forEach(m => { const w = m.geometry.parameters.width, h = m.geometry.parameters.height;
+    twinkle(facadeDark.slice().sort(() => Math.random() - .5).slice(0, 18).map(([px, py]) => [(px / 256 - .5) * w, (.5 - py / 512) * h, 6.5 / 256 * w]), railGroup, m.position.x, m.position.y, m.position.z + .182, 1); });
 
   /* the train: one instanced carriage body (≤6 instances), lit windows from an emissive strip, no per-window lights */
   const CAR_L = .6, CAR_GAP = .024, CAR_H = .115, CAR_D = .085;
@@ -2179,6 +2208,54 @@
   });
   const dayMesh = new T.Mesh(new T.PlaneGeometry(26, 13), new T.MeshBasicMaterial({ map: dayCity.t, toneMapped: false, fog: false, transparent: true, opacity: 0, depthWrite: false }));
   cityGroup.add(put(dayMesh, 0, 3.2, -10.95));
+  /* ---------- life outside: cloud that drifts, birds by day, a contrail behind the plane ----------
+     All of it follows the weather the room already shows (cloud cover, rain, fog, storm); none of it is a reading. */
+  const driftTex = canvasTex(1024, 256, g => {
+    g.clearRect(0, 0, 1024, 256); g.filter = 'blur(9px)';
+    for (let i = 0; i < 9; i++) {   // each cloud: a grey underside, then white puffs heaped on top; drawn three times across so it tiles
+      const x = rnd(0, 1024), y = rnd(60, 190), w = rnd(60, 150), a = rnd(.4, .75);
+      const puffs = Array.from({ length: 5 }, () => [rnd(-w * .7, w * .7), rnd(-14, 4), rnd(w * .25, w * .55), rnd(10, 22)]);
+      [x, x - 1024, x + 1024].forEach(xx => {
+        g.fillStyle = `rgba(138,150,168,${a})`; g.beginPath(); g.ellipse(xx, y + 9, w, 13, 0, 0, 7); g.fill();
+        puffs.forEach(([dx, dy, pw, ph]) => { g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.ellipse(xx + dx, y + dy, pw, ph, 0, 0, 7); g.fill(); });
+      });
+    }
+    g.filter = 'none';
+  });
+  driftTex.t.wrapS = T.RepeatWrapping;
+  const CLOUD_NIGHT = new T.Color(0x9a8068), CLOUD_DAY = new T.Color(0xffffff);
+  const drift = new T.Mesh(new T.PlaneGeometry(30, 6), new T.MeshBasicMaterial({ map: driftTex.t, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, fog: false }));
+  cityGroup.add(put(drift, 0, 3.3, -10.8));
+  let driftOff = 0;
+  // birds: one mesh for the whole flock, wings beaten in the shader
+  const BIRDS = 11, bPos = new Float32Array(BIRDS * 18), bTip = new Float32Array(BIRDS * 6), bOff = new Float32Array(BIRDS * 18), bSeed = new Float32Array(BIRDS * 6);
+  for (let i = 0; i < BIRDS; i++) {
+    const r = Math.ceil(i / 2), side = i % 2 ? 1 : -1, off = [-r * .12 + rnd(-.03, .03), side * r * .045 + rnd(-.02, .02), rnd(-.25, .25)], sd = Math.random();
+    [[0, .1, 0], [0, -.14, 0], [-1, 0, 1], [0, .1, 0], [0, -.14, 0], [1, 0, 1]].forEach(([x, y, tip], v) => {
+      const k = i * 6 + v; bPos[k * 3] = x; bPos[k * 3 + 1] = y; bTip[k] = tip; bOff.set(off, k * 3); bSeed[k] = sd;
+    });
+  }
+  const birdGeo = new T.BufferGeometry();
+  birdGeo.setAttribute('position', new T.BufferAttribute(bPos, 3)); birdGeo.setAttribute('aTip', new T.BufferAttribute(bTip, 1));
+  birdGeo.setAttribute('aOff', new T.BufferAttribute(bOff, 3)); birdGeo.setAttribute('aSeed', new T.BufferAttribute(bSeed, 1));
+  const birdMat = new T.ShaderMaterial({
+    uniforms: { uT: { value: 0 }, uO: { value: 0 } }, transparent: true, depthWrite: false, side: T.DoubleSide,
+    vertexShader: `attribute float aTip; attribute float aSeed; attribute vec3 aOff; uniform float uT;
+      void main() { float amp = .3 + .7 * smoothstep(-.3, .4, sin(uT * .45 + aSeed * 6.3));   // they glide now and then
+        float flap = sin(uT * (8.0 + aSeed * 3.0) + aSeed * 20.0) * amp;
+        vec3 p = aOff + vec3(sin(uT * .6 + aSeed * 9.0) * .04, sin(uT * .9 + aSeed * 5.0) * .025, 0.0);
+        p.xy += position.xy * .055; p.y += aTip * (flap * .034 + .008);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0); }`,
+    fragmentShader: `uniform float uO; void main() { gl_FragColor = vec4(.1, .11, .13, uO); }`,
+  });
+  const birds = new T.Mesh(birdGeo, birdMat); birds.frustumCulled = false; birds.visible = false; cityGroup.add(birds);
+  const flock = { start: 6, dir: 1, speed: .3, y: 1.9, rise: .2 };
+  function planFlock(t) { flock.dir = Math.random() < .5 ? 1 : -1; flock.speed = rnd(.24, .36); flock.y = rnd(1.55, 2.25); flock.rise = rnd(-.25, .3); flock.start = t; }
+  // the plane's contrail on a fair day
+  const trailTex = canvasTex(256, 8, g => { g.clearRect(0, 0, 256, 8); const gr = g.createLinearGradient(0, 0, 256, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.8, 'rgba(255,255,255,.75)'); gr.addColorStop(1, 'rgba(255,255,255,1)'); g.fillStyle = gr; g.fillRect(0, 2, 256, 4); });
+  const contrail = new T.Mesh(new T.PlaneGeometry(2.2, .03), new T.MeshBasicMaterial({ map: trailTex.t, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, fog: false }));
+  cityGroup.add(contrail);
+  window.__deskLife = { birds, flock, drift, twinkles, contrail };   // for testing
 
   /* ---------- desk ---------- */
   /* walnut: long flowing grain with cathedral arcs, pores and colour drift */
@@ -4350,6 +4427,21 @@
     skyTint.lerpColors(SKY_CLEAR, SKY_OVERCAST, overcast).multiplyScalar(1 - .35 * W.storm + W.flash * .5);
     dayMesh.material.color.copy(skyTint);
     overcastSky.material.opacity = d * Math.min(.92, overcast); overcastSky.material.color.setScalar(1 - .35 * W.storm + W.flash * .5);
+    // life outside: windows coming on and going off, drifting cloud, birds by day, the plane's contrail
+    twk.uT.value = reduce ? 0 : t; twk.uO.value = nightK * (1 - .5 * W.fog); twk.uH.value = renderer.domElement.height * .5;
+    const lit = nightK > .01; twinkles.forEach(p => { p.visible = lit; });
+    if (!reduce) { driftOff += ddt * (.0035 + .004 * W.storm); driftTex.t.offset.x = driftOff % 1; }
+    drift.material.color.lerpColors(CLOUD_NIGHT, CLOUD_DAY, d);
+    drift.material.opacity = Math.max(0, (.45 + .4 * W.cloud) * (1 - .6 * W.clear * nightK) * (1 - .5 * W.fog - d * .6 * Math.min(1, W.rain)));
+    const fair = d * (1 - .5 * Math.min(1, W.rain)) * (1 - .8 * W.storm) * (1 - .6 * W.fog);   // birds keep to daylight and out of storms
+    birds.visible = fair > .02 && !reduce;
+    if (birds.visible) {
+      const bx = -flock.dir * 5.5 + flock.dir * flock.speed * (t - flock.start);
+      if (t < flock.start) birds.visible = false;
+      else if (Math.abs(bx) > 5.6) { planFlock(t); flock.start = t + rnd(10, 26); birds.visible = false; }
+      else { birds.position.set(bx, flock.y + flock.rise * (bx / 5.5) + Math.sin(t * .35) * .05, -5.1); birds.scale.x = flock.dir; birdMat.uniforms.uT.value = t; birdMat.uniforms.uO.value = Math.min(1, fair * 1.4) * .9; }
+    }
+    contrail.position.set(plane.position.x - 1.1, plane.position.y, -9.25); contrail.material.opacity = d * .5 * (1 - overcast);
     glassSheen.material.opacity = .5 + .3 * nightK;
     // lamp: tiny filament flicker; switched off by day
     const lampOn = lampLevel * (1 - d * .92);
