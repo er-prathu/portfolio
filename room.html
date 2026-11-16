@@ -1839,17 +1839,17 @@
   win.add(put(box(.042, OY1 - OY0, .1, frameMat), 0, (OY0 + OY1) / 2, WZ));   // centre mullion
   win.add(put(box(OX * 2, .05, .11, frameMat), 0, TRY, WZ));                    // transom: the casements below, a fixed upper light above
   win.add(put(box(OX * 2, .03, .1, frameMat), 0, TRY + .1, WZ + .005));         // the upper light's bottom rail, a hand's width above
-  win.add(put(box(.012, .09, .02, std(0xc9a36a, .3, .85)), .045, TRY - .17, WZ + .07));   // latch on the meeting stile, just under the transom
+  const latch = put(box(.012, .09, .02, std(0xc9a36a, .3, .85)), .045, TRY - .17, WZ + .07); win.add(latch);   // latch on the meeting stile, just under the transom
   win.add(put(box(OX * 2 + .24, .035, .18, std(0x4e4538, .7, .02)), 0, OY0 - .03, WZ + .06));   // sill: darker, worn timber so it doesn't read as a bright band across the frame
-  const glass = new T.Mesh(new T.PlaneGeometry(OX * 2, OY1 - OY0), new T.MeshPhysicalMaterial({ color: 0xbfd8dc, transparent: true, opacity: .1, roughness: .04, metalness: 0, clearcoat: 1, clearcoatRoughness: .05, depthWrite: false }));
-  win.add(put(glass, 0, (OY0 + OY1) / 2, WZ + .01));
+  const glass = new T.Mesh(new T.PlaneGeometry(OX * 2, OY1 - TRY), new T.MeshPhysicalMaterial({ color: 0xbfd8dc, transparent: true, opacity: .1, roughness: .04, metalness: 0, clearcoat: 1, clearcoatRoughness: .05, depthWrite: false }));
+  win.add(put(glass, 0, (TRY + OY1) / 2, WZ + .01));   // the fixed upper light; the casements below carry their own glass (see the window block by the plant)
   /* faint reflections streaked across the glass */
   const glassTex = canvasTex(256, 256, g => {
     g.clearRect(0, 0, 256, 256);
     for (let i = 0; i < 5; i++) { const x = Math.random() * 256, w = 8 + Math.random() * 40; const gr = g.createLinearGradient(x, 0, x + w, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.5, `rgba(220,235,240,${.05 + Math.random() * .06})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.save(); g.translate(x, 0); g.transform(1, 0, -.35, 1, 0, 0); g.fillRect(0, 0, w, 256); g.restore(); }
   });
-  const glassSheen = new T.Mesh(new T.PlaneGeometry(OX * 2, OY1 - OY0), new T.MeshBasicMaterial({ map: glassTex.t, transparent: true, opacity: .8, depthWrite: false, toneMapped: false, blending: T.AdditiveBlending }));
-  win.add(put(glassSheen, 0, (OY0 + OY1) / 2, WZ + .012));
+  const glassSheen = new T.Mesh(new T.PlaneGeometry(OX * 2, OY1 - TRY), new T.MeshBasicMaterial({ map: glassTex.t, transparent: true, opacity: .8, depthWrite: false, toneMapped: false, blending: T.AdditiveBlending }));
+  win.add(put(glassSheen, 0, (TRY + OY1) / 2, WZ + .012));
 
   /* monsoon rain on the glass: beads that cling, drops that stall then slide, leaving a trail of tiny beads */
   const RW = 768, RH = 460;
@@ -2155,7 +2155,7 @@
   }
   scene.add(win);   // the window is scenery now; double-click it to walk over
   /* linen curtains either side of the window, with real folds */
-  const curtainGeo = new T.PlaneGeometry(.34, 2.75, 28, 1), cg = curtainGeo.attributes.position;   // drawn back: a narrow fall of linen over each edge of the frame
+  const curtainGeo = new T.PlaneGeometry(.34, 2.75, 28, 24), cg = curtainGeo.attributes.position;   // drawn back: a narrow fall of linen over each edge of the frame
   for (let i = 0; i < cg.count; i++) { const x = cg.getX(i); cg.setZ(i, Math.sin(x * 40) * .03 + Math.sin(x * 11 + 1) * .018); }
   curtainGeo.computeVertexNormals();
   const curtainTex = canvasTex(64, 256, g => { g.fillStyle = 'rgb(205,200,190)'; g.fillRect(0, 0, 64, 256); for (let i = 0; i < 500; i++) { g.fillStyle = `rgba(0,0,0,${Math.random() * .06})`; g.fillRect(Math.random() * 64, Math.random() * 256, 1, 3 + Math.random() * 10); } });
@@ -3227,9 +3227,78 @@
     const stem = new T.Group(); put(stem, 0, .165, 0); stem.rotation.set(0, a, 0);
     const st = mesh(new T.CylinderGeometry(.003, .004, len, 6), stemMat, false); st.rotation.z = -tilt; st.position.set(Math.sin(tilt) * len / 2, Math.cos(tilt) * len / 2, 0); stem.add(st);
     const leaf = mesh(leafGeo, leafMat); leaf.position.set(Math.sin(tilt) * len, Math.cos(tilt) * len, 0); leaf.rotation.set(-.3, Math.PI / 2, -tilt - .25); leaf.scale.setScalar(1.05 + (i % 3) * .2);
-    stem.add(leaf); plant.add(stem);
+    stem.add(leaf); plant.add(stem); stem.userData.a0 = stem.rotation.y;
   }
   scene.add(plant);
+
+  /* ---------- the window opens: two casements swing out, and a breeze moves the curtains and the plant ----------
+     Click the lower glass to open or close. The breeze follows the live wind speed when there is one (a light breeze
+     otherwise), only blows while the window is open, and is off with reduced motion. It runs in the shaders (two
+     uniforms), so it costs nothing per vertex on the CPU. */
+  const breeze = { uWind: { value: 0 }, uTime: { value: 0 } };
+  function breezeLeaves(mat) {
+    mat.onBeforeCompile = sh => {
+      Object.assign(sh.uniforms, breeze);
+      sh.vertexShader = 'uniform float uWind; uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+        float lh = max(position.y - .12, 0.);
+        float gust = .6 + .4 * sin(uTime * .7 + position.x * 3.);
+        transformed.x += uWind * lh * (.022 * sin(uTime * 1.6 + position.y * 2.) * gust + .006 * sin(uTime * 7.3 + position.x * 24. + position.z * 19.));
+        transformed.z += uWind * lh * (.018 * gust + .005 * sin(uTime * 6.1 + position.z * 21. + position.y * 9.));
+        transformed.y += uWind * lh * .004 * sin(uTime * 8.2 + position.x * 31.);`);
+    };
+    mat.customProgramCacheKey = () => 'desk-breeze-leaves'; mat.needsUpdate = true;
+  }
+  curtainMat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, breeze);
+    sh.vertexShader = 'uniform float uWind; uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      float f = clamp((1.375 - position.y) / 2.75, 0., 1.);
+      float ph = modelMatrix[3].x * 3.;
+      float gust = .55 + .45 * sin(uTime * .63 + ph);
+      transformed.z += uWind * f * f * (.07 * gust + .025 * sin(uTime * 1.4 + ph + position.y * 1.8));
+      transformed.x += uWind * f * f * .03 * sin(uTime * .95 + ph + position.y * 1.3);
+      transformed.z += uWind * f * .012 * sin(uTime * 3.3 + position.x * 28. + position.y * 4. + ph);`);
+  };
+  curtainMat.customProgramCacheKey = () => 'desk-breeze-curtain'; curtainMat.needsUpdate = true;
+
+  const winHot = new T.Group();
+  const CSW = OX - .051, CSH = TRY - .025 - (OY0 + .028), CSY = (OY0 + .028 + TRY - .025) / 2;   // one casement, inside the jambs
+  const sashGlass = new T.MeshPhysicalMaterial({ color: 0xbfd8dc, transparent: true, opacity: .1, roughness: .04, metalness: 0, clearcoat: 1, clearcoatRoughness: .05, depthWrite: false, side: T.DoubleSide });
+  const sashes = [-1, 1].map(side => {
+    const hinge = new T.Group(); put(hinge, side * (OX - .03), CSY, WZ - .02);          // hinged on the outer jamb, opening outwards
+    const inner = new T.Group(); inner.position.x = -side * CSW / 2; hinge.add(inner);
+    [[0, CSH / 2 - .016, CSW, .032], [0, -CSH / 2 + .016, CSW, .032], [side * (CSW / 2 - .016), 0, .032, CSH], [-side * (CSW / 2 - .016), 0, .032, CSH]]
+      .forEach(([x, y, w, h]) => inner.add(put(box(w, h, .035, frameMat), x, y, 0)));
+    inner.add(put(new T.Mesh(new T.PlaneGeometry(CSW - .05, CSH - .05), sashGlass), 0, 0, .004));
+    inner.add(put(new T.Mesh(new T.PlaneGeometry(CSW - .05, CSH - .05), glassSheen.material), 0, 0, .006));
+    winHot.add(hinge); return hinge;
+  });
+  scene.add(winHot); winHot.updateMatrixWorld(true); win.updateMatrixWorld(true);
+  sashes[1].children[0].attach(latch);   // the latch rides on the right casement
+  winHot.attach(glass);                  // the fixed glass above is part of the click target, so an open window can be closed from there
+  const winState = { open: false, at: 0 };
+  act(winHot, 'Window · <b>Open</b>', () => {
+    const now = performance.now(); if (now - winState.at < 450) return;          // a double-click toggles once
+    winState.at = now; winState.open = !winState.open; sndClick();
+    sashes.forEach((h, i) => G.to(h.rotation, { y: winState.open ? (i ? -1 : 1) * 1.05 : 0, duration: reduce ? 0 : 1.2, ease: winState.open ? 'power2.out' : 'power2.inOut', overwrite: true }));
+    G.to(rainPane.material, { opacity: winState.open ? 0 : .7, duration: reduce ? 0 : .6, overwrite: true });   // the drops were on the casement glass
+    winHot.userData.hot.label = winState.open ? 'Window · <b>Close</b>' : 'Window · <b>Open</b>';
+    tip.innerHTML = winHot.userData.hot.label;
+  });
+  winHot.userData.hot.still = true;
+  // how hard the breeze blows: the live wind (km/h) when there is a reading, a light breeze otherwise; storms gust harder
+  const windTarget = () => {
+    if (!winState.open || reduce) return 0;
+    let ws = 9;
+    try { if (wx.rec && wx.rec.cur && isFinite(wx.rec.cur.wind_speed_10m)) ws = wx.rec.cur.wind_speed_10m; } catch (e) {}
+    return Math.min(1.6, .45 + ws / 28 + W.storm * .35);
+  };
+  deskTick.push((t, dt) => {
+    breeze.uTime.value = t;
+    breeze.uWind.value += (windTarget() - breeze.uWind.value) * (1 - Math.exp(-dt * 1.4));   // builds and dies away gently
+    if (plant.visible && breeze.uWind.value > .001) plant.children.forEach((c, i) => { if (c.userData.a0 !== undefined) c.rotation.y = c.userData.a0 + breeze.uWind.value * .06 * Math.sin(t * 1.7 + i); });
+  });
+  breezeLeaves(leafMat);
+  window.__deskWindow = { toggle: () => winHot.userData.hot.action(), state: winState, breeze, sashes };   // for testing
 
   /* ---------- CC0 models from Poly Haven (polyhaven.com, public domain): the set, the lamp and the plant ----------
      the procedural versions above stay in the scene until each model arrives, so a failed load never leaves a gap */
@@ -3271,7 +3340,7 @@
   loadModel('potted_plant_02', m => {
     plant.visible = false;
     m.scale.setScalar(.68); m.rotation.y = .9; scene.add(put(m, PLX - .05, DY, PLZ));   // big and cut by the frame edge, as in the reference
-    m.traverse(o => { if (o.isMesh && /leaves/i.test(o.material.name)) o.material.color.setScalar(.62); });   // deeper, darker green
+    m.traverse(o => { if (o.isMesh && /leaves/i.test(o.material.name)) { o.material.color.setScalar(.62); breezeLeaves(o.material); } });   // deeper, darker green
   });
 
   /* ---------- framed degree (About) ---------- */
@@ -4000,7 +4069,7 @@
     if (g === hovered) return;
     if (hovered) G.to(hovered.scale, { x: 1, y: 1, z: 1, duration: .5, ease: 'power3.out' });
     hovered = g;
-    if (g) { if (!reduce) G.to(g.scale, { x: 1.04, y: 1.04, z: 1.04, duration: .5, ease: 'power3.out' }); tip.innerHTML = g.userData.hot.label; glowOn(g); }
+    if (g) { if (!reduce && !g.userData.hot.still) G.to(g.scale, { x: 1.04, y: 1.04, z: 1.04, duration: .5, ease: 'power3.out' }); tip.innerHTML = g.userData.hot.label; glowOn(g); }
     else G.to(hoverLight, { intensity: 0, duration: .4, ease: 'power2.out', overwrite: true });
     tip.classList.toggle('on', !!(g && g.userData.hot.label));   // the TV and its tape carry no label: they're just played
     $('#gl').style.cursor = g ? 'pointer' : 'grab';
@@ -4111,7 +4180,7 @@
     const g = pick(e.clientX, e.clientY);
     ripple(e.clientX, e.clientY, !!g);
     if (g) {
-      if (!reduce && g !== tv && g !== introTape && g !== deskRemote) G.fromTo(g.scale, { x: 1.06, y: 1.06, z: 1.06 }, { x: 1, y: 1, z: 1, duration: .6, ease: 'elastic.out(1, .5)' });   // tap acknowledgement
+      if (!reduce && !g.userData.hot.still && g !== tv && g !== introTape && g !== deskRemote) G.fromTo(g.scale, { x: 1.06, y: 1.06, z: 1.06 }, { x: 1, y: 1, z: 1, duration: .6, ease: 'elastic.out(1, .5)' });   // tap acknowledgement
       if (g === tv && tvSet.state === 'ENDED') { const i = menuRowAt(); if (i >= 0) menuOpen(i); return; }   // a row of the on-screen menu
       if (g === tv || g === introTape || g === deskRemote) { tvClick(); return; }   // load the tape and play the intro (skip to the menu once it's on)
       if (g.userData.hot.action) { g.userData.hot.action(); return; }   // terminal, Walkman, floppy, lamp, mug
