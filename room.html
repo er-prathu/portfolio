@@ -406,15 +406,28 @@
   html.text-mode .deck { display: none !important; }
   body.tv-on .intro, body.tv-on .reset { opacity: 0 !important; pointer-events: none; }
   /* ---- the game pad: shown while Cookie Chase is on the set ---- */
-  .gpad { position: fixed; z-index: 22; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px); padding: 10px 14px; border-radius: 16px; background: rgba(10,9,8,.78); border: 1px solid var(--line); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--ink); font: 500 11px/1.4 "JetBrains Mono", ui-monospace, monospace; -webkit-user-select: none; user-select: none; touch-action: none; animation: menu-in .4s cubic-bezier(.2,.8,.2,1) both; }
+  .gpad { position: fixed; z-index: 22; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 12px; width: min(348px, calc(100vw - 32px)); padding: 14px 18px 12px; border-radius: 16px 16px 30px 30px; background: linear-gradient(180deg, #ddd7c9, #c4bdad); border: 1px solid #8f897b; box-shadow: 0 22px 44px -14px rgba(0,0,0,.8), inset 0 2px 0 rgba(255,255,255,.55), inset 0 -5px 0 rgba(0,0,0,.16); color: #2a2622; font: 600 10px/1.3 "JetBrains Mono", ui-monospace, monospace; -webkit-user-select: none; user-select: none; touch-action: none; animation: gpad-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes gpad-in { from { opacity: 0; transform: translateX(-50%) translateY(60%) rotate(6deg); } }
   .gpad[hidden] { display: none; }
-  .gpad p { margin: 0; color: var(--ink-2); }
-  .gpad button { min-width: 44px; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(237,231,220,.22); background: #1b1d20; color: var(--ink); font: 600 12px/1 var(--sans); touch-action: none; }
-  .gpad button:active, .gpad button.down { background: var(--amber); color: #1a1108; }
-  .gpad-d { display: none; grid-template: repeat(3, 44px) / repeat(3, 44px); gap: 4px; }
-  .gpad-d button { padding: 0; }
-  #gUp { grid-area: 1 / 2; } #gLeft { grid-area: 2 / 1; } #gOk { grid-area: 2 / 2; font-size: 10px; } #gRight { grid-area: 2 / 3; } #gDown { grid-area: 3 / 2; }
-  @media (pointer: coarse) { .gpad-d { display: grid; } .gpad-keys { display: none; } }
+  .gpad::before { content: ""; position: absolute; left: calc(50% - 3px); top: -26px; width: 6px; height: 27px; border-radius: 3px 3px 0 0; background: #1c1d20; }   /* its lead */
+  .gpad button { border: 0; padding: 0; font: inherit; color: inherit; touch-action: none; cursor: pointer; }
+  .gpad-d { display: grid; grid-template: repeat(3, 40px) / repeat(3, 40px); padding: 4px; border-radius: 50%; background: rgba(0,0,0,.08); box-shadow: inset 0 2px 4px rgba(0,0,0,.25); }
+  .gpad-d button, .gpad-hub { background: #1c1d20; color: #a9a396; font-size: 11px; }
+  .gpad-d button { box-shadow: 0 2px 0 #000; }
+  .gpad-d button.down, .gpad-d button:active { background: #000; color: var(--amber); box-shadow: none; transform: translateY(1px); }
+  #gUp { grid-area: 1 / 2; border-radius: 7px 7px 0 0; } #gLeft { grid-area: 2 / 1; border-radius: 7px 0 0 7px; } .gpad-hub { grid-area: 2 / 2; } #gRight { grid-area: 2 / 3; border-radius: 0 7px 7px 0; } #gDown { grid-area: 3 / 2; border-radius: 0 0 7px 7px; }
+  .gpad-mid { display: grid; justify-items: center; gap: 10px; min-width: 0; }
+  .gpad-name { font: 800 11px/1 Syne, var(--sans); letter-spacing: .08em; color: #b5402c; font-style: italic; white-space: nowrap; }
+  .gpad-pills { display: flex; gap: 6px; padding: 6px 6px; border-radius: 10px; background: #1c1d20; }
+  .gpad-pills span { display: grid; justify-items: center; gap: 4px; font-size: 8px; letter-spacing: .1em; color: #c9c3b5; }
+  .gpad-pills button { width: 34px; height: 26px; position: relative; background: none; }
+  .gpad-pills button::after { content: ""; position: absolute; left: 3px; right: 3px; top: 8px; height: 10px; border-radius: 6px; background: #8d877a; box-shadow: 0 2px 0 #000; }
+  .gpad-pills button:active::after { background: var(--amber); box-shadow: none; }
+  #gA { width: 58px; height: 58px; border-radius: 50%; background: radial-gradient(circle at 38% 30%, #d9634b, #b5402c 60%, #8a2c1c); color: #f3ead9; font: 800 15px/1 Syne, var(--sans); box-shadow: 0 4px 0 #5c1c11, 0 0 0 5px rgba(0,0,0,.1); }
+  #gA:active { transform: translateY(3px); box-shadow: 0 1px 0 #5c1c11, 0 0 0 5px rgba(0,0,0,.1); }
+  .gpad button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .gpad-keys { grid-column: 1 / -1; margin: 4px 0 0; text-align: center; font-weight: 500; color: #6b6558; }
+  @media (pointer: coarse) { .gpad { padding-left: 10px; padding-right: 10px; gap: 4px 6px; } #gA { width: 52px; height: 52px; } .gpad-d { grid-template: repeat(3, 44px) / repeat(3, 44px); } .gpad-keys { display: none; } .gpad-pills button { height: 36px; } .gpad-pills button::after { top: 13px; } }
   body.game-on .intro, body.game-on .reset { opacity: 0 !important; pointer-events: none; }
   body.game-on .dock { transform: translateY(110%); opacity: 0; pointer-events: none; }
   @media (prefers-reduced-motion: reduce) { .gpad { animation: none; } }
@@ -999,6 +1012,7 @@
   <div class="quick room-only" role="group" aria-label="Things on the desk">
     <button type="button" id="qTv"><span aria-hidden="true">▶</span> TV intro</button>
     <button type="button" id="qTerm"><span aria-hidden="true">&gt;_</span> Terminal</button>
+    <button type="button" id="qGame"><span aria-hidden="true">◉</span> Play a game</button>
     <button type="button" id="qDeck"><span aria-hidden="true">◉</span> Now building</button>
     <button type="button" id="qCv"><span aria-hidden="true">▤</span> Résumé</button>
   </div>
@@ -1006,10 +1020,14 @@
 </div>
 
 <div class="tip" id="tip" aria-hidden="true"></div>
-<div class="gpad" id="gameCtl" role="group" aria-label="Game controls" hidden>
-  <div class="gpad-d"><button type="button" id="gUp" aria-label="Move up">▲</button><button type="button" id="gLeft" aria-label="Move left">◀</button><button type="button" id="gOk" aria-label="Start or restart the game">OK</button><button type="button" id="gRight" aria-label="Move right">▶</button><button type="button" id="gDown" aria-label="Move down">▼</button></div>
+<div class="gpad" id="gameCtl" role="group" aria-label="Game controller" hidden>
+  <div class="gpad-d"><button type="button" id="gUp" aria-label="Move up">▲</button><button type="button" id="gLeft" aria-label="Move left">◀</button><span class="gpad-hub" aria-hidden="true"></span><button type="button" id="gRight" aria-label="Move right">▶</button><button type="button" id="gDown" aria-label="Move down">▼</button></div>
+  <div class="gpad-mid">
+    <span class="gpad-name" aria-hidden="true">COOKIE CHASE</span>
+    <div class="gpad-pills"><span><button type="button" id="gExit" aria-label="Exit the game"></button>EXIT</span><span><button type="button" id="gOk" aria-label="Start or restart the game"></button>START</span></div>
+  </div>
+  <button type="button" id="gA" aria-label="Start or restart the game">A</button>
   <p class="gpad-keys" aria-hidden="true">Arrows or WASD move · Enter start · Esc exit</p>
-  <button type="button" id="gExit">✕ Exit game</button>
 </div>
 
 <button type="button" class="tvskip" id="tvSkip" hidden>Skip intro <span aria-hidden="true">▸▸</span></button>
@@ -2455,13 +2473,18 @@
   const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['SKILLS', 'stack'], ['CONTACT', 'contact']];
   const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
   const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
-  const game = { mode: 'title', keys: {}, score: 0, best: 0, time: 0, px: 320, py: 260, dx: 1, dy: 0, walk: 0, chomp: 0, clock: 0, cookies: [], crumbs: [], led: null };
+  const game = { mode: 'title', keys: {}, score: 0, best: 0, time: 0, px: 320, py: 260, dx: 1, dy: 0, walk: 0, chomp: 0, clock: 0, cookies: [], crumbs: [], led: null, pad3d: null, padOn: false };
   try { game.best = Math.max(0, parseInt(localStorage.getItem('desk-cookie-best'), 10) || 0); } catch (e) {}
   function gameUi(on) {   // the pad under the set, and the console's light
     const el = document.getElementById('gameCtl'); if (el) el.hidden = !on;
     document.body.classList.toggle('game-on', on);
     if (!on) game.keys = {};
     if (game.led) game.led.color.setHex(on ? 0x5dff9a : 0x7a1408);
+    if (game.pad3d && game.padOn !== on) {   // the controller is picked up off the side table, and put back afterwards
+      game.padOn = on; const p = game.pad3d; G.killTweensOf([p.position, p.scale]);
+      if (on) G.timeline().to(p.position, { y: .07, duration: reduce ? 0 : .3, ease: 'power2.out' }).to(p.scale, { x: .01, y: .01, z: .01, duration: reduce ? 0 : .2, ease: 'power2.in', onComplete: () => { p.visible = false; } });
+      else { p.visible = true; p.scale.set(1, 1, 1); p.position.y = .07; G.to(p.position, { y: 0, duration: reduce ? 0 : .55, delay: reduce ? 0 : .2, ease: 'bounce.out' }); }
+    }
   }
   const introTex = canvasTex(640, 480, g => { g.fillStyle = '#000'; g.fillRect(0, 0, 640, 480); });
   // standby LED on the set's bezel: green when on, amber while warming up, a dim red at standby
@@ -3050,15 +3073,16 @@
   }
   function exitGame() { if (tvSet.state !== 'GAME') return; backToIdle(); if (!current) focus('home'); }
   // keys: taken before the room's own arrow keys (which turn the camera) while a game is on
+  const padMark = (dir, on) => { const b = document.getElementById({ up: 'gUp', down: 'gDown', left: 'gLeft', right: 'gRight' }[dir]); if (b) b.classList.toggle('down', on); };
   const GKEY = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', a: 'left', d: 'right', w: 'up', s: 'down', A: 'left', D: 'right', W: 'up', S: 'down' };
   addEventListener('keydown', e => {
     if (tvSet.state !== 'GAME' || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
     const onBtn = e.target && e.target.closest && e.target.closest('button, a');
-    if (GKEY[e.key]) { game.keys[GKEY[e.key]] = true; e.preventDefault(); e.stopImmediatePropagation(); }
+    if (GKEY[e.key]) { game.keys[GKEY[e.key]] = true; padMark(GKEY[e.key], true); e.preventDefault(); e.stopImmediatePropagation(); }
     else if (e.key === 'Escape') { e.stopImmediatePropagation(); exitGame(); }
     else if ((e.key === 'Enter' || e.key === ' ') && !onBtn) { e.preventDefault(); e.stopImmediatePropagation(); gameAction(); }
   }, true);
-  addEventListener('keyup', e => { if (GKEY[e.key]) game.keys[GKEY[e.key]] = false; }, true);
+  addEventListener('keyup', e => { if (GKEY[e.key]) { game.keys[GKEY[e.key]] = false; padMark(GKEY[e.key], false); } }, true);
   addEventListener('blur', () => { game.keys = {}; });
   [['gUp', 'up'], ['gDown', 'down'], ['gLeft', 'left'], ['gRight', 'right']].forEach(([id, dir]) => {
     const b = document.getElementById(id), set = on => { game.keys[dir] = on; b.classList.toggle('down', on); };
@@ -3067,6 +3091,7 @@
     b.addEventListener('contextmenu', e => e.preventDefault());
   });
   document.getElementById('gOk').addEventListener('click', gameAction);
+  document.getElementById('gA').addEventListener('click', gameAction);
   document.getElementById('gExit').addEventListener('click', exitGame);
   document.getElementById('gameCtl').addEventListener('pointerdown', e => e.stopPropagation());
   window.DESK_GAME = { start: startGame, exit: exitGame, state: game };
@@ -3402,6 +3427,7 @@
   // the quick buttons under the name do what a tap on each object does
   $('#qTv').addEventListener('click', () => { tvClick(); setTimeout(() => $('#tvExit').focus({ preventScroll: true }), 80); });
   $('#qTerm').addEventListener('click', () => openTerm());
+  $('#qGame').addEventListener('click', () => { startGame(); setTimeout(() => $('#gA').focus({ preventScroll: true }), 80); });
   $('#qDeck').addEventListener('click', () => { openDeck(); setTimeout(() => $('#deckPlay').focus({ preventScroll: true }), 60); });
   $('#qCv').addEventListener('click', () => openResume());
   // the tracks advance on their own while it plays, like a tape running on
@@ -3554,8 +3580,16 @@
   breezeLeaves(leafMat);
   window.__deskWindow = { toggle: () => winHot.userData.hot.action(), state: winState, breeze, sashes, curtains: () => curtainHot.userData.hot.action(), curtainState };   // for testing
 
-  /* ---------- the game console: it sits on top of the set, pad beside it; click it to play Cookie Chase ---------- */
-  const gcon = new T.Group(); put(gcon, TVX - .015, 1.2715, TVZ + .075); gcon.rotation.y = .06;
+  /* ---------- a side table beside the desk, and the game console on it; click the console to play Cookie Chase ---------- */
+  const STX = 1.06, STZ = DZ - .1, STY = .74;   // a little lower than the desk, standing just off its right end
+  {
+    const st = new T.Group(); put(st, STX, 0, STZ);
+    st.add(put(topBox(.46, .03, .4, woodMat, .01), 0, STY - .015, 0));
+    st.add(put(box(.4, .018, .34, legMat, .004), 0, .2, 0));                                        // a low shelf
+    [[-.2, -.17], [.2, -.17], [-.2, .17], [.2, .17]].forEach(([x, z]) => st.add(put(box(.035, STY - .03, .035, legMat, .008), x, (STY - .03) / 2, z)));
+    scene.add(st); contact(STX, STZ, .6, .54, .5);
+  }
+  const gcon = new T.Group(); put(gcon, STX + .02, STY + .0005, STZ + .02); gcon.rotation.y = -.45;
   {
     const shell = std(0xcfc9bb, .55, .05), dark = std(0x1c1d20, .5, .15), red = std(0xb5402c, .5, .1);
     gcon.add(put(box(.2, .03, .12, shell, .004), -.07, .015, 0));                                  // the console
@@ -3566,12 +3600,12 @@
     gcon.add(put(box(.022, .005, .012, red, .001), -.14, .0325, .035)); gcon.add(put(box(.022, .005, .012, dark, .001), -.108, .0325, .035));   // power, reset
     game.led = new T.MeshBasicMaterial({ color: 0x7a1408, toneMapped: false });
     gcon.add(put(new T.Mesh(new T.SphereGeometry(.003, 10, 8), game.led), -.005, .031, .04));
-    const pad = new T.Group(); put(pad, .13, 0, .012); pad.rotation.y = -.35; gcon.add(pad);       // the controller
+    const pad = new T.Group(); put(pad, .1, 0, .09); pad.rotation.y = -.2; gcon.add(pad); game.pad3d = pad;   // the controller, in front of the console
     pad.add(put(box(.1, .012, .045, shell, .003), 0, .006, 0));
     pad.add(put(box(.022, .003, .007, dark, .0008), -.028, .013, 0)); pad.add(put(box(.007, .003, .022, dark, .0008), -.028, .013, 0));   // d-pad
     [.022, .038].forEach(x => { const b = mesh(new T.CylinderGeometry(.0055, .0055, .003, 14), red, false); pad.add(put(b, x, .0135, .004 - (x - .022) * .4)); });   // two buttons
-    gcon.add(rod([.02, .008, .02], [.085, .005, .002], .0022, dark));                              // its lead
-    hitPad(gcon, .34, .07, .15);
+    gcon.add(rod([-.01, .008, .058], [.055, .005, .085], .0022, dark));                            // its lead
+    hitPad(gcon, .3, .08, .24, .04);
   }
   scene.add(gcon);
   act(gcon, 'Console · <b>Play Cookie Chase</b>', () => startGame());
