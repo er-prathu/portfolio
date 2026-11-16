@@ -797,6 +797,29 @@
   .ar-info { display: grid; gap: 5px; padding: 10px 11px; border: 1px solid var(--g3); border-radius: 5px; background: rgba(0,0,0,.3); font-size: 12px; }
   .ar-info b { color: var(--g); font-weight: 600; }
   .ar-why span { color: var(--amber); }
+  .lab-status { margin: 0 0 12px; font: 500 10.5px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--g2); }
+  .lab-status::before { content: "▮ "; color: var(--amber); }
+  .lab-status.all { color: var(--g); text-shadow: 0 0 12px rgba(134,239,172,.6); }
+  .mon.lit .mon-scr { filter: brightness(1.08); }
+  .mon.lit::after { background: #86EFAC; box-shadow: 0 0 9px #86EFAC; }
+  .mon.lit .mon-cta { color: var(--g); }
+  .lab-trail { display: grid; gap: 7px; margin-bottom: 12px; }
+  .lab-trail ol { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; }
+  .lab-trail button { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 4px 9px 4px 5px; border: 1px solid var(--g3); border-radius: 999px; font: 500 11px/1 var(--mono); color: #b4e6c5; transition: border-color .15s, color .15s; }
+  .lab-trail button i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--g2); font-style: normal; font-size: 10px; }
+  .lab-trail button:hover { border-color: var(--g); }
+  .lab-trail button.done { color: var(--g); } .lab-trail button.done i { background: var(--g); border-color: var(--g); color: #04130a; font-weight: 700; }
+  .lab-trail button[aria-current="step"] { border-color: var(--amber); color: #ffd2a3; }
+  .dm-req { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; }
+  .dm-req select { width: auto; padding-right: 6px; }
+  .dm-in option { background: #07150d; color: #86EFAC; }
+  .dm-err { min-height: 0; font-size: 11px; color: #ffab73 !important; } .dm-err:empty { display: none; }
+  .dm-in[aria-invalid="true"] { border-color: #ffab73; }
+  .dm-out.code { white-space: pre; overflow: auto; max-height: 340px; overflow-wrap: normal; font-size: 11px; }
+  .fx-stage { justify-items: stretch; } .fx-stage .fx-btn { justify-self: start; justify-content: center; } .fx-stage .fx-state { justify-self: start; }
+  .dm-res li.yours { border-left-color: var(--amber); background: rgba(232,145,60,.08); }
+  .ai-why li.yes { color: var(--g); } .ai-why li.no { color: #b9bdb6; } .ai-why li.yes::before, .ai-why li.no::before { content: none; } .ai-why li.yes, .ai-why li.no { padding-left: 0; }
+  @media (pointer: coarse) { .lab-trail button { min-height: 44px; padding-right: 12px; } }
   @media (max-width: 760px) { .ws { padding: 6px 7px 8px; } .ws-scr { padding: 15px 12px 16px; } .ws-scr h3 { font-size: 18px; } .mon-scr { min-height: 104px; padding: 11px 10px; } .mon-name { font-size: 12.5px; } }
   @media (max-width: 374px) { .lab-rack { gap: 9px; } .mon-tech { font-size: 10px; } .ar-node span { display: none; } }
   @media (pointer: coarse) { .dm-btn { min-height: 44px; } .lab-back, .lab-next { padding-block: 16px; } }
@@ -1466,6 +1489,11 @@
       go('work'); openCase(i); if (location.hash !== '#work') location.hash = 'work';
     },
     blip(f) { try { blip(f); } catch (e) {} },
+    // all five workstations visited: the lamp flickers once, and the TV (if it is on) says so
+    allOnline() {
+      try { if (!reduce && lampWanted) G.timeline().add(() => { lampLevel = .25; }).add(() => { lampLevel = 1; }, .09).add(() => { lampLevel = .45; }, .2).add(() => { lampLevel = 1; }, .3); } catch (e) {}
+      try { osdFlash({ tr: 'LAB', bl: 'ALL SYSTEMS ONLINE' }, 4); } catch (e) {}
+    },
   };
 
   /* ================= GitHub: public repositories, read live from api.github.com when Projects opens (cached 6 h).
@@ -1506,7 +1534,8 @@
       ['hd', 'Available commands'],
       '  about        who I am',
       '  skills       languages, frameworks and tools',
-      '  experience   where I have worked',
+      '  lab          the interactive skills lab',
+      '  experience  where I have worked',
       '  projects     what I have built',
       '  contact      how to reach me',
       '  resume       my résumé (PDF)',
@@ -1589,6 +1618,13 @@
       const sec = SECTION_OF[rest[0]];
       if (!sec) return termPrint([['err', `open: say which section: about, experience, projects, stack or contact`]]);
       termPrint([['dim', `Opening ${NAMES[sec]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash(sec); }, reduce ? 0 : 350));
+      return;
+    }
+    if (cmd === 'lab') {
+      const L = window.__lab; if (!L) return termPrint([['err', 'lab: not available on this page']]);
+      const i = L.find(rest.join(' '));
+      if (i < 0) return termPrint([['hd', 'Engineering lab'], ...L.names.map((n, k) => `  lab ${k + 1}   ${n}`), ['dim', 'Type "lab 1" or "lab backend" to switch one on.']]);
+      termPrint([['dim', `Powering on ${L.names[i]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash('stack'); setTimeout(() => L.open(i), 80); }, reduce ? 0 : 350));
       return;
     }
     if (cmd === 'sudo') return termPrint([['err', 'Nice try. This terminal is read-only: it answers questions, it runs nothing.']]);
