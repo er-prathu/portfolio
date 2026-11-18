@@ -86,6 +86,18 @@
   body.is-day .grade { opacity: .55; }
   .grain { inset: -8%; }
   @media (prefers-reduced-motion: no-preference) { .grain { animation: grain 1s steps(6) infinite; } }
+  /* Phones and tablets: the jumping full-screen grain read as a flicker on many Android GPUs, and every frosted-glass
+     panel (the bottom nav is always on screen) re-blurred the 3D scene on every frame. Keep the grain still and
+     swap blur for solid tints. Lite scene (weak GPUs): drop the full-screen blend layers altogether. */
+  @media (pointer: coarse) {
+    .grain { animation: none !important; inset: 0; }
+    *, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    .quick button { background: rgba(10,9,8,.74); }
+    .term { background: rgba(6,5,4,.9); }
+    .tvskip { background: rgba(10,9,8,.86); }
+    :root { --glass: rgba(12, 14, 17, .95); }
+  }
+  html.lite3d .grain, html.lite3d .grade { display: none; }
   @keyframes grain { 0% { transform: translate(0, 0); } 17% { transform: translate(-3%, 2%); } 33% { transform: translate(2%, -3%); } 50% { transform: translate(-2%, -1%); } 67% { transform: translate(3%, 3%); } 83% { transform: translate(-1%, 3%); } 100% { transform: translate(0, 0); } }
   .bars::before, .bars::after {
     content: ""; position: fixed; left: 0; right: 0; height: var(--bar-h); background: #000; z-index: 6; pointer-events: none;
@@ -512,6 +524,16 @@
   @media (max-width: 760px) and (max-height: 760px) {   /* short phones: the buttons carry the how-to, so the hint line steps aside */
     .intro .hint { display: none; }
     .intro h1 { font-size: 24px !important; margin: 4px 0 6px !important; }
+  }
+  /* phones turned sideways (and other short, wide screens): one compact caption, the desk buttons on one scrolling row */
+  @media (min-width: 761px) and (max-height: 500px) {
+    .intro { top: calc(50px + var(--bar-h)); max-width: min(340px, 42vw); }
+    .intro .label.amber, html:not(.text-mode) .intro .hint { display: none; }
+    .intro h1 { font-size: 20px !important; margin: 0 0 2px !important; }
+    #clock { margin-bottom: 2px !important; font-size: 9.5px; }
+    .quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 6px 0 0; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .quick::-webkit-scrollbar { display: none; }
+    .quick button { flex: none; height: 30px; padding: 0 10px; font-size: 11px; }
   }
   html, body { overscroll-behavior: none; }
   #gl { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
@@ -1776,10 +1798,37 @@
 
   /* ================= 3D room ================= */
   if (!window.THREE || !window.gsap) { fallback(); return; }
+  /* ---------- device tier + safety net ----------
+     Phones and tablets get a lighter scene (no MSAA, cheaper shadows, fewer lights) when memory is low,
+     the GPU's shader limits are small, or the GPU dropped the scene earlier this session (?lite=1 forces it).
+     Anything that breaks the 3D start (a script error, a shader that won't compile, a lost WebGL context,
+     a start that never finishes) drops to the text page instead of leaving a stuck loader or a black screen. */
+  const touchDev = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) <= 1024;
+  let glLostBefore = false; try { glLostBefore = sessionStorage.getItem('desk-gl-lost') === '1'; } catch (e) {}
+  let lite = new URLSearchParams(location.search).get('lite') === '1' || glLostBefore
+    || (touchDev && ((navigator.deviceMemory || 8) <= 4 || (navigator.hardwareConcurrency || 8) <= 4));
+  let failed3d = false;
+  const fail3d = why => {
+    if (failed3d) return; failed3d = true;
+    console.warn('3D desk unavailable, showing the text version:', why);
+    fallback(); if (room) room.setPaused(true);
+  };
+  addEventListener('error', e => { if (!loader.classList.contains('gone')) fail3d(e.message || 'script error'); });
+  setTimeout(() => { if (!loader.classList.contains('gone') && !root.classList.contains('text-mode')) fail3d('start timed out'); }, 20000);
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: true, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: !touchDev, powerPreference: touchDev ? 'default' : 'high-performance' });
   } catch (e) { fallback(); return; }
+  {
+    const gl = renderer.getContext();
+    const fragU = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) || 1024;
+    if (touchDev && fragU < 512) lite = true;
+  }
+  $('#gl').addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    try { sessionStorage.setItem('desk-gl-lost', '1'); } catch (err) {}   // the next visit this session starts in lite mode
+    fail3d('WebGL context lost');
+  });
 
   const T = THREE, G = gsap;
   const isPhone = () => innerWidth <= 760;
@@ -1787,7 +1836,7 @@
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.type = lite ? T.PCFShadowMap : T.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = false;   // the room is static: shadows render once, and again only while the light moves
   let shadowDirty = 3, lastSky = -1;
 
@@ -3532,7 +3581,7 @@
   const lampFade = { v: 1 };
   const spot = new T.SpotLight(0xffa458, 0, 2.1, .9, .88, 1.4);   // warm tungsten (the reference's desk zone measures strongly orange-warm)   // tungsten, ~2700 K: amber-white rather than orange
   spot.position.copy(headPos).addScaledVector(aimDir, .05); spot.target.position.copy(aim);
-  spot.castShadow = true; spot.shadow.mapSize.set(isPhone() ? 1024 : 2048, isPhone() ? 1024 : 2048); spot.shadow.bias = -.0008; spot.shadow.radius = 4;
+  spot.castShadow = true; spot.shadow.mapSize.setScalar(lite ? 512 : isPhone() ? 1024 : 2048); spot.shadow.bias = -.0008; spot.shadow.radius = 4;
   scene.add(spot, spot.target);
   const lowBounce = new T.PointLight(0xff9a50, .9, 2.6, 2); lowBounce.position.set(0, .6, -.62); scene.add(lowBounce);   // under the desk, behind the deck's front: lights wall and floor, not the black set   // lamp light bounced off desk and floor: lifts the wall under the desk (the reference's lower frame is warm, not black)
   const warm = new T.PointLight(0xff9a50, 0, 1.5, 2); warm.position.set(-.42, .95, DZ + .25); scene.add(warm);   // the lamp's pool bouncing off the desk, on the lamp's side (the set's face stays dark, lit by its own screen)   // the lamp's bounce off the desk
@@ -4053,7 +4102,7 @@
   const sun = new T.DirectionalLight(0xfff0d8, 0);
   sun.castShadow = true;
   Object.assign(sun.shadow.camera, { left: -2.6, right: 2.6, top: 2.6, bottom: -2.6, near: .5, far: 12 });
-  sun.shadow.mapSize.set(isPhone() ? 1024 : 2048, isPhone() ? 1024 : 2048);
+  sun.shadow.mapSize.setScalar(lite ? 512 : isPhone() ? 1024 : 2048);
   sun.shadow.bias = -.0005; sun.shadow.normalBias = .02;
   sun.target.position.set(.1, .5, .6);
   scene.add(sun, sun.target);
@@ -4615,8 +4664,15 @@
   $('#resetBtn').addEventListener('click', () => { if (current) focus(current); else setHash('home'); body.classList.remove('exploring'); });
 
   /* ---------- resize ---------- */
+  let lastW = 0, lastH = 0;
   function resize() {
+    // mobile browsers fire resize as the address bar slides in and out: same width, small height change.
+    // Only resize the canvas then; re-framing the camera every time made the view jump and blink.
+    const dh = Math.abs(innerHeight - lastH);
+    const barOnly = lastW && innerWidth === lastW && dh > 0 && dh < 160;
+    lastW = innerWidth; lastH = innerHeight;
     renderer.setSize(innerWidth, innerHeight, false);
+    if (barOnly) return;
     baseFov = innerWidth / innerHeight < 1 ? 64 : 40;   // portrait needs a wider lens to keep the desk in frame
     cityGroup.position.y = innerWidth / innerHeight < 1 ? .95 : 0;
     railGroup.position.y = innerWidth / innerHeight < 1 ? -.5 : 0;   // net +0.45 on portrait: the train runs through the lower panes, between the set and the transom   // portrait looks down from further back: lift the skyline so its lights clear the sill
@@ -4783,21 +4839,50 @@
     renderer.render(scene, camera);
   }
   /* adaptive quality: watch real frame times and trade resolution for smoothness (and back) */
-  const maxDpr = Math.min(devicePixelRatio || 1, isPhone() ? 2 : 2);
-  let dpr = Math.min(maxDpr, isPhone() ? 1.5 : 1.75), ftAcc = 0, ftN = 0, lastFrame = 0;
+  const maxDpr = Math.min(devicePixelRatio || 1, lite ? 1.5 : 2);
+  let dpr = Math.min(maxDpr, lite ? 1 : touchDev ? 1.5 : 1.75), ftAcc = 0, ftN = 0, lastFrame = 0, dprCeil = maxDpr, fastRuns = 0;
+  const minDpr = () => (lite ? .75 : 1);
   renderer.setPixelRatio(dpr);
+  /* lite scene: hide the lights that only add subtle bounce, use cheaper shadows; materials recompile for the new light count */
+  function applyLite() {
+    lite = true; root.classList.add('lite3d');
+    [lowBounce, flampLight, slampLight].forEach(l => { l.visible = false; });
+    renderer.shadowMap.type = T.PCFShadowMap;
+    [spot, sun].forEach(l => { l.shadow.mapSize.setScalar(512); if (l.shadow.map) { l.shadow.map.dispose(); l.shadow.map = null; } });
+    scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => { m.needsUpdate = true; }); });
+    shadowDirty = 3;
+  }
+  /* a shader that fails to compile on this GPU leaves objects black: retry in lite, then fall back to the text page */
+  let glChecks = 0;
+  function checkShaders() {
+    const broken = renderer.info.programs.some(p => p.diagnostics && p.diagnostics.runnable === false);
+    if (!broken) return;
+    if (!lite) { console.warn('shader failed on this GPU; switching to the lite scene'); applyLite(); }
+    else fail3d('shaders failed to compile');
+  }
   function adapt(now) {
     if (lastFrame) { const ft = now - lastFrame; if (ft < 250) { ftAcc += ft; ftN++; } }   // ignore stalls (tab switches)
     lastFrame = now;
     if (ftN >= 90) {
       const avg = ftAcc / ftN; ftAcc = ftN = 0;
       let next = dpr;
-      if (avg > 24 && dpr > 1) next = Math.max(1, dpr - .25);
-      else if (avg < 13 && dpr < maxDpr) next = Math.min(maxDpr, dpr + .25);
+      // Each change resizes the canvas (one blank frame). Without hysteresis a phone hovering around 40 fps
+      // flipped resolution down and up every ~1.5 s: a steady blink. A level that proved too slow is never
+      // retried (the ceiling), and raising needs three fast windows in a row; touch devices never raise.
+      if (avg > 24 && dpr > minDpr()) { next = Math.max(minDpr(), dpr - .25); dprCeil = Math.min(dprCeil, dpr - .25); fastRuns = 0; }
+      else if (avg > 40 && !lite && touchDev) { applyLite(); next = Math.min(dpr, 1); dprCeil = next; }   // still under ~25 fps at 1x on a touch device: lighten the scene
+      else if (avg < 13 && !touchDev && dpr < dprCeil) { if (++fastRuns >= 3) { next = Math.min(dprCeil, dpr + .25); fastRuns = 0; } }
+      else fastRuns = 0;
       if (next !== dpr) { dpr = next; renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight, false); }
     }
   }
-  function loop(now) { if (!paused && !document.hidden) { render(); adapt(now || performance.now()); } requestAnimationFrame(loop); }
+  function loop(now) {
+    if (!paused && !document.hidden && !failed3d) {
+      render(); adapt(now || performance.now());
+      if (glChecks < 900 && (++glChecks % 30 === 0)) checkShaders();   // models and festival props compile late: check every 30 frames for the first ~15 s
+    }
+    requestAnimationFrame(loop);
+  }
 
   /* ---------- intro ---------- */
   const power = { v: 0 };
@@ -5135,6 +5220,7 @@
   };
   window.__desk = { render, go, focus, scene, camera, shot, view, sky, orbit, renderer, models, tvb, spot, lens, hot, pick, tvSet, tvClick, introTape: () => introTape, crt, W, wx, mockWeather: (k, instant) => { accept(Object.assign({ tz: 'UTC' }, MOCKS[k]), 'Test city', 'mock'); if (instant) applyScene(wx.rec, true); }, flashNow: () => { flashT = clock.getElapsedTime(); }, pinTrain(x, dir = 1, cars = 5) { trainPinned = x; if (x !== null) { trainRun.dir = -dir; planTrain(0); trainRun.dir = dir; trainRun.cars = cars; trainRun.len = cars * (CAR_L + CAR_GAP); train.count = cars; tailL.position.x = -(trainRun.len - CAR_L / 2) - .004; spill.scale.x = trainRun.len; spill.position.x = -(trainRun.len - CAR_L) / 2; } }, get lim() { return LIM; } }; // for testing
 
+  if (lite) applyLite();
   resize();
   applyPower();
   let mode3d = true;
