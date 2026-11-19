@@ -25,11 +25,12 @@ test('POST /api/contact is handled by the contact form and emails through Resend
 
 test('GET /recruiter serves the home page from the assets, so the text view works without a second copy', async () => {
   assetsSeen.length = 0;
-  for (const p of ['/recruiter', '/recruiter/']) {
-    const res = await worker.fetch(new Request('https://portfolio.example.workers.dev' + p), env);
-    assert.equal(res.status, 200);
-  }
-  assert.deepEqual(assetsSeen, ['/', '/']);
+  const res = await worker.fetch(new Request('https://portfolio.example.workers.dev/recruiter'), env);
+  assert.equal(res.status, 200);
+  assert.deepEqual(assetsSeen, ['/']);
+  const slash = await worker.fetch(new Request('https://portfolio.example.workers.dev/recruiter/'), env);
+  assert.equal(slash.status, 301);
+  assert.equal(new URL(slash.headers.get('location')).pathname, '/recruiter');
   assert.equal(await (await worker.fetch(new Request('https://portfolio.example.workers.dev/recruiter-notes'), env)).status, 200);
   assert.equal(assetsSeen.at(-1), '/recruiter-notes');   // only the exact path is rewritten
 });

@@ -36,7 +36,8 @@ export default {
     if (pathname === '/api/contact') return contact({ request, env });
     if (pathname === '/api/geo') return geo(request);
     // Recruiter Mode: the same page as "/", which switches to the text view (and skips the 3D libraries) when the path is /recruiter
-    if (pathname === '/recruiter' || pathname === '/recruiter/') { url.pathname = '/'; return env.ASSETS.fetch(new Request(url, request)); }
+    if (pathname === '/recruiter/') { url.pathname = '/recruiter'; return Response.redirect(url.toString(), 301); }   // relative file paths in the page need the path without a slash
+    if (pathname === '/recruiter') { url.pathname = '/'; return env.ASSETS.fetch(new Request(url, request)); }
     return env.ASSETS.fetch(request);
   },
 };

@@ -63,17 +63,19 @@ test('no outdated or unsupported claims', () => {
   assert.ok(!/testimonial|★|⭐|5 stars|\brated\b/i.test(text(html)), 'no reviews or ratings');
 });
 
-test('the five roles and their dates match the CV', () => {
+test('the six roles and their dates match LinkedIn', () => {
   const tl = html.slice(html.indexOf('<ol class="tl">'), html.indexOf('</ol>', html.indexOf('<ol class="tl">')));
   const roles = [...tl.matchAll(/<li[^>]*data-from="([\d-]+)" data-to="([\w-]+)"[^>]*><time>([^<]+)<\/time><h3>([^<]+)<\/h3><span class="co">([^<]+)<\/span>/g)].map(m => m.slice(1));
   assert.deepEqual(roles.map(r => [r[3], r[4], r[0], r[1]]), [
     ['Senior Software Engineer', 'WebMD · Nolo legal team', '2024-08', 'now'],
-    ['Software Engineer', 'The Information Company', '2021-09', '2024-08'],
-    ['PHP Developer', 'Neolite Infotech', '2020-01', '2021-09'],
-    ['Associate Developer', 'Centillion Solutions and Services', '2018-06', '2019-08'],
-    ['Web Developer', 'Techfryday', '2017-08', '2018-06'],
+    ['Software Developer', 'MediSage', '2023-10', '2024-08'],
+    ['Software Engineer', 'The Information Company', '2021-09', '2023-10'],
+    ['Senior Software Engineer', 'Neolite Infotech', '2020-01', '2021-09'],
+    ['Full-stack Developer', 'Centillion', '2018-06', '2019-08'],
+    ['Software Engineer', 'Techfryday', '2017-08', '2018-05'],
   ]);
-  assert.deepEqual(roles.map(r => r[2]), ['Aug 2024 — Now', 'Sep 2021 — Aug 2024', 'Jan 2020 — Sep 2021', 'Jun 2018 — Aug 2019', 'Aug 2017 — Jun 2018']);
+  assert.deepEqual(roles.map(r => r[2]), ['Aug 2024 — Now', 'Oct 2023 — Aug 2024', 'Sep 2021 — Oct 2023', 'Jan 2020 — Sep 2021', 'Jun 2018 — Aug 2019', 'Aug 2017 — May 2018']);
+  assert.match(html, /across six companies/);
   // earlier roles carry no invented responsibilities: only the current role lists bullets
   assert.equal((tl.match(/<ul class="tl-pts">/g) || []).length, 1);
 });
