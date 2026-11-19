@@ -1,5 +1,5 @@
 /*
- * Engineering lab: the Skills section as five CRT workstations (#lab in room.html).
+ * Engineering lab: the Skills section as five CRT workstations (#labHost in room.html).
  * Each module is a working tool, followed by what I work with and the related case studies.
  *
  * The demos are connected: one sample enquiry can be written in the Frontend Studio, posted to the sample API in the
@@ -14,7 +14,7 @@
  */
 (() => {
   'use strict';
-  const host = document.getElementById('lab'); if (!host) return;
+  const host = document.getElementById('labHost'); if (!host) return;
   const G = window.gsap;
   const still = () => !/[?&]motion\b/.test(location.search) && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hook = () => window.DESK_LAB || {};
@@ -687,11 +687,11 @@ class StoreLeadRequest extends FormRequest
   const MODS = [
     { name: 'Backend Engine', keys: 'backend back api php laravel', line: 'APIs and server-side code', tech: ['PHP', 'Laravel', 'CodeIgniter', 'Node.js', 'REST APIs'],
       know: ['Server-side application code in PHP, with Laravel and CodeIgniter.', 'REST API design: resources, validation, status codes and consistent error shapes.', 'Keeping keys and third-party calls on the server, out of page code.'],
-      proj: [[2, 'Nolo CMS', 'Sole developer. WebMD, confidential.'], [3, 'This site’s API', 'A Cloudflare Worker with two endpoints. Public code.']],
+      proj: [[0, 'Nolo CMS', 'Sole developer. WebMD, confidential.'], [3, 'This site’s API', 'A Cloudflare Worker with two endpoints. Public code.']],
       demoName: 'API playground', demo: demoBackend },
     { name: 'Frontend Studio', keys: 'frontend front ui javascript js css html', line: 'Interfaces in the browser', tech: ['JavaScript', 'jQuery', 'HTML', 'CSS'],
       know: ['Interfaces in plain JavaScript and jQuery, without depending on a framework.', 'Semantic HTML, keyboard access and responsive CSS.', 'Turning designs into working HTML.'],
-      proj: [[1, 'Figma-to-HTML skill', 'Turns Figma designs into HTML. Used across the IB team.'], [3, 'Prathamesh’s Desk', 'This site: one HTML page, no framework or bundler.']],
+      proj: [[2, 'Figma-to-HTML skill', 'Turns Figma designs into HTML. Used across the IB team.'], [3, 'Prathamesh’s Desk', 'This site: one HTML page, no framework or bundler.']],
       demoName: 'UI playground', demo: demoFrontend },
     { name: 'Database Console', keys: 'database db data mysql elasticsearch search sql', line: 'Data modelling and search', tech: ['MySQL', 'Elasticsearch', 'Data modelling', 'Search'],
       know: ['Relational data modelling and queries in MySQL.', 'Full-text search with Elasticsearch: analysed text and relevance ranking.', 'Choosing between an exact database lookup and a ranked search.'],
@@ -699,11 +699,11 @@ class StoreLeadRequest extends FormRequest
       demoName: 'Search console', demo: demoDatabase },
     { name: 'AI Research Lab', keys: 'ai llm mcp claude research', line: 'LLM features and agent tooling', tech: ['LLM integrations', 'MCP', 'Claude Code', 'Claude API', 'Figma MCP', 'Cline'],
       know: ['Working on LLM features that run in a production product.', 'Connecting tools to coding agents through the Model Context Protocol.', 'Writing agent skills a whole team can reuse, to speed up development.'],
-      proj: [[0, 'AI lead qualification engine', 'An LLM asks follow-up questions and scores leads. WebMD, confidential.'], [1, 'Figma-to-HTML skill', 'Figma MCP with Claude Code and Cline.']],
+      proj: [[1, 'AI lead qualification engine', 'An LLM asks follow-up questions and scores leads. WebMD, confidential.'], [2, 'Figma-to-HTML skill', 'Figma MCP with Claude Code and Cline.']],
       demoName: 'LLM workflow and MCP', demo: demoAI },
     { name: 'System Architecture', keys: 'architecture system arch design flow', line: 'How the parts fit together', tech: ['API architecture', 'Application design', 'Data flow', 'Engineering decisions'],
       know: ['Deciding what runs in the browser, on the server and in outside services.', 'Designing so that failures are reported, never hidden.', 'Keeping a system small enough for one person to own end to end.'],
-      proj: [[3, 'Prathamesh’s Desk', 'Its real architecture is the second diagram above. Public code.'], [2, 'Nolo CMS', 'Sole developer. Architecture not public.']],
+      proj: [[3, 'Prathamesh’s Desk', 'Its real architecture is the second diagram above. Public code.'], [0, 'Nolo CMS', 'Sole developer. Architecture not public.']],
       demoName: 'Architecture explorer', demo: demoArch },
   ];
   const no = i => String(i + 1).padStart(2, '0');

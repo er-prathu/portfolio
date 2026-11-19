@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="text-mode">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prathamesh Patil · Senior Software Engineer · Prathamesh's Desk</title>
-<meta name="description" content="Prathamesh Patil, Senior Software Engineer at WebMD with 9+ years in PHP, Laravel, JavaScript and LLM integrations. Explore an interactive 3D desk: experience, projects, skills and contact.">
+<title>Prathamesh Patil · Senior Full Stack Engineer · Backend and AI</title>
+<meta name="description" content="Senior Full Stack Engineer with 8+ years building web apps, backend systems and AI-powered solutions in PHP, Laravel and JavaScript. Explore the 3D desk or use Recruiter Mode.">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Prathamesh Patil">
 <meta name="theme-color" content="#0A0C0E">
 <link rel="canonical" href="https://portfolio.prathpatil3.workers.dev/">
@@ -12,8 +13,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Prathamesh's Desk">
-<meta property="og:title" content="Prathamesh Patil · Senior Software Engineer">
-<meta property="og:description" content="An interactive 3D desk: a working CRT TV, a terminal, live weather in the window, and nine years of engineering work.">
+<meta property="og:title" content="Prathamesh Patil · Senior Full Stack Engineer">
+<meta property="og:description" content="8+ years building web applications, backend systems and AI-powered solutions. Explore an interactive 3D desk, or open Recruiter Mode for a clean overview.">
 <meta property="og:url" content="https://portfolio.prathpatil3.workers.dev/">
 <meta property="og:image" content="https://portfolio.prathpatil3.workers.dev/og-image.jpg">
 <meta property="og:image:width" content="1200">
@@ -22,23 +23,55 @@
 <meta property="profile:first_name" content="Prathamesh">
 <meta property="profile:last_name" content="Patil">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Prathamesh Patil · Senior Full Stack Engineer">
+<meta name="twitter:description" content="8+ years building web applications, backend systems and AI-powered solutions. PHP, Laravel, JavaScript, MySQL, LLM integration and MCP.">
+<meta name="twitter:image" content="https://portfolio.prathpatil3.workers.dev/og-image.jpg">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Prathamesh Patil",
-  "jobTitle": "Senior Software Engineer",
-  "worksFor": { "@type": "Organization", "name": "WebMD" },
-  "address": { "@type": "PostalAddress", "addressLocality": "Navi Mumbai", "addressCountry": "IN" },
-  "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Mumbai" },
-  "url": "https://portfolio.prathpatil3.workers.dev/",
-  "sameAs": ["https://www.linkedin.com/in/prathu123", "https://github.com/er-prathu"],
-  "knowsAbout": ["PHP", "Laravel", "CodeIgniter", "JavaScript", "jQuery", "Node.js", "MySQL", "Elasticsearch", "LLM integrations", "Model Context Protocol", "Application architecture"]
+  "@graph": [
+    {
+      "@type": "ProfilePage",
+      "@id": "https://portfolio.prathpatil3.workers.dev/#page",
+      "url": "https://portfolio.prathpatil3.workers.dev/",
+      "name": "Prathamesh Patil · Senior Full Stack Engineer",
+      "inLanguage": "en",
+      "mainEntity": { "@id": "https://portfolio.prathpatil3.workers.dev/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://portfolio.prathpatil3.workers.dev/#person",
+      "name": "Prathamesh Patil",
+      "jobTitle": "Senior Software Engineer",
+      "description": "Senior Full Stack Engineer with 8+ years of experience building web applications, backend systems and AI-powered solutions.",
+      "worksFor": { "@type": "Organization", "name": "WebMD" },
+      "address": { "@type": "PostalAddress", "addressLocality": "Navi Mumbai", "addressCountry": "IN" },
+      "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Mumbai" },
+      "url": "https://portfolio.prathpatil3.workers.dev/",
+      "sameAs": ["https://www.linkedin.com/in/prathu123", "https://github.com/er-prathu"],
+      "knowsAbout": ["Full-stack development", "Backend engineering", "PHP", "Laravel", "CodeIgniter", "JavaScript", "jQuery", "Node.js", "REST APIs", "MySQL", "Elasticsearch", "LLM integrations", "Model Context Protocol", "Application architecture"]
+    }
+  ]
 }
 </script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>
+/* The 3D libraries (about 1 MB) are fetched only for the 3D desk. Recruiter Mode (/recruiter) and a saved text view never download them. */
+(function () {
+  var textOnly = /^\/recruiter\/?$/.test(location.pathname);
+  try { if (localStorage.getItem('desk-mode') === 'text') textOnly = true; } catch (e) {}
+  window.__textOnly = textOnly;
+  if (!textOnly) document.documentElement.classList.remove('text-mode');   // the static page is the text version; the 3D desk replaces it
+  function load(src) { return new Promise(function (ok, no) { var el = document.createElement('script'); el.src = src; el.async = false; el.onload = ok; el.onerror = no; document.head.appendChild(el); }); }
+  window.__libs = textOnly ? Promise.resolve(false) : Promise.all([
+    load('https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js').then(function () { return load('https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js'); }),
+    load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
+  ]).then(function () { return true; }, function () { return false; });
+})();
+</script>
 <style>
   /* Layout: full-screen WebGL desk; a glass sheet slides in from the right (desktop) or bottom (phone) */
   :root {
@@ -295,7 +328,7 @@
     .tvmenu { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px; }
     .tvmenu .label { grid-column: 1 / -1; margin-bottom: 2px; }
     .tvmenu button[role="menuitem"] { border: 1px solid var(--line); padding: 11px 10px; }
-    .tvmenu button[role="menuitem"]:last-of-type { grid-column: 1 / -1; }
+    .tvmenu button[role="menuitem"]:last-of-type:nth-of-type(odd) { grid-column: 1 / -1; }
     .tvmenu-ph { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 4px; }
     .tvmenu-ph button { flex: 1; height: 38px; border-radius: 8px; background: rgba(237,231,220,.06); font: 500 12px/1 var(--sans); color: var(--ink-2); }
     .tvmenu-ph button[aria-pressed="true"] { color: var(--amber); }
@@ -304,6 +337,21 @@
   @media (max-width: 760px) { .tvmenu-ph { display: flex; } }
   @media (prefers-reduced-motion: reduce) { .tvmenu { animation: none; } }
   html.text-mode .tvmenu { display: none !important; }
+  .learning { color: var(--ink-2); font-size: 14px; margin-top: 18px; }
+  .doc.demo { border: 1px dashed var(--line); border-radius: 12px; padding: 14px 16px; }
+  .doc.demo p { margin: 6px 0; }
+  .ribbon { margin: 4px 0 22px; min-height: 118px; }
+  .rb-bar { position: relative; height: 44px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+  .rb-seg { position: absolute; top: 4px; bottom: 4px; min-width: 10px; border: 0; border-radius: 8px; cursor: pointer; opacity: .78; transition: opacity .2s, transform .2s, box-shadow .2s; }
+  .rb-seg:hover, .rb-seg:focus-visible, .rb-seg.on { opacity: 1; transform: translateY(-1px); box-shadow: 0 0 0 2px var(--ink); }
+  .rb-seg:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .rb-axis { position: relative; height: 18px; margin-top: 6px; font: 500 10px/18px "JetBrains Mono", ui-monospace, monospace; color: var(--muted); }
+  .rb-axis span { position: absolute; transform: translateX(-50%); }
+  .rb-info { min-height: 3.2em; margin: 8px 0 0; font-size: 13.5px; color: var(--ink); }
+  .rb-info small { display: block; color: var(--ink-2); font-size: 12px; }
+  .tl > li.sel { background: rgba(232,145,60,.08); box-shadow: -3px 0 0 var(--amber); border-radius: 6px; }
+  #modeBtn { border-color: rgba(232,145,60,.65); color: var(--amber); }
+  #modeBtn:hover, #modeBtn:focus-visible { background: rgba(232,145,60,.14); }
   .skip { position: fixed; z-index: 60; left: 16px; top: -60px; padding: 10px 16px; border-radius: 999px; background: var(--amber); color: #1a1108; font: 600 13px/1 var(--sans); transition: top .2s; }
   .skip:focus-visible { top: calc(12px + env(safe-area-inset-top, 0px)); outline-offset: 2px; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -488,7 +536,7 @@
       border-top: 1px solid var(--line);
       transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s;
     }
-    .dock a { flex: 1; text-align: center; padding: 14px 0; font: 500 10px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-2); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .dock a { flex: 1; min-width: 0; text-align: center; padding: 14px 0; font: 500 9.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
     .dock a[aria-current="true"] { color: var(--amber); }
     body.sheet-open .dock { transform: translateY(110%); opacity: 0; }
   }
@@ -501,11 +549,15 @@
     transition: opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1);
   }
   @media (min-width: 761px) {   /* top-left, small and quiet over the dark sky: the desk and window carry the first screen */
-    .intro { left: 40px; bottom: auto; top: calc(58px + var(--bar-h) + 6px); max-width: 220px; }   /* stays over the curtain, off the glass */
+    .intro { left: 40px; bottom: auto; top: calc(58px + var(--bar-h) + 10px); max-width: clamp(310px, 27vw, 430px); }   /* the hero: a readable block over the curtain, the desk stays in view */
     /* the curtain behind it is lit cream now: a soft dark halo keeps the white type readable */
     .intro { text-shadow: 0 0 2px rgba(10,6,3,.9), 0 1px 10px rgba(10,6,3,.85), 0 0 26px rgba(10,6,3,.6); }
     .intro::before { content: ""; position: absolute; inset: -18px -26px -18px -40px; z-index: -1; background: radial-gradient(ellipse at 30% 50%, rgba(12,8,5,.55), rgba(12,8,5,0) 72%); pointer-events: none; }
-    .intro h1 { font-size: clamp(19px, 1.45vw, 24px) !important; margin: 6px 0 6px !important; }
+    .intro h1 { font-size: clamp(20px, 1.75vw, 30px) !important; margin: 6px 0 8px !important; line-height: 1.1; }
+    .hero-lede { font-size: clamp(12px, .9vw, 14px); line-height: 1.5; max-width: 44ch; margin-bottom: 10px; }
+    .hero-cta { gap: 6px; margin-bottom: 9px; }
+    .hero-cta .btn { min-height: 30px; padding: 0 11px; font-size: 10px; letter-spacing: .07em; }
+    html:not(.text-mode) .quick { position: fixed; left: 40px; bottom: 18px; margin: 0; max-width: calc(100vw - 460px); }
     .intro .label { font-size: 10px; }
     /* the how-to line sits bottom-right in small mono, where the reference keeps its control hints */
     html:not(.text-mode) .intro .hint { position: fixed; right: 40px; bottom: 22px; max-width: none; text-align: right; font: 500 11px/1.4 "JetBrains Mono", ui-monospace, monospace !important; letter-spacing: .02em; opacity: .7; }
@@ -515,7 +567,11 @@
     .intro h1 { font-size: clamp(25px, 7.4vw, 31px) !important; margin: 6px 0 8px !important; }
     .intro .label { font-size: 9.5px; }
     .intro .hint { font-size: 12.5px; line-height: 1.5; }
-    #clock { margin-bottom: 4px !important; }
+    #clock, .hero-proof { display: none; }
+    .hero-lede { font-size: 12.5px; line-height: 1.5; margin-bottom: 9px; }
+    .hero-cta { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 8px 0; padding-right: 24px; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+    .hero-cta::-webkit-scrollbar { display: none; }
+    .hero-cta .btn { flex: none; }
     /* phones: the quick buttons sit on one line that scrolls sideways, so the caption stays low and the desk stays clear */
     .quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -16px; padding-right: 24px; -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
     .quick::-webkit-scrollbar { display: none; }
@@ -523,12 +579,16 @@
   }
   @media (max-width: 760px) and (max-height: 760px) {   /* short phones: the buttons carry the how-to, so the hint line steps aside */
     .intro .hint { display: none; }
-    .intro h1 { font-size: 24px !important; margin: 4px 0 6px !important; }
+    .intro h1 { font-size: 22px !important; margin: 4px 0 6px !important; }
+    .hero-lede { font-size: 12px; margin-bottom: 7px; }
   }
   /* phones turned sideways (and other short, wide screens): one compact caption, the desk buttons on one scrolling row */
   @media (min-width: 761px) and (max-height: 500px) {
     .intro { top: calc(50px + var(--bar-h)); max-width: min(340px, 42vw); }
-    .intro .label.amber, html:not(.text-mode) .intro .hint { display: none; }
+    .intro .label.amber, html:not(.text-mode) .intro .hint, .hero-lede, .hero-proof { display: none; }
+    .hero-cta { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 4px 0 0; }
+    .hero-cta::-webkit-scrollbar { display: none; }
+    .hero-cta .btn { flex: none; min-height: 30px; font-size: 11px; padding: 0 10px; }
     .intro h1 { font-size: 20px !important; margin: 0 0 2px !important; }
     #clock { margin-bottom: 2px !important; font-size: 9.5px; }
     .quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 6px 0 0; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
@@ -550,6 +610,28 @@
   @keyframes ripple { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
   .intro h1 { font-size: clamp(22px, 1.9vw, 30px); font-weight: 800; letter-spacing: -.03em; margin: 10px 0 12px; }
   .intro h1 i { font-style: normal; color: var(--amber); }
+  .hero-lede { color: var(--ink); opacity: .9; font-size: 14px; line-height: 1.55; max-width: 46ch; margin: 0 0 12px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; pointer-events: auto; }
+  .hero-cta .btn { min-height: 34px; padding: 0 13px; align-items: center; font-size: 10.5px; letter-spacing: .08em; white-space: nowrap; background: rgba(10,9,8,.5); }
+  .hero-cta .btn.solid { background: var(--amber); color: #1a0f05; border-color: var(--amber); }
+  .hero-proof { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 14px; font: 500 10.5px/1.5 "JetBrains Mono", ui-monospace, monospace; color: var(--ink-2); }
+  .hero-proof li::before { content: "▸ "; color: var(--amber); }
+  .intro h1 .hl { display: block; }
+  html.text-mode .intro h1 .hl { display: inline; }
+  @media (max-width: 760px) {
+    .intro h1 { font-size: clamp(21px, 6.3vw, 27px) !important; line-height: 1.12; }
+    .hero-lede { font-size: 12px; line-height: 1.45; margin-bottom: 8px; }
+    .hero-cta { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 0 0; padding-right: 24px; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+    .hero-cta::-webkit-scrollbar { display: none; }
+    .hero-cta .btn { flex: none; }
+    html:not(.text-mode) .quick { display: none; }   /* the desk objects themselves are the buttons on a phone */
+    html.text-mode .hero-cta { flex-wrap: wrap; overflow: visible; margin-right: 0; padding-right: 0; -webkit-mask-image: none; mask-image: none; }
+  }
+  @media (min-width: 761px) and (max-height: 500px) {
+    .intro h1 .hl { display: inline; }
+  }
+  html:not(.text-mode) .hero-proof { display: none; }   /* over the 3D desk the laptop's screen and the buttons carry this; the text and Recruiter views show it */
+  .quick button[hidden] { display: none; }
   .intro .hint { color: var(--ink-2); font-size: 14px; max-width: 40ch; }
   .intro .hint b { color: var(--ink); font-weight: 500; }
   body.is-day .intro { text-shadow: 0 1px 14px rgba(0,0,0,.8), 0 0 3px rgba(0,0,0,.55); }   /* the small caption sits over bright sky by day */
@@ -1024,6 +1106,8 @@
   html.text-mode .nav { background: var(--ground); border-bottom: 1px solid var(--line); }
   html.text-mode .intro { position: static; max-width: 760px; margin: 0 auto; padding: 110px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); pointer-events: auto; opacity: 1; transform: none; }
   html.text-mode .intro > * { opacity: 1; transform: none; }
+  html.text-mode .hero-lede { font-size: 17px; max-width: 60ch; }
+  html.text-mode .intro h1 { font-size: clamp(30px, 5vw, 46px); }
   html.text-mode .sheet { transition: none; position: static; transform: none; width: auto; height: auto; max-height: none; background: none; border: 0; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
   html.text-mode .sheet-head, html.text-mode .sheet-foot { display: none; }
   html.text-mode .sheet-body { overflow: visible; max-width: 760px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 80px max(16px, env(safe-area-inset-left, 0px)); }
@@ -1042,6 +1126,7 @@
 <div class="grain" aria-hidden="true"></div>
 <div class="bars" aria-hidden="true"></div>
 
+<a class="skip" href="/recruiter" id="skipLink">Skip the 3D desk: open Recruiter Mode</a>
 <header class="nav">
   <a class="brand" href="#home">PRATHAMESH<i>.</i></a>
   <div class="nav-right">
@@ -1049,6 +1134,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#timeline">Experience</a></li>
       <li><a href="#work">Projects</a></li>
+      <li><a href="#lab">Lab</a></li>
       <li><a href="#stack">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a class="cv js-cv" href="#contact" data-dl="Résumé" data-req="Résumé">Résumé</a></li>
@@ -1083,26 +1169,40 @@
         <p class="wxp-attr">Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</p>
       </div>
     </div>
-    <button class="pill" id="modeBtn" type="button" aria-label="Quick read: the whole portfolio as one page"><span class="long">Quick read</span><span class="short">Read</span></button>
+    <button class="pill" id="modeBtn" type="button" aria-label="Recruiter mode: the whole portfolio as one clean page, without the 3D desk"><span class="long">Recruiter mode</span><span class="short">Recruiter</span></button>
   </div>
 </header>
 
 <nav class="dock" aria-label="Sections">
-  <a href="#about">About</a><a href="#timeline">Career</a><a href="#work">Projects</a><a href="#stack">Skills</a><a href="#contact">Contact</a>
+  <a href="#about">About</a><a href="#timeline">Career</a><a href="#work">Work</a><a href="#lab">Lab</a><a href="#stack">Skills</a><a href="#contact">Contact</a>
 </nav>
 
+<main id="main">
 <div class="intro" id="intro">
-  <p class="label amber">Senior Software Engineer · WebMD · Navi Mumbai</p>
-  <h1>Prathamesh Patil<i>.</i></h1>
+  <p class="label amber">Senior Full Stack Engineer · Backend · AI Integration</p>
+  <h1><span class="hl">Building products.</span> <span class="hl">Solving problems.</span> <span class="hl">Engineering what&rsquo;s&nbsp;next.</span></h1>
+  <p class="hero-lede">I&rsquo;m Prathamesh, a Senior Full Stack Engineer with 8+ years of experience building web applications, backend systems and AI-powered solutions.</p>
+  <div class="hero-cta" role="group" aria-label="Start here">
+    <a class="btn solid" href="#work">Explore my work</a>
+    <a class="btn js-cv" href="#contact" data-dl="View résumé" data-req="Request résumé">View résumé</a>
+    <a class="btn" href="#contact">Contact me</a>
+    <a class="btn js-linkedin" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a class="btn js-github" href="https://github.com/er-prathu" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <ul class="hero-proof" aria-label="Highlights">
+    <li>Nolo CMS, sole developer</li>
+    <li>AI lead qualification</li>
+    <li>Figma-to-HTML skill, team-wide</li>
+  </ul>
   <p class="label room-only" id="clock" style="margin-bottom:8px"></p>
   <div class="quick room-only" role="group" aria-label="Things on the desk">
     <button type="button" id="qTv"><span aria-hidden="true">▶</span> TV intro</button>
     <button type="button" id="qTerm"><span aria-hidden="true">&gt;_</span> Terminal</button>
     <button type="button" id="qGame"><span aria-hidden="true">◉</span> Play a game</button>
     <button type="button" id="qDeck"><span aria-hidden="true">◉</span> Now building</button>
-    <button type="button" id="qCv"><span aria-hidden="true">▤</span> Résumé</button>
+    <button type="button" id="qCv" hidden><span aria-hidden="true">▤</span> Résumé</button>
   </div>
-  <p class="hint"><span class="room-only" id="hintText">This is my desk. <b>Click anything on it</b>, drag to look around, scroll to zoom, double-click to move.</span><span class="text-only">Full-stack engineer shipping LLM features in production on the Nolo legal team at WebMD.</span></p>
+  <p class="hint room-only" id="hintText">This is my desk. <b>Click anything on it</b>, drag to look around, scroll to zoom, double-click to move.</p>
 </div>
 
 <div class="tip" id="tip" aria-hidden="true"></div>
@@ -1122,8 +1222,9 @@
   <button type="button" role="menuitem" data-i="0">About me</button>
   <button type="button" role="menuitem" data-i="1">Experience</button>
   <button type="button" role="menuitem" data-i="2">Projects</button>
-  <button type="button" role="menuitem" data-i="3">Skills</button>
-  <button type="button" role="menuitem" data-i="4">Contact</button>
+  <button type="button" role="menuitem" data-i="3">Engineering Lab</button>
+  <button type="button" role="menuitem" data-i="4">Skills</button>
+  <button type="button" role="menuitem" data-i="5">Contact</button>
   <p class="tvmenu-keys" aria-hidden="true">↑ ↓ choose · Enter open · Esc exit</p>
   <div class="tvmenu-ph"><button type="button" id="tmSound" aria-pressed="false">♪ Sound off</button><button type="button" id="tmExit">✕ Exit TV</button></div>
 </div>
@@ -1184,10 +1285,10 @@
     <span class="rc-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><b>PDF</b></span>
     <div><h2 id="rcardTitle">Résumé</h2><p id="rcardText">Experience, projects and skills on one page.</p><p class="rc-meta" id="rcardMeta"></p></div>
   </div>
-  <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request my résumé">Download résumé</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+  <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request my résumé">Download résumé</a><a class="btn js-linkedin" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a></div>
 </aside>
 
-<aside class="sheet" id="sheet" aria-label="Section" aria-hidden="true" inert>
+<section class="sheet" id="sheet" aria-label="Portfolio sections">
   <div class="sheet-head">
     <span class="label amber" id="chapter">01 — About</span>
     <div class="acts"><button type="button" id="closeBtn">Back to room</button></div>
@@ -1197,98 +1298,124 @@
     <section class="sec" id="about" data-section="about">
       <p class="label amber text-only">01 — About</p>
       <h2>Hi, I'm Prathamesh.</h2>
-      <p class="big">I build web applications and backend systems that hold up in production, and I bring <em>LLM features</em> into real products at WebMD.</p>
-      <p>Senior Software Engineer on WebMD's Nolo legal team, working across the stack. Nine years of PHP, Laravel and JavaScript across five companies. AI-assisted development is part of how I work every day: Claude Code, the Claude API and MCP.</p>
-      <p>Next: system design, RAG and vector databases, on the way to Tech Lead and Solution Architect roles.</p>
-      <div class="cta-row top"><a class="btn solid" href="#work">View projects</a><a class="btn js-cv" href="#contact" data-dl="Download résumé" data-req="Request résumé">Download résumé</a><a class="btn" href="#contact">Contact me</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a><a class="btn js-github" href="#" target="_blank" rel="noopener">GitHub ↗</a></div>
+      <p class="big">I'm a Senior Full Stack Engineer who owns products from the database to the browser, and brings <em>AI integration</em> into real systems.</p>
+      <p>8+ years of building web applications and backend systems in PHP, Laravel and JavaScript, across five companies. At WebMD I work on the Nolo legal product: full-stack delivery, an LLM-powered lead qualification engine, and the Nolo CMS, which I built as its sole developer. AI-assisted development (Claude Code, the Claude API and MCP) is part of how I work every day.</p>
+      <div class="cta-row top"><a class="btn solid" href="#work">Explore my work</a><a class="btn js-cv" href="#contact" data-dl="View résumé" data-req="Request résumé">View résumé</a><a class="btn" href="#contact">Contact me</a><a class="btn js-linkedin" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a><a class="btn js-github" href="https://github.com/er-prathu" target="_blank" rel="noopener">GitHub ↗</a></div>
       <div class="facts">
-        <div class="stat"><b>9+</b><span class="label">Years shipping,<br>since Aug 2017</span></div>
+        <div class="stat"><b>8+</b><span class="label">Years building<br>web software</span></div>
         <dl class="kv">
-          <div><dt>Role</dt><dd>Senior Software Engineer</dd></div>
-          <div><dt>Company</dt><dd>WebMD · Nolo legal team</dd></div>
+          <div><dt>Focus</dt><dd>Full stack · Backend engineering · AI integration</dd></div>
+          <div><dt>Current role</dt><dd>Senior Software Engineer, WebMD (Nolo legal team)</dd></div>
           <div><dt>Based in</dt><dd>Navi Mumbai, open to relocation</dd></div>
         </dl>
       </div>
-      <h3 class="sub">What I care about</h3>
+      <h3 class="sub">What I bring</h3>
       <ul class="chips">
-        <li>Backend engineering</li><li>Application architecture</li><li>Full-stack development</li><li>LLM integrations</li><li>AI-assisted development</li><li>MCP</li><li>Developer productivity</li>
+        <li>Full-stack application development</li><li>PHP and Laravel backend engineering</li><li>JavaScript frontend development</li><li>REST API development and integrations</li><li>MySQL database development</li><li>AI-powered application development</li><li>LLM integration and MCP</li><li>End-to-end project ownership</li><li>Production support and deployment</li>
       </ul>
+      <p class="learning">Learning now: system design, RAG and vector databases.</p>
     </section>
 
     <section class="sec" id="timeline" data-section="timeline" hidden>
       <p class="label amber text-only">02 — Experience</p>
       <h2>Experience.</h2>
       <div class="exp-sum">
-        <div><b>9+</b><span>years in software</span></div>
+        <div><b>8+</b><span>years in software</span></div>
         <div><b>5</b><span>companies</span></div>
         <div><b>2017</b><span>first role</span></div>
       </div>
       <p>From web developer to senior engineer: PHP and JavaScript web applications first, then full-stack ownership, and now LLM features in production at WebMD.</p>
-      <h3 class="sub">What I bring</h3>
-      <ul class="chips">
-        <li>Backend development</li><li>Full-stack engineering</li><li>Application architecture</li><li>API development</li><li>AI and LLM integrations</li><li>Developer productivity</li>
-      </ul>
       <h3 class="sub">Career</h3>
+      <div class="ribbon" id="ribbon"></div>
       <ol class="tl">
-        <li class="current"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span>
+        <li class="current" data-from="2024-08" data-to="now" data-tone="#d9772a"><time>Aug 2024 — Now</time><h3>Senior Software Engineer</h3><span class="co">WebMD · Nolo legal team</span>
           <ul class="tl-pts"><li>Full-stack work on the Nolo legal product.</li><li>Works on LLM features in production, such as the AI lead qualification engine.</li><li>Built the Figma-to-HTML skill used across the IB team.</li><li>Sole developer of the Nolo CMS.</li></ul></li>
-        <li><time>Sep 2021 — Aug 2024</time><h3>Software Engineer</h3><span class="co">The Information Company</span></li>
-        <li><time>Jan 2020 — Sep 2021</time><h3>PHP Developer</h3><span class="co">Neolite Infotech</span></li>
-        <li><time>Jun 2018 — Aug 2019</time><h3>Associate Developer</h3><span class="co">Centillion Solutions and Services</span></li>
-        <li><time>Aug 2017 — Jun 2018</time><h3>Web Developer</h3><span class="co">Techfryday</span></li>
+        <li data-from="2021-09" data-to="2024-08" data-tone="#22808a"><time>Sep 2021 — Aug 2024</time><h3>Software Engineer</h3><span class="co">The Information Company</span></li>
+        <li data-from="2020-01" data-to="2021-09" data-tone="#a8402c"><time>Jan 2020 — Sep 2021</time><h3>PHP Developer</h3><span class="co">Neolite Infotech</span></li>
+        <li data-from="2018-06" data-to="2019-08" data-tone="#2f53a0"><time>Jun 2018 — Aug 2019</time><h3>Associate Developer</h3><span class="co">Centillion Solutions and Services</span></li>
+        <li data-from="2017-08" data-to="2018-06" data-tone="#6f6b2e"><time>Aug 2017 — Jun 2018</time><h3>Web Developer</h3><span class="co">Techfryday</span></li>
       </ol>
-      <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request résumé">Download résumé</a><a class="btn js-linkedin" href="#" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+      <div class="cta-row"><a class="btn solid js-cv" href="#contact" data-dl="Download résumé" data-req="Request résumé">Download résumé</a><a class="btn js-linkedin" href="https://www.linkedin.com/in/prathu123" target="_blank" rel="noopener">LinkedIn ↗</a></div>
     </section>
 
     <section class="sec" id="work" data-section="work" hidden>
       <p class="label amber text-only">03 — Projects</p>
-      <h2>Projects.</h2>
+      <h2>Featured projects.</h2>
       <p class="cases-intro">Three projects from WebMD and one you can inspect line by line. WebMD work is confidential: those case studies show only what can be shared publicly, and anything withheld is marked <span class="np">Not public</span>.</p>
       <button type="button" class="case-back" id="caseBack" hidden>← All projects</button>
       <ul class="cases" id="cases">
         <li class="case" data-case="0">
           <button type="button" class="case-open" aria-expanded="false" aria-controls="case0">
             <span class="row"><span class="label amber">PP—01</span><span class="badge">Confidential · WebMD</span></span>
-            <span class="case-h">AI lead qualification engine</span>
-            <span class="lede">An LLM asks users follow-up questions, tells strong leads from weak ones and scores them, so Nolo gets better-qualified leads.</span>
-            <span class="tags">LLM in production · Lead scoring</span>
+            <span class="case-h">Nolo CMS</span>
+            <span class="lede">Sole full-stack developer of a content management system for the Nolo legal product, built with Claude Code-assisted development.</span>
+            <span class="tags">Full-stack · Sole developer · Claude Code</span>
             <span class="more" aria-hidden="true">Read case study →</span>
           </button>
-          <div class="case-body" id="case0" role="region" aria-label="AI lead qualification engine, case study">
-            <h3 class="cs-h" tabindex="-1">AI lead qualification engine</h3>
-            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Status</dt><dd>In production</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
-            <section class="doc"><h4><span>A</span>Overview</h4><p>An LLM-driven step that qualifies leads for Nolo, WebMD's legal product, by talking to the user instead of relying on a fixed form.</p></section>
-            <section class="doc"><h4><span>B</span>Problem</h4><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></section>
-            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
-            <section class="doc"><h4><span>D</span>Architecture</h4>
+          <div class="case-body" id="case0" role="region" aria-label="Nolo CMS, case study">
+            <h3 class="cs-h" tabindex="-1">Nolo CMS</h3>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Sole full-stack developer</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>A content management system for the Nolo legal product, built end to end by one engineer: the frontend and the backend, developed with Claude Code assisting.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>The Nolo legal product needed its own content management system.</p></section>
+            <section class="doc"><h4><span>C</span>Architecture</h4><p>The internal architecture is confidential and <span class="np">Not public</span>. What can be shared is how the work was organised:</p>
               <figure class="arch"><ol>
-                <li><b>User</b><span>starts a request</span></li>
-                <li><b>LLM conversation</b><span>asks follow-up questions</span></li>
-                <li><b>Classification</b><span>strong or weak lead</span></li>
-                <li><b>Lead score</b><span>from the answers</span></li>
-                <li class="end"><b>Nolo</b><span>receives better-qualified leads</span></li>
-              </ol><figcaption>Flow at the level described publicly; internal services are not shown.</figcaption></figure></section>
-            <section class="doc"><h4><span>E</span>Implementation</h4><p>Runs in production at WebMD. The model drives the follow-up questions, and the answers become a classification and a score. Prompting, models and integration details are <span class="np">Not public</span>.</p></section>
-            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>LLM integration</li><li>Production web stack at WebMD</li></ul></section>
-            <section class="doc"><h4><span>G</span>My contribution</h4><p>Part of my work on the Nolo team at WebMD. Specifics are <span class="np">Not public</span>.</p></section>
-            <section class="doc"><h4><span>H</span>Results and impact</h4><p class="np">Not public</p></section>
+                <li><b>One engineer</b><span>responsible for the whole stack</span></li>
+                <li><b>Frontend and backend</b><span>both implemented by me</span></li>
+                <li><b>Claude Code</b><span>assisted the development</span></li>
+                <li class="end"><b>Nolo CMS</b><span>the finished system</span></li>
+              </ol><figcaption>Development approach, not the system's internal design.</figcaption></figure></section>
+            <section class="doc"><h4><span>D</span>Technologies</h4><ul class="chips sm"><li>Full-stack development</li><li>Claude Code</li></ul><p class="np">The rest of the stack is Not public</p></section>
+            <section class="doc"><h4><span>E</span>Engineering decisions</h4><ul class="pts"><li>Ownership: one engineer is responsible for the whole stack, frontend and backend.</li><li>Tooling: development was assisted by Claude Code.</li><li>Other design decisions: <span class="np">Not public</span></li></ul></section>
+            <section class="doc"><h4><span>F</span>Implementation</h4><p>I implemented both the frontend and the backend, using Claude Code to assist development. Details are <span class="np">Not public</span>.</p></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>Sole developer, responsible for the whole stack: frontend and backend implementation.</p></section>
+            <section class="doc"><h4><span>H</span>Challenges</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>I</span>Results</h4><p class="np">Not public</p></section>
           </div>
         </li>
         <li class="case" data-case="1">
           <button type="button" class="case-open" aria-expanded="false" aria-controls="case1">
             <span class="row"><span class="label amber">PP—02</span><span class="badge">Confidential · WebMD</span></span>
-            <span class="case-h">Figma-to-HTML skill</span>
-            <span class="lede">Integrated the Figma MCP with Claude Code and Cline, then built a skill that turns Figma designs into HTML. Used across the entire IB team.</span>
-            <span class="tags">MCP · Claude Code · Developer productivity</span>
+            <span class="case-h">AI lead qualification engine</span>
+            <span class="lede">An LLM asks dynamic follow-up questions, tells strong leads from weak ones and scores them in real time, integrated with Nolo LMS.</span>
+            <span class="tags">LLM in production · Lead scoring · Nolo LMS</span>
             <span class="more" aria-hidden="true">Read case study →</span>
           </button>
-          <div class="case-body" id="case1" role="region" aria-label="Figma-to-HTML skill, case study">
-            <h3 class="cs-h" tabindex="-1">Figma-to-HTML skill</h3>
-            <dl class="cs-meta"><div><dt>Team</dt><dd>IB team, WebMD</dd></div><div><dt>Status</dt><dd>In use</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
-            <section class="doc"><h4><span>A</span>Overview</h4><p>A coding-agent skill that converts a Figma design into HTML, built on the Model Context Protocol so the agent reads the design directly.</p></section>
+          <div class="case-body" id="case1" role="region" aria-label="AI lead qualification engine, case study">
+            <h3 class="cs-h" tabindex="-1">AI lead qualification engine</h3>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Status</dt><dd>In production</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>An LLM-driven step that qualifies leads for Nolo, WebMD's legal product. It talks to the user and asks dynamic follow-up questions instead of relying on a fixed form, then scores the lead in real time and passes it on through the Nolo LMS integration.</p></section>
+            <section class="doc"><h4><span>B</span>Problem</h4><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></section>
+            <section class="doc"><h4><span>C</span>Architecture</h4>
+              <figure class="arch"><ol>
+                <li><b>User</b><span>starts a request</span></li>
+                <li><b>LLM conversation</b><span>asks dynamic follow-up questions</span></li>
+                <li><b>Classification</b><span>strong or weak lead</span></li>
+                <li><b>Lead score</b><span>calculated in real time</span></li>
+                <li class="end"><b>Nolo LMS</b><span>integration receives the qualified lead</span></li>
+              </ol><figcaption>Flow at the level described publicly; internal services are not shown.</figcaption></figure></section>
+            <section class="doc"><h4><span>D</span>Technologies</h4><ul class="chips sm"><li>LLM integration</li><li>Nolo LMS integration</li><li>Production web stack at WebMD</li></ul></section>
+            <section class="doc"><h4><span>E</span>Engineering decisions</h4><ul class="pts"><li>The model drives the questioning, so the next question depends on the previous answers, rather than every user seeing the same form.</li><li>The answers become a classification (strong or weak lead) and a score.</li><li>Scoring happens in real time, and the engine plugs into Nolo LMS.</li><li>Prompts, models and thresholds: <span class="np">Not public</span></li></ul></section>
+            <section class="doc"><h4><span>F</span>Implementation</h4><p>Runs in production at WebMD. The model drives the follow-up questions, the answers become a classification and a score, and the result goes to Nolo LMS. Prompting, models and integration details are <span class="np">Not public</span>.</p></section>
+            <section class="doc"><h4><span>G</span>My contribution</h4><p>I designed and built the engine and its integration with Nolo LMS, as part of my work on the Nolo team at WebMD.</p></section>
+            <section class="doc"><h4><span>H</span>Challenges</h4><p class="np">Not public</p></section>
+            <section class="doc result"><h4><span>I</span>Results</h4><p>Better-qualified leads reach Nolo. No figures are published.</p></section>
+            <section class="doc demo"><h4><span>▶</span>Try a sample workflow</h4><p>The Engineering Lab has a sample qualification workflow you can run yourself. It is a <b>simulation on sample data</b>, not the production system and not WebMD's prompts or models.</p><p><button type="button" class="btn solid js-lab" data-lab="ai">Open the sample workflow</button></p></section>
+          </div>
+        </li>
+        <li class="case" data-case="2">
+          <button type="button" class="case-open" aria-expanded="false" aria-controls="case2">
+            <span class="row"><span class="label amber">PP—03</span><span class="badge">Confidential · WebMD</span></span>
+            <span class="case-h">Figma-to-HTML engineering skill</span>
+            <span class="lede">A reusable design-to-code workflow: the Figma MCP integrated with Claude Code and Cline, adopted team-wide across IB engineering.</span>
+            <span class="tags">Figma MCP · Claude Code · Cline · Team-wide</span>
+            <span class="more" aria-hidden="true">Read case study →</span>
+          </button>
+          <div class="case-body" id="case2" role="region" aria-label="Figma-to-HTML engineering skill, case study">
+            <h3 class="cs-h" tabindex="-1">Figma-to-HTML engineering skill</h3>
+            <dl class="cs-meta"><div><dt>Team</dt><dd>IB engineering, WebMD</dd></div><div><dt>Status</dt><dd>In use</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>A coding-agent skill that converts a Figma design into HTML. It is built on the Model Context Protocol, so the agent reads the design directly, and it works in both Claude Code and Cline as a reusable design-to-code workflow.</p></section>
             <section class="doc"><h4><span>B</span>Problem</h4><p>Turning Figma designs into HTML by hand is slow, repetitive work.</p></section>
-            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
-            <section class="doc"><h4><span>D</span>Architecture</h4>
+            <section class="doc"><h4><span>C</span>Architecture</h4>
               <figure class="arch"><ol>
                 <li><b>Figma design</b><span>the source of truth</span></li>
                 <li><b>Figma MCP server</b><span>exposes the design to the agent</span></li>
@@ -1296,31 +1423,12 @@
                 <li><b>Figma-to-HTML skill</b><span>tells the agent how to convert it</span></li>
                 <li class="end"><b>HTML</b><span>ready for the team</span></li>
               </ol><figcaption>How the pieces connect.</figcaption></figure></section>
-            <section class="doc"><h4><span>E</span>Implementation</h4><p>Connected the Figma MCP server to both Claude Code and Cline, then wrote a skill the agent uses to turn a design into HTML.</p></section>
-            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></section>
+            <section class="doc"><h4><span>D</span>Technologies</h4><ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></section>
+            <section class="doc"><h4><span>E</span>Engineering decisions</h4><ul class="pts"><li>Build on MCP, so the agent reads the Figma design directly.</li><li>Package the conversion as a skill, so it is a reusable design-to-code workflow.</li><li>Support both Claude Code and Cline.</li></ul></section>
+            <section class="doc"><h4><span>F</span>Implementation</h4><p>Connected the Figma MCP server to both Claude Code and Cline, then wrote a skill the agent uses to turn a design into HTML.</p></section>
             <section class="doc"><h4><span>G</span>My contribution</h4><p>Integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></section>
-            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Used across the entire IB team.</p></section>
-          </div>
-        </li>
-        <li class="case" data-case="2">
-          <button type="button" class="case-open" aria-expanded="false" aria-controls="case2">
-            <span class="row"><span class="label amber">PP—03</span><span class="badge">Confidential · WebMD</span></span>
-            <span class="case-h">Nolo CMS</span>
-            <span class="lede">The only developer on a full-stack CMS for the Nolo legal product, built with AI-assisted tooling.</span>
-            <span class="tags">Full-stack · Sole developer · AI-assisted development</span>
-            <span class="more" aria-hidden="true">Read case study →</span>
-          </button>
-          <div class="case-body" id="case2" role="region" aria-label="Nolo CMS, case study">
-            <h3 class="cs-h" tabindex="-1">Nolo CMS</h3>
-            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Sole developer</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
-            <section class="doc"><h4><span>A</span>Overview</h4><p>A content management system for the Nolo legal product, built end to end by one engineer.</p></section>
-            <section class="doc"><h4><span>B</span>Problem</h4><p>The Nolo legal product needed its own content management system.</p></section>
-            <section class="doc"><h4><span>C</span>Technical challenges</h4><p class="np">Not public</p></section>
-            <section class="doc"><h4><span>D</span>Architecture</h4><p class="np">Not public</p></section>
-            <section class="doc"><h4><span>E</span>Implementation</h4><p>Built with AI-assisted development tools.</p></section>
-            <section class="doc"><h4><span>F</span>Technology stack</h4><p class="np">Not public</p></section>
-            <section class="doc"><h4><span>G</span>My contribution</h4><p>Sole developer, responsible for the whole stack.</p></section>
-            <section class="doc"><h4><span>H</span>Results and impact</h4><p class="np">Not public</p></section>
+            <section class="doc"><h4><span>H</span>Challenges</h4><p class="np">Not public</p></section>
+            <section class="doc result"><h4><span>I</span>Results</h4><p>Adopted team-wide across IB engineering. No time-saving figures are published.</p></section>
           </div>
         </li>
         <li class="case" data-case="3">
@@ -1334,23 +1442,29 @@
           <div class="case-body" id="case3" role="region" aria-label="Prathamesh's Desk, case study">
             <h3 class="cs-h" tabindex="-1">Prathamesh's Desk</h3>
             <dl class="cs-meta"><div><dt>Role</dt><dd>Design and build</dd></div><div><dt>Status</dt><dd>Live</dd></div><div><dt>Source</dt><dd>Public on GitHub</dd></div></dl>
-            <section class="doc"><h4><span>A</span>Overview</h4><p>The portfolio is a room: every object on the desk opens part of it, and a plain text version is always one click away.</p></section>
+            <section class="doc"><h4><span>A</span>Overview</h4><p>The portfolio is a room: every object on the desk opens part of it, and a plain-text Recruiter Mode is always one click away.</p></section>
             <section class="doc"><h4><span>B</span>Problem</h4><p>A portfolio people remember, that is still fast, accessible and quick for a recruiter to scan.</p></section>
-            <section class="doc"><h4><span>C</span>Technical challenges</h4><ul class="pts">
-              <li>A believable CRT (curvature, scanlines, static, VHS tracking, power-on beam) without full-screen post-processing, so phones keep up.</li>
-              <li>Live weather in the window with no API keys in the browser and no fake readings: every state (denied location, offline, cached) is labelled.</li>
-              <li>A contact form that never claims success unless the email provider accepted the message.</li>
-              <li>One codebase for desktop, tablet and phone, keyboard and screen readers included.</li></ul></section>
-            <section class="doc"><h4><span>D</span>Architecture</h4>
+            <section class="doc"><h4><span>C</span>Architecture</h4>
               <figure class="arch"><ol>
                 <li><b>Browser</b><span>three.js scene · one GLSL pass for the CRT · Web Audio · weather fetched straight from Open-Meteo (no key)</span></li>
                 <li><b>Cloudflare Worker</b><span>static files · <code>/api/geo</code>: approximate city from Cloudflare's request data · <code>/api/contact</code>: validation, rate limit, honeypot</span></li>
                 <li class="end"><b>Resend</b><span>delivers contact messages; the key lives only in the Worker</span></li>
               </ol><figcaption>Deployed from GitHub to Cloudflare on every push.</figcaption></figure></section>
-            <section class="doc"><h4><span>E</span>Implementation</h4><p>No framework and no bundler: the page is plain HTML and JavaScript, with three.js and GSAP from a CDN. The TV picture is a single shader on the screen mesh; sound is synthesized in the browser and off until asked for. The Worker validates and rate-limits contact messages, uses a honeypot, and reports success only on the provider's confirmation. A weather reading is reused for 15 minutes, so reloading the page doesn't call the API again.</p></section>
-            <section class="doc"><h4><span>F</span>Technology stack</h4><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Open-Meteo</li><li>Node test runner</li></ul></section>
+            <section class="doc"><h4><span>D</span>Technologies</h4><ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Open-Meteo</li><li>Node test runner</li></ul></section>
+            <section class="doc"><h4><span>E</span>Engineering decisions</h4><ul class="pts">
+              <li>No framework and no bundler: plain HTML and JavaScript, so there is nothing to build before it runs.</li>
+              <li>The CRT is one shader on the screen mesh, not a full-screen post-processing pass, so phones keep up.</li>
+              <li>Weather comes straight from a keyless API with no secrets in the browser, and every state (denied location, offline, cached) is labelled.</li>
+              <li>The contact form reports success only when the email provider accepted the message.</li>
+              <li>The 3D scene is optional: Recruiter Mode loads without the 3D libraries at all.</li></ul></section>
+            <section class="doc"><h4><span>F</span>Implementation</h4><p>The page is plain HTML and JavaScript, with three.js and GSAP from a CDN. The TV picture is a single shader on the screen mesh; sound is synthesized in the browser and off until asked for. The Worker validates and rate-limits contact messages, uses a honeypot, and reports success only on the provider's confirmation. A weather reading is reused for 15 minutes, so reloading the page doesn't call the API again.</p></section>
             <section class="doc"><h4><span>G</span>My contribution</h4><p>Designed and built it, with AI-assisted development (Claude Code).</p></section>
-            <section class="doc result"><h4><span>H</span>Results and impact</h4><p>Live, with its source public on GitHub and automated tests for the contact endpoint and the Worker.</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></section>
+            <section class="doc"><h4><span>H</span>Challenges</h4><ul class="pts">
+              <li>A believable CRT (curvature, scanlines, static, VHS tracking, power-on beam) that still runs on phones.</li>
+              <li>Mobile GPUs: the resolution adapts to measured frame times, weak devices get a lighter scene, and if WebGL fails the page falls back to the text version instead of a blank screen.</li>
+              <li>Live weather with no keys in the browser and no fake readings.</li>
+              <li>One codebase for desktop, tablet and phone, keyboard and screen readers included.</li></ul></section>
+            <section class="doc result"><h4><span>I</span>Results</h4><p>Live, with its source public on GitHub and automated tests for the contact endpoint and the Worker.</p><p><a class="ln" href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">Source on GitHub ↗</a></p></section>
           </div>
         </li>
         <li class="case bench">
@@ -1366,20 +1480,33 @@
       </div>
     </section>
 
-    <section class="sec" id="stack" data-section="stack" hidden>
-      <p class="label amber text-only">04 — Skills</p>
+    <section class="sec" id="lab" data-section="lab" hidden>
+      <p class="label amber text-only">04 — Engineering Lab</p>
       <p class="lab-eye">Engineering lab</p>
-      <h2>Explore my skills.</h2>
-      <p>Five workstations. Switch one on to see what I work with, the projects behind it and a demo you can try. The demos run in your browser on sample data and say so.</p>
-      <!-- lab.js replaces this list with the five workstations; without it the skills still read as a list -->
-      <div class="lab" id="lab">
+      <h2>Try the engineering.</h2>
+      <p>Five workstations with practical demos: a Laravel-style API, a JavaScript front end, MySQL queries, an AI workflow and a system map. They run in your browser on sample data. Each one says whether it is a simulation or the real thing, and none of them is a production system.</p>
+      <!-- lab.js replaces this list with the workstations; without it the skills still read as a list -->
+      <div class="lab" id="labHost">
         <div class="stack">
           <div><h3 class="sub"><span class="label teal">Back end</span></h3><ul class="chips"><li>PHP</li><li>Laravel</li><li>CodeIgniter</li><li>Node.js</li><li>REST APIs</li></ul></div>
           <div><h3 class="sub"><span class="label amber">Front end</span></h3><ul class="chips"><li>JavaScript</li><li>jQuery</li><li>HTML</li><li>CSS</li></ul></div>
           <div><h3 class="sub"><span class="label teal">Data and search</span></h3><ul class="chips"><li>MySQL</li><li>Elasticsearch</li><li>Data modelling</li></ul></div>
-          <div><h3 class="sub"><span class="label amber">AI-assisted development</span></h3><ul class="chips"><li>LLM integrations</li><li>MCP</li><li>Claude Code</li><li>Claude API</li><li>Figma MCP</li><li>Cline</li></ul></div>
+          <div><h3 class="sub"><span class="label amber">AI integration</span></h3><ul class="chips"><li>LLM integrations</li><li>MCP</li><li>Claude Code</li><li>Claude API</li></ul></div>
           <div><h3 class="sub"><span class="label teal">Architecture</span></h3><ul class="chips"><li>API architecture</li><li>Application design</li></ul></div>
         </div>
+      </div>
+    </section>
+
+    <section class="sec" id="stack" data-section="stack" hidden>
+      <p class="label amber text-only">05 — Skills</p>
+      <h2>Technical skills.</h2>
+      <p>What I work with, grouped by where it sits in the stack.</p>
+      <div class="stack">
+        <div><h3 class="sub"><span class="label teal">Back end</span></h3><ul class="chips"><li>PHP</li><li>Laravel</li><li>CodeIgniter</li><li>Node.js</li><li>REST APIs</li><li>API integrations</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">Front end</span></h3><ul class="chips"><li>JavaScript</li><li>jQuery</li><li>HTML</li><li>CSS</li></ul></div>
+        <div><h3 class="sub"><span class="label teal">Data and search</span></h3><ul class="chips"><li>MySQL</li><li>Elasticsearch</li><li>Data modelling</li></ul></div>
+        <div><h3 class="sub"><span class="label amber">AI integration</span></h3><ul class="chips"><li>LLM integrations</li><li>MCP</li><li>Claude Code</li><li>Claude API</li><li>Figma MCP</li><li>Cline</li></ul></div>
+        <div><h3 class="sub"><span class="label teal">Engineering practice</span></h3><ul class="chips"><li>Application architecture</li><li>End-to-end ownership</li><li>Production support</li><li>Deployment</li></ul></div>
       </div>
       <div class="stack">
         <div><h3 class="sub"><span class="label teal">Learning now</span></h3><ul class="chips"><li>System design</li><li>RAG</li><li>Vector databases</li></ul></div>
@@ -1388,10 +1515,11 @@
     </section>
 
     <section class="sec" id="contact" data-section="contact" hidden>
-      <p class="label amber text-only">05 — Contact</p>
+      <p class="label amber text-only">06 — Contact</p>
       <h2>Let’s build something great.</h2>
-      <p>Open to Tech Lead, Solution Architect and AI-focused engineering roles. Based in Navi Mumbai, happy to relocate. Tell me about the role or the project and I’ll get back to you.</p>
+      <p>Open to Senior Full Stack Engineer roles in India and internationally. Based in Navi Mumbai, happy to relocate. Tell me about the role or the project and I’ll get back to you.</p>
 
+      <noscript><p class="np">The form needs JavaScript. You can email me directly at <a href="mailto:prathpatil3@gmail.com">prathpatil3@gmail.com</a>.</p></noscript>
       <form class="cf" id="contactForm" novalidate aria-describedby="cfNote">
         <div class="row2">
           <div class="field">
@@ -1446,28 +1574,26 @@
     <button type="button" id="prevBtn">← Prev</button>
     <button type="button" id="nextBtn">Next →</button>
   </div>
-</aside>
+</section>
+</main>
 
 <div class="loader" id="loader">
   <p class="msg">Switching on the lamp</p>
-  <div class="card" aria-hidden="true"><span class="label amber">A desk in Navi Mumbai</span><h2>Prathamesh Patil</h2></div>
+  <div class="card" aria-hidden="true"><span class="label amber">Senior Full Stack Engineer · Navi Mumbai</span><h2>Prathamesh Patil</h2></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="weather.config.js"></script>
 <script src="tv.config.js"></script>
 <script src="festival.config.js"></script>
 <script src="festival.dates.js"></script>
 <script src="site.config.js"></script>
 <script>
-(() => {
+(async () => {
   const root = document.documentElement, body = document.body;
   const forceMotion = /[?&]motion\b/.test(location.search) || location.hash === '#motion';
   const reduce = !forceMotion && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ORDER = ['about', 'timeline', 'work', 'stack', 'contact'];   // the TV menu's order: About me · Experience · Projects · Tech stack · Contact
-  const NAMES = { about: 'About', work: 'Projects', stack: 'Skills', timeline: 'Experience', contact: 'Contact' };
+  const ORDER = ['about', 'timeline', 'work', 'lab', 'stack', 'contact'];   // the TV menu's order: About me · Experience · Projects · Engineering Lab · Skills · Contact
+  const NAMES = { about: 'About', work: 'Projects', lab: 'Engineering Lab', stack: 'Skills', timeline: 'Experience', contact: 'Contact' };
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 
   /* festivals: which theme (if any) the desk wears today, by the date in India (dates in festival.config.js) */
@@ -1522,6 +1648,7 @@
 
   /* ================= UI: sheet, nav, text mode ================= */
   const sheet = $('#sheet'), sheetBody = $('#sheetBody'), chapter = $('#chapter');
+  if (!root.classList.contains('text-mode')) { sheet.inert = true; sheet.setAttribute('aria-hidden', 'true'); }
   let current = null, room = null;
 
   function markNav(sec) {
@@ -1566,21 +1693,26 @@
 
   function setTextMode(on) {
     root.classList.toggle('text-mode', on);
-    $('#modeBtn').innerHTML = on ? '3D desk' : '<span class="long">Quick read</span><span class="short">Read</span>';
-    $('#modeBtn').setAttribute('aria-label', on ? 'Back to the 3D desk' : 'Quick read: the whole portfolio as one page');
+    $('#modeBtn').innerHTML = on ? '3D desk' : '<span class="long">Recruiter mode</span><span class="short">Recruiter</span>';
+    $('#modeBtn').setAttribute('aria-label', on ? 'Back to the 3D desk' : 'Recruiter mode: the whole portfolio as one clean page, without the 3D desk');
     if (on) { hideSheet(); $$('.sec').forEach(s => { s.hidden = false; }); sheet.setAttribute('aria-hidden', 'false'); sheet.inert = false; loadRepos(); }
     if (room) room.setPaused(on);
     if (!on) fromHash();
   }
   $('#modeBtn').addEventListener('click', () => {
     const on = !root.classList.contains('text-mode');
-    if (!on && !room) return; // no WebGL: stay in text
+    if (!on && !room) {   // a text view that never loaded the 3D libraries: reload into the 3D desk
+      if (window.__textOnly) { try { localStorage.setItem('desk-mode', '3d'); } catch (e) {} location.href = location.pathname.replace(/^\/recruiter\/?$/, '/') + location.search; }
+      return;   // no WebGL: stay in text
+    }
     setTextMode(on);
     try { localStorage.setItem('desk-mode', on ? 'text' : '3d'); } catch (e) {}
   });
 
-  if (matchMedia('(pointer: coarse)').matches) $('#hintText').innerHTML = 'This is my desk. <b>Tap anything on it</b>, drag to look around, pinch to zoom, double-tap to move.';
+  if (matchMedia('(pointer: coarse)').matches) $('#hintText').innerHTML = '<b>Tap any object</b> on the desk, drag to look around.';
   const loader = $('#loader');
+  if (/^\/recruiter\/?$/.test(location.pathname)) document.title = 'Prathamesh Patil · Recruiter overview · Senior Full Stack Engineer';
+  function quietText() { loader.classList.add('gone'); setTextMode(true); body.classList.add('ready'); }
   function fallback() {
     loader.classList.add('gone');
     setTextMode(true);
@@ -1604,6 +1736,34 @@
   $('#caseBack').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase(-1); if (i >= 0) cases[i].querySelector('.case-open').focus({ preventScroll: true }); });
   $('#caseNext').addEventListener('click', () => { const i = cases.findIndex(c => c.classList.contains('open')); openCase((i + 1) % cases.length); });
   // what the Engineering lab (lab.js) may use: open a case study, and the desk's blip (silent unless sound is on)
+  /* career ribbon: the roles drawn to scale from the dates in the list below; the gap between jobs shows as a gap */
+  (function ribbon() {
+    const host = $('#ribbon'), items = $$('#timeline .tl > li'); if (!host || !items.length) return;
+    const ym = v => { const [y, m] = v.split('-').map(Number); return y * 12 + (m - 1); };
+    const now = new Date(), nowM = now.getFullYear() * 12 + now.getMonth();
+    const spans = items.map(li => ({ li, a: ym(li.dataset.from), b: li.dataset.to === 'now' ? nowM : ym(li.dataset.to) }));
+    const t0 = Math.min(...spans.map(x => x.a)), t1 = Math.max(...spans.map(x => x.b)), span = t1 - t0;
+    const dur = m => { const y = Math.floor(m / 12), mo = m % 12; return [y ? y + ' yr' + (y > 1 ? 's' : '') : '', mo ? mo + ' mo' : ''].filter(Boolean).join(' ') || '1 mo'; };
+    const bar = document.createElement('div'); bar.className = 'rb-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Career ribbon: the five roles drawn to scale. Select one to highlight it in the list.');
+    const info = document.createElement('p'); info.className = 'rb-info'; info.setAttribute('aria-live', 'polite');
+    const segs = spans.map(({ li, a, b }) => {
+      const role = li.querySelector('h3').textContent, co = li.querySelector('.co').textContent, when = li.querySelector('time').textContent;
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'rb-seg';
+      btn.style.left = ((a - t0) / span * 100) + '%'; btn.style.width = (Math.max(b - a, 1) / span * 100) + '%'; btn.style.background = li.dataset.tone || 'var(--amber)';
+      btn.setAttribute('aria-label', role + ', ' + co + ', ' + when + ', ' + dur(b - a));
+      const show = () => { info.innerHTML = ''; const t = document.createElement('span'); t.textContent = role + ' · ' + co; const sm = document.createElement('small'); sm.textContent = when + ' · ' + dur(b - a) + (li.dataset.to === 'now' ? ' so far' : ''); info.append(t, sm); segs.forEach(x => x.btn.classList.toggle('on', x.btn === btn)); items.forEach(x => x.classList.toggle('sel', x === li)); };
+      btn.addEventListener('click', () => { show(); li.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); });
+      btn.addEventListener('pointerenter', show); btn.addEventListener('focus', show);
+      bar.appendChild(btn); return { btn, show };
+    });
+    const axis = document.createElement('div'); axis.className = 'rb-axis'; axis.setAttribute('aria-hidden', 'true');
+    for (let y = Math.ceil(t0 / 12); y * 12 <= t1; y++) if (y % 2 === 0) { const sp = document.createElement('span'); sp.style.left = ((y * 12 - t0) / span * 100) + '%'; sp.textContent = String(y); axis.appendChild(sp); }
+    host.append(bar, axis, info); segs[0].show();
+  })();
+
+  /* case-study buttons that open a lab workstation */
+  $$('.js-lab').forEach(b => b.addEventListener('click', () => { setHash('lab'); setTimeout(() => { const L = window.__lab; const i = L ? L.find(b.dataset.lab) : -1; if (i >= 0) L.open(i); }, 140); }));
+
   window.DESK_LAB = {
     openCase(i) {
       if (!cases[i]) return;
@@ -1664,21 +1824,21 @@
       '  projects     what I have built',
       '  contact      how to reach me',
       '  resume       my résumé (PDF)',
-      '  open <name>  open a section beside the desk (about, experience, projects, stack, contact)',
+      '  open <name>  open a section beside the desk (about, experience, projects, lab, skills, contact)',
       '  clear        clear the screen',
       ['dim', 'Tip: ↑ and ↓ go through your previous commands.'],
     ],
     about: () => [
-      'Senior Software Engineer with 9+ years of experience building web applications,',
-      'backend systems and modern development solutions.',
+      'Senior Full Stack Engineer with 8+ years of experience building web applications,',
+      'backend systems and AI-powered solutions.',
       '',
-      'Right now: full-stack on the Nolo legal team at WebMD, shipping LLM features in',
-      'production with Claude Code, the Claude API and MCP.',
-      'Next: system design, RAG and vector databases, on the way to Tech Lead and',
-      'Solution Architect roles.',
+      'Right now: full-stack on the Nolo legal team at WebMD: the Nolo CMS, an LLM lead',
+      'qualification engine in production, and AI-assisted development with Claude Code,',
+      'the Claude API and MCP.',
+      'Learning: system design, RAG and vector databases.',
     ],
     skills: () => [
-      ['hd', 'Back end   '], '  PHP · Laravel · CodeIgniter · Node.js · MySQL · Elasticsearch · API development',
+      ['hd', 'Back end   '], '  PHP · Laravel · CodeIgniter · Node.js · REST APIs · MySQL · Elasticsearch',
       ['hd', 'Front end  '], '  JavaScript · jQuery · HTML · CSS',
       ['hd', 'AI tooling '], '  Claude Code · Claude API · MCP · Figma MCP · Cline',
       ['hd', 'Learning   '], '  System design · RAG · vector databases',
@@ -1691,9 +1851,9 @@
       'Aug 2017 – Jun 2018  Web Developer · Techfryday',
     ],
     projects: () => [
-      ['hd', 'PP-01  AI lead qualification engine'], '       An LLM asks follow-up questions, then scores the lead. (WebMD, internal)',
-      ['hd', 'PP-02  Figma-to-HTML skill'], '       Figma MCP + Claude Code/Cline skill; used across the entire IB team. (WebMD, internal)',
-      ['hd', 'PP-03  Nolo CMS'], '       Sole developer on a full-stack CMS for the Nolo legal product. (WebMD, internal)',
+      ['hd', 'PP-01  Nolo CMS'], '       Sole full-stack developer of a CMS for the Nolo legal product, built with Claude Code. (WebMD, internal)',
+      ['hd', 'PP-02  AI lead qualification engine'], '       An LLM asks dynamic follow-up questions and scores leads in real time; Nolo LMS integration. (WebMD, internal)',
+      ['hd', 'PP-03  Figma-to-HTML skill'], '       Figma MCP + Claude Code/Cline skill; used team-wide across IB engineering. (WebMD, internal)',
       ['hd', 'PP-04  Prathamesh\'s Desk (this site)'], ['html', '       three.js · GLSL · Cloudflare Workers · <a href="https://github.com/er-prathu/portfolio" target="_blank" rel="noopener">github.com/er-prathu/portfolio</a>'],
       ['dim', 'Run "open projects" for the full case studies.'],
     ],
@@ -1708,7 +1868,7 @@
       : [['html', `My résumé is available on request: <a href="${esc(cvMailto())}">email me</a> or message me on <a href="${esc(SITE.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>.`]],
   };
   const TERM_ALIAS = { stack: 'skills', work: 'projects', timeline: 'experience', career: 'experience', cv: 'resume', whoami: 'about', ls: 'help', '?': 'help' };
-  const SECTION_OF = { about: 'about', experience: 'timeline', timeline: 'timeline', projects: 'work', work: 'work', stack: 'stack', skills: 'stack', contact: 'contact' };
+  const SECTION_OF = { about: 'about', experience: 'timeline', timeline: 'timeline', projects: 'work', work: 'work', lab: 'lab', stack: 'stack', skills: 'stack', contact: 'contact' };
   const term = { el: $('#term'), out: $('#termOut'), input: $('#termInput'), hist: [], hi: 0, queue: Promise.resolve(), opener: null, booted: false };
   const termSleep = ms => new Promise(r => setTimeout(r, ms));
   function termLine(item) {
@@ -1741,7 +1901,7 @@
     if (cmd === 'exit' || cmd === 'quit') { closeTerm(); return; }
     if (cmd === 'open' || cmd === 'cd') {
       const sec = SECTION_OF[rest[0]];
-      if (!sec) return termPrint([['err', `open: say which section: about, experience, projects, stack or contact`]]);
+      if (!sec) return termPrint([['err', `open: say which section: about, experience, projects, lab, skills or contact`]]);
       termPrint([['dim', `Opening ${NAMES[sec]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash(sec); }, reduce ? 0 : 350));
       return;
     }
@@ -1750,7 +1910,7 @@
       const L = window.__lab; if (!L) return termPrint([['err', 'lab: not available on this page']]);
       const i = L.find(rest.join(' '));
       if (i < 0) return termPrint([['hd', 'Engineering lab'], ...L.names.map((n, k) => `  lab ${k + 1}   ${n}`), ['dim', 'Type "lab 1" or "lab backend" to switch one on.']]);
-      termPrint([['dim', `Powering on ${L.names[i]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash('stack'); setTimeout(() => L.open(i), 80); }, reduce ? 0 : 350));
+      termPrint([['dim', `Powering on ${L.names[i]}…`]]).then(() => setTimeout(() => { closeTerm(true); setHash('lab'); setTimeout(() => L.open(i), 80); }, reduce ? 0 : 350));
       return;
     }
     if (cmd === 'sudo') return termPrint([['err', 'Nice try. This terminal is read-only: it answers questions, it runs nothing.']]);
@@ -1797,7 +1957,8 @@
   addEventListener('keydown', e => { if (e.key === 'Escape' && !rcard.hidden) rcard.hidden = true; });
 
   /* ================= 3D room ================= */
-  if (!window.THREE || !window.gsap) { fallback(); return; }
+  if (window.__textOnly) { quietText(); return; }   // Recruiter Mode: the 3D libraries were never requested
+  if (!(await window.__libs) || !window.THREE || !window.gsap) { fallback(); return; }
   /* ---------- device tier + safety net ----------
      Phones and tablets get a lighter scene (no MSAA, cheaper shadows, fewer lights) when memory is low,
      the GPU's shader limits are small, or the GPU dropped the scene earlier this session (?lite=1 forces it).
@@ -2585,8 +2746,8 @@
   // the sequence: tape loads (0–1.7 s) · PRATHAMESH.EXE boots (1.75–3.7) · the introduction (3.8–8.6) · the menu (8.8 →)
   const MENU_AT = 8.8, INTRO_LEN = 9.3;                    // sequence time of the title sequence (a video uses its own length, then the menu)
   const INTRO_RATE = 1.25;                                  // the sequence plays a little faster than it is written: about 7 s to the menu
-  const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['SKILLS', 'stack'], ['CONTACT', 'contact']];
-  const MENU_Y0 = 150, MENU_DY = 56;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
+  const MENU = [['ABOUT ME', 'about'], ['EXPERIENCE', 'timeline'], ['PROJECTS', 'work'], ['ENGINEERING LAB', 'lab'], ['SKILLS', 'stack'], ['CONTACT', 'contact']];
+  const MENU_Y0 = 132, MENU_DY = 49;                        // menu rows on the 640 × 480 picture (row i is centred near MENU_Y0 + i·MENU_DY − 11)
   const tvSet = { state: 'IDLE', glow: 1, warm: 0, introT: 0, tl: null, lastDraw: -1, video: null, videoOk: false, osdKey: '', menu: 0, menuShownAt: 0 };
   const game = { mode: 'title', keys: {}, score: 0, best: 0, time: 0, px: 320, py: 260, dx: 1, dy: 0, walk: 0, chomp: 0, clock: 0, cookies: [], crumbs: [], led: null, pad3d: null, padOn: false };
   try { game.best = Math.max(0, parseInt(localStorage.getItem('desk-cookie-best'), 10) || 0); } catch (e) {}
@@ -3306,10 +3467,10 @@
   hotspot(vhsTimeline, 'timeline', 'Career tapes · <b>Experience</b>');
   const vhsWork = stackOf([
     ['BLANK', 'E-180 · SP · UNUSED', '#56534d'],
-    ['ON THE BENCH', 'PP—04 · RAG & SYSTEM DESIGN', '#5b4a8c'],
-    ['NOLO CMS', 'PP—03 · FULL-STACK, SOLO', '#9c2f45'],
-    ['FIGMA → HTML', 'PP—02 · FIGMA MCP SKILL', '#2b7a4b'],
-    ['LEAD ENGINE', 'PP—01 · LLM IN PRODUCTION', '#d9772a'],
+    ['ON THE BENCH', 'PP—05 · RAG & SYSTEM DESIGN', '#5b4a8c'],
+    ['FIGMA → HTML', 'PP—03 · FIGMA MCP SKILL', '#2b7a4b'],
+    ['LEAD ENGINE', 'PP—02 · LLM IN PRODUCTION', '#d9772a'],
+    ['NOLO CMS', 'PP—01 · FULL-STACK, SOLO', '#9c2f45'],
   ], .64, DZ + .1, -.09);
   hotspot(vhsWork, 'work', 'Project tapes · <b>Projects</b>');
   // the intro tape, laid a little askew on top of the career pile: click it (or the set) and it is loaded and played
@@ -3429,7 +3590,7 @@
     g.fillStyle = '#140d06'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#ffb35f'; g.font = '600 30px "JetBrains Mono", monospace';
     g.fillText('PRATHAMESH OS 1.0', 18, 42);
-    g.fillText('$ help' + (Math.floor(t * 2) % 2 ? ' █' : ''), 18, 90);
+    g.fillText('$ run lab' + (Math.floor(t * 2) % 2 ? ' █' : ''), 18, 90);
     g.fillStyle = 'rgba(0,0,0,.28)'; for (let y = 0; y < h; y += 3) g.fillRect(0, y, w, 1);
   }, true);
   const pcPanel = new T.Group(); put(pcPanel, 0, .018, -.034); pcPanel.rotation.x = .2; pc.add(pcPanel);   // the display strip leans back
@@ -3442,9 +3603,38 @@
   pcKeys.count = kn; pcKeys.castShadow = true; pc.add(pcKeys);
   pc.add(put(box(.07, .004, .0102, std(0x2c2a26, .62, .05), .0015), .004, .02, .0512));       // space bar
   pc.add(put(box(.0105, .004, .0102, std(0x9a4a22, .5), .0015), .085, .02, .0128));           // the orange RETURN key
-  hitPad(pc, .26, .07, .17); act(pc, 'Pocket computer · <b>Terminal</b>', () => openTerm());
+  hitPad(pc, .26, .07, .17); hotspot(pc, 'lab', 'Computer · <b>Engineering Lab</b>');
   let pcBlink = -1;
   deskTick.push(t => { const b = Math.floor(t * 2); if (b !== pcBlink) { pcBlink = b; pcLcdTex.draw(t); } });
+
+  /* laptop: an open aluminium laptop left of the set, in the lamp's pool. Its screen lists the featured projects; it opens Projects. */
+  const LTX = -.38, LTZ = DZ - .1;   // left of the set, under the lamp: in plain view from the home shot
+  const lt = new T.Group(); put(lt, LTX, DY, LTZ); lt.rotation.y = .3; lt.scale.setScalar(.9);
+  const ltAl = std(0x9fa2a5, .36, .85), ltDark = std(0x141517, .55, .2);
+  lt.add(put(box(.25, .011, .17, ltAl, .004), 0, .0055, 0));
+  lt.add(put(box(.214, .002, .082, ltDark, .001), 0, .0118, .02));                              // keyboard well
+  lt.add(put(box(.07, .0015, .045, std(0x86898c, .4, .8), .001), 0, .0114, .066));              // trackpad
+  const ltKeyGeo = new T.BoxGeometry(.0148, .003, .0132), ltKeys = new T.InstancedMesh(ltKeyGeo, std(0x1d1e20, .6, .1), 4 * 13), ltM = new T.Matrix4();
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 13; c++) { ltM.makeTranslation(-.093 + c * .0155, .0138, -.004 + r * .0152 - .002); ltKeys.setMatrixAt(r * 13 + c, ltM); }
+  lt.add(ltKeys);
+  const ltLid = new T.Group(); put(ltLid, 0, .011, -.082); ltLid.rotation.x = -.3; lt.add(ltLid);   // hinged along the back edge, leaning back
+  ltLid.add(put(box(.25, .165, .007, ltAl, .003), 0, .0825, 0));
+  const ltTex = canvasTex(512, 320, (g, w, h) => {
+    g.fillStyle = '#0d121a'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#E8913C'; g.font = '700 22px "JetBrains Mono", monospace'; g.fillText('FEATURED PROJECTS', 26, 44);
+    g.fillStyle = 'rgba(237,231,220,.18)'; g.fillRect(26, 58, w - 52, 2);
+    [['01', 'Nolo CMS', 'sole full-stack developer'], ['02', 'AI lead qualification', 'LLM · scoring · Nolo LMS'], ['03', 'Figma-to-HTML skill', 'Figma MCP · Claude Code · Cline']].forEach(([n, a, b], i) => {
+      const y = 82 + i * 74;
+      g.fillStyle = 'rgba(255,255,255,.06)'; g.fillRect(26, y, w - 52, 62);
+      g.fillStyle = '#E8913C'; g.font = '600 20px "JetBrains Mono", monospace'; g.fillText(n, 40, y + 38);
+      g.fillStyle = '#EDE7DC'; g.font = '700 24px Sora, sans-serif'; g.fillText(a, 88, y + 28);
+      g.fillStyle = '#9EA5A8'; g.font = '500 17px "JetBrains Mono", monospace'; g.fillText(b, 88, y + 52);
+    });
+  }, true);
+  const ltScr = new T.Mesh(new T.PlaneGeometry(.234, .146), new T.MeshBasicMaterial({ map: ltTex.t, toneMapped: false }));
+  ltLid.add(put(ltScr, 0, .0825, .0042));
+  const ltGlow = new T.PointLight(0x9fc4ff, .12, .45, 2); ltGlow.position.set(0, .12, .16); lt.add(ltGlow);   // the screen's faint spill on the desk
+  hitPad(lt, .3, .2, .24); hotspot(lt, 'work', 'Laptop · <b>Projects</b>');
 
   /* Walkman on top of the book stack: click → the lid opens, a cassette drops in, the reels turn ("currently building") */
   const wk = new T.Group(); put(wk, BKX + .005, DY + by, BKZ + .01); wk.rotation.y = .62;
@@ -4426,8 +4616,10 @@
                 p: { pos: [.85, 1.5, 1.05], look: [-1.9, .7, 3.3] } },       // reading corner: armchair, lamp, rug
     about:    { pos: [0, 1.12, .48],     look: [0, 1.05, -.5],
                 p: { pos: [0, 1.12, 1.0], look: [0, 1.0, -.5] } },          // the television, tuned to CH 01
-    work:     { pos: [.5, 1.04, .25],    look: [.64, .86, -.39],
-                p: { pos: [.58, 1.1, .91], look: [.62, .86, -.39] } },      // project tapes
+    work:     { pos: [-.18, 1.06, .3],   look: [-.36, .88, -.6],
+                p: { pos: [-.2, 1.14, .95], look: [-.36, .88, -.6] } },     // the laptop (the project tapes also open Projects)
+    lab:      { pos: [.24, 1.04, .22],   look: [.27, .8, -.26],
+                p: { pos: [.3, 1.1, .85], look: [.28, .8, -.26] } },        // the pocket computer: the Engineering Lab
     timeline: { pos: [.29, 1.04, .23],   look: [.43, .86, -.45],
                 p: { pos: [.37, 1.1, .89], look: [.45, .86, -.45] } },      // career tapes
     stack:    { pos: [-.3, 1.2, .5],     look: [-.64, .86, -.42],

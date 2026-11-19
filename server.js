@@ -36,6 +36,7 @@ http.createServer(async (req, res) => {
   if (url.pathname === '/api/contact') return contact(req, res);
   if (req.method !== 'GET' && req.method !== 'HEAD') { res.statusCode = 405; res.setHeader('Allow', 'GET, HEAD'); return res.end(); }
 
+  if (url.pathname === '/recruiter' || url.pathname === '/recruiter/') url.pathname = '/room.html';   // Recruiter Mode: same page, the text view
   let rel; try { rel = decodeURIComponent(url.pathname).replace(/^\/+/, '') || 'room.html'; } catch (_) { res.statusCode = 400; return res.end(); }
   const file = path.normalize(path.join(ROOT, rel));
   if (!file.startsWith(ROOT + path.sep) || PRIVATE.test(path.relative(ROOT, file).split(path.sep).join('/'))) { res.statusCode = 404; return res.end('Not found'); }

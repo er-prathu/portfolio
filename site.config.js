@@ -8,7 +8,7 @@
  * `npm run build` stops with an error if resumePdf points at a file that doesn't exist.
  */
 window.DESK_SITE = {
-  resumePdf: '',
+  resumePdf: 'resume/Prathamesh-Patil-Resume.pdf',   // generated from the portfolio's own published facts; replace it with your own PDF at any time
   resumeDownloadName: 'Prathamesh-Patil-Resume.pdf',   // the filename visitors' browsers save it as
 
   email: 'prathpatil3@gmail.com',
