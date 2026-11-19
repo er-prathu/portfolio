@@ -50,6 +50,15 @@ for (const id of fs.readdirSync(path.join(ROOT, 'models'))) {
   if (fs.existsSync(path.join(ROOT, tex))) for (const f of fs.readdirSync(path.join(ROOT, tex))) copy(path.join(tex, f));
 }
 
+// scanned surface textures (Poly Haven, CC0) for the high-quality tier: textures/<asset>/{diff,nor,rough}.jpg
+if (fs.existsSync(path.join(ROOT, 'textures'))) {
+  for (const id of fs.readdirSync(path.join(ROOT, 'textures'))) {
+    const dir = path.join('textures', id);
+    if (!fs.statSync(path.join(ROOT, dir)).isDirectory()) continue;
+    for (const f of fs.readdirSync(path.join(ROOT, dir))) if (/\.jpg$/i.test(f)) copy(path.join(dir, f));
+  }
+}
+
 // Cloudflare Pages response headers
 fs.writeFileSync(path.join(OUT, '_headers'), [
   '/*',
@@ -58,6 +67,8 @@ fs.writeFileSync(path.join(OUT, '_headers'), [
   '  X-Frame-Options: SAMEORIGIN',
   '  Strict-Transport-Security: max-age=31536000',
   '/models/*',
+  '  Cache-Control: public, max-age=604800',
+  '/textures/*',
   '  Cache-Control: public, max-age=604800',
   '',
 ].join('\n'));

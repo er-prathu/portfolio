@@ -5220,7 +5220,48 @@
   };
   window.__desk = { render, go, focus, scene, camera, shot, view, sky, orbit, renderer, models, tvb, spot, lens, hot, pick, tvSet, tvClick, introTape: () => introTape, crt, W, wx, mockWeather: (k, instant) => { accept(Object.assign({ tz: 'UTC' }, MOCKS[k]), 'Test city', 'mock'); if (instant) applyScene(wx.rec, true); }, flashNow: () => { flashT = clock.getElapsedTime(); }, pinTrain(x, dir = 1, cars = 5) { trainPinned = x; if (x !== null) { trainRun.dir = -dir; planTrain(0); trainRun.dir = dir; trainRun.cars = cars; trainRun.len = cars * (CAR_L + CAR_GAP); train.count = cars; tailL.position.x = -(trainRun.len - CAR_L / 2) - .004; spill.scale.x = trainRun.len; spill.position.x = -(trainRun.len - CAR_L) / 2; } }, get lim() { return LIM; } }; // for testing
 
+  /* ---------- high-quality tier: scanned PBR surfaces (Poly Haven, CC0) ----------
+     Desktops and other capable non-touch devices swap the painted canvas textures on the floor, desk and walls
+     for real scans (colour, normal and roughness maps), loaded after the room is on screen. Each colour map is
+     matched to the painted one's average brightness, so the tuned lighting and mood stay the same and only the
+     surfaces gain real detail. Phones and the lite scene keep the painted textures. ?hq=0 turns it off. */
+  const hq = !lite && !touchDev && new URLSearchParams(location.search).get('hq') !== '0';
+  function meanLum(img) {
+    const c = document.createElement('canvas'); c.width = c.height = 32;
+    const g = c.getContext('2d'); g.drawImage(img, 0, 0, 32, 32);
+    const d = g.getImageData(0, 0, 32, 32).data; let s = 0;
+    for (let i = 0; i < d.length; i += 4) s += .2126 * d[i] + .7152 * d[i + 1] + .0722 * d[i + 2];
+    return s / (d.length / 4) / 255;
+  }
+  const texLoader = new T.TextureLoader();
+  function scanSurface(mat, id, { repeat, roughness = 1, normal = 1, rotate = 0 }) {
+    const oldLum = mat.map && mat.map.image ? meanLum(mat.map.image) : null;
+    const rep = repeat || (mat.map ? mat.map.repeat.clone() : new T.Vector2(1, 1));
+    const load = (f, srgb) => new Promise((res, rej) => texLoader.load(`textures/${id}/${f}`, t => {
+      t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.copy(rep);
+      if (rotate) { t.center.set(.5, .5); t.rotation = rotate; }
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      t.encoding = srgb ? T.sRGBEncoding : T.LinearEncoding; res(t);
+    }, undefined, rej));
+    return Promise.all([load('diff.jpg', true), load('nor.jpg', false), load('rough.jpg', false)]).then(([map, nor, rough]) => {
+      if (lite || failed3d) return;   // the device fell back to lite while these were loading
+      if (oldLum) mat.color.multiplyScalar(oldLum / Math.max(.02, meanLum(map.image)));
+      mat.map = map; mat.normalMap = nor; mat.normalScale.set(normal, normal);
+      mat.roughnessMap = rough; mat.roughness = roughness; mat.needsUpdate = true;
+      shadowDirty = Math.max(shadowDirty, 1);
+    }).catch(e => console.warn('texture failed, keeping the painted one:', id, e));
+  }
+  function upgradeRealism() {
+    scanSurface(floorMat, 'wood_floor', { roughness: 1, normal: .8 });
+    scanSurface(woodMat, 'walnut_veneer', { repeat: new T.Vector2(.46, 1), rotate: Math.PI / 2, roughness: .9, normal: .5 });   // the scan's grain runs vertically: turn it to run along the desk
+    scanSurface(wallMat, 'painted_plaster_wall', { roughness: 1, normal: .6 });
+    // crisper desk-lamp shadows: the shadow map renders only when the light changes, so the bigger map costs little
+    spot.shadow.mapSize.setScalar(4096); if (spot.shadow.map) { spot.shadow.map.dispose(); spot.shadow.map = null; }
+    shadowDirty = Math.max(shadowDirty, 2);
+  }
+
   if (lite) applyLite();
+  else if (hq) setTimeout(upgradeRealism, 1200);   // after the first frames, so the start isn't slower
   resize();
   applyPower();
   let mode3d = true;
