@@ -15,9 +15,11 @@ test('pano.js parses and exposes the window view and the opening', () => {
   new Function('window', pano)(win);
   assert.equal(typeof win.Pano.windowView, 'function');
   assert.equal(typeof win.Pano.intro, 'function');
-  for (const p of Object.values(win.Pano.PANOS)) {
-    assert.ok(fs.existsSync(path.join(ROOT, p.src)), `${p.src} exists`);
-    assert.ok(fs.statSync(path.join(ROOT, p.src)).size < 600 * 1024, `${p.src} stays small`);
+  assert.equal(typeof win.Pano.palms, 'function');
+  for (const p of Object.values(win.Pano.PANOS)) for (const [suffix, max] of [['.jpg', 450], ['-m.jpg', 150]]) {   // desktop and phone versions
+    const f = path.join(ROOT, p.src + suffix);
+    assert.ok(fs.existsSync(f), `${p.src + suffix} exists`);
+    assert.ok(fs.statSync(f).size < max * 1024, `${p.src + suffix} stays under ${max} KB`);
   }
 });
 
@@ -36,7 +38,11 @@ test('the opening is gated: once per visitor, never with reduced motion, deep li
   assert.ok(html.includes("window.__cityJs = !textOnly ? load('pano.js')"));   // never fetched by Recruiter Mode or the text view
 });
 
-test('the opening has an accessible skip control and Escape, and can be replayed', () => {
+test('the opening has the title, the tagline, an accessible skip control and Escape, and can be replayed', () => {
+  assert.ok(html.includes('<h2>Prathamesh Patil</h2><span class="label">Senior Full Stack Engineer</span>'));
+  assert.ok(html.includes('Building products. Solving problems. Engineering what’s next.'));
+  assert.ok(html.includes('Replay intro'));
+  assert.ok(html.includes('lite: lite || touchDev'));   // phones get the light version
   assert.match(html, /<button type="button" class="city-skip" id="citySkip">Skip intro/);
   assert.match(html, /e\.key === 'Escape'/);
   assert.match(html, /id="qCity"/);

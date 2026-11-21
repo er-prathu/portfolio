@@ -559,7 +559,8 @@
   .city-cap > * { display: block; opacity: 0; transform: translateY(10px); transition: opacity 1.1s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); }
   .city-cap.on > * { opacity: 1; transform: none; }
   .city-cap.on > *:nth-child(2) { transition-delay: .25s; }
-  .city-cap .label { color: #f3c58e; letter-spacing: .32em; margin-bottom: 10px; }
+  .city-cap .label { color: #f3c58e; letter-spacing: .42em; margin-top: 14px; font-size: 11px; }
+  .city-cap .tagline { font: 600 clamp(18px, 2.6vw, 34px)/1.2 var(--display); letter-spacing: -.01em; color: #fff6ea; max-width: 22ch; }
   .city-cap h2 { font: 800 clamp(30px, 6.2vw, 88px)/.95 var(--display); letter-spacing: .01em; text-transform: uppercase; color: #fff6ea; }
   .city-cap p { font: 500 clamp(15px, 1.7vw, 22px)/1.35 var(--sans); color: #fff1df; }
   .city-skip { position: absolute; right: max(16px, calc(env(safe-area-inset-right, 0px) + 16px)); bottom: calc(var(--bar-h) + 18px); pointer-events: auto;
@@ -1230,7 +1231,7 @@
     <button type="button" id="qGame"><span aria-hidden="true">◉</span> Play a game</button>
     <button type="button" id="qDeck"><span aria-hidden="true">◉</span> Now building</button>
     <button type="button" id="qCv" hidden><span aria-hidden="true">▤</span> Résumé</button>
-    <button type="button" id="qCity"><span aria-hidden="true">↺</span> City intro</button>
+    <button type="button" id="qCity"><span aria-hidden="true">↺</span> Replay intro</button>
   </div>
   <p class="hint room-only" id="hintText">This is my desk. <b>Click anything on it</b>, drag to look around, scroll to zoom, double-click to move.</p>
 </div>
@@ -2041,13 +2042,12 @@
   if (window.__cityPlay && (await window.__cityJs) && window.Pano) {
     const ui = $('#cityUi'), cap = $('#cityCap'), prog = $('#cityProg');
     const CAPS = [
-      '<span class="label">Senior Full Stack Engineer</span><h2>Prathamesh Patil</h2>',
-      '<p>Backend engineering · AI integration<br>8+ years building for the web</p>',
-      '<p>Welcome to my desk.</p>',
+      '<h2>Prathamesh Patil</h2><span class="label">Senior Full Stack Engineer</span>',
+      '<p class="tagline">Building products. Solving problems. Engineering what’s next.</p>',
     ];
     try {
       cityRun = window.Pano.intro({
-        renderer, reduce, hold: new URLSearchParams(location.search).get('introAt'),
+        renderer, reduce, lite: lite || touchDev, hold: new URLSearchParams(location.search).get('introAt'),
         onCaption: i => { cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = CAPS[i] || ''; requestAnimationFrame(() => cap.classList.add('on')); }, 260); },
         onProgress: p => { prog.style.transform = `scaleX(${p.toFixed(4)})`; },
       });
@@ -2647,7 +2647,7 @@
   cityGroup.add(contrail);
   window.__deskLife = { birds, flock, drift, twinkles, contrail };   // for testing
 
-  /* ---------- the view from the window: a real sunset skyline (pano.js, a CC0 photograph) far outside the glass ----------
+  /* ---------- the view from the window: the coast at sunset (pano.js, a CC0 photograph) far outside the glass ----------
      Each pixel looks up the panorama in its own direction, so moving or looking around shows the view a real window
      would. Cheap enough for every device (one texture, no extra render). The painted skyline above stays only as the
      fallback if the photograph can't load. */
@@ -2657,11 +2657,11 @@
   scene.add(liveBack);
   function startLive() {
     if (live || !window.Pano) return;
-    const view = window.Pano.windowView(T, { lift: .02, wide: 2.1 });
+    const view = window.Pano.windowView(T, { lift: .03, wide: 2, center: .445, reduce, small: touchDev });
     view.ready.then(() => {
       if (failed3d) return;
       live = view; window.__live = live;
-      liveBack.material = view.material; liveBack.visible = true;
+      liveBack.material = view.material; liveBack.visible = true; palms.visible = true;
       // the painted city steps aside; the railway, trains, birds and weather stay in front of the view
       [skyMesh, dayMesh, stars, drift, overcastSky, mist, plane, planeRed, contrail, ...nightLayers, ...dayLayers, ...twinkles, ...beacons, ...cars, ...nearTowers]
         .forEach(o => o.parent && o.parent.remove(o));
@@ -2672,8 +2672,77 @@
     }, e => console.warn('window view unavailable, keeping the painted city:', e));
   }
   function renderLive(t, d) {
-    if (live) live.setNight(1 - d, Math.min(1, W.cloud * .3 + Math.min(1, W.rain) * .4 + W.fog * .8 + W.storm * .5));
+    const nightK = 1 - d;
+    // glass: clear by day, a faint mirror after dark (the lamp and the TV show in it, from the room's reflection probe)
+    glass.material.opacity = sashGlass.opacity = .08 + .2 * nightK;
+    glass.material.envMapIntensity = sashGlass.envMapIntensity = .6 + 1.4 * nightK;
+    if (!live) return;
+    live.setNight(nightK, Math.min(1, W.cloud * .3 + Math.min(1, W.rain) * .4 + W.fog * .8 + W.storm * .5));
+    live.tick(t);
+    palmU.uT.value = reduce ? 0 : t; palmU.uWind.value = .6 + 1.2 * Math.min(1, W.rain) + 1.5 * W.storm;
+    palmMat.emissiveIntensity = .4 * d;
+    // the fronds' shadows sway across the room too: refresh the shadow maps a few times a second (desktop, by day)
+    if (!reduce && !touchDev && !lite && d > .3 && (++palmTick % 4 === 0)) shadowDirty = Math.max(shadowDirty, 1);
   }
+
+  /* ---------- two palms outside the glass: dark against the sunset, swaying, their shadows thrown into the room ----------
+     One procedural palm (a leaning, tapering trunk and arching fronds of leaflets), drawn twice. The sway is in the
+     vertex shader, and the shadow pass uses the same sway, so the dappled shadows on the wall move with the fronds. */
+  let palmTick = 0;
+  const palmU = { uT: { value: 0 }, uWind: { value: .6 } };
+  function palmGeometry() {
+    const pos = [], col = [];
+    const v3 = (x, y, z) => new T.Vector3(x, y, z);
+    const tri = (a, b, c, k) => { [a, b, c].forEach(v => { pos.push(v.x, v.y, v.z); col.push(k[0], k[1], k[2]); }); };
+    const H = 5.2, seg = 10, sides = 7, lean = .9;
+    const spine = t => v3(lean * t * t, H * t, 0);
+    for (let i = 0; i < seg; i++) for (let k = 0; k < sides; k++) {
+      const s0 = i / seg, s1 = (i + 1) / seg, a0 = k / sides * Math.PI * 2, a1 = (k + 1) / sides * Math.PI * 2;
+      const r0 = .12 - .045 * s0, r1 = .12 - .045 * s1, c0 = spine(s0), c1 = spine(s1);
+      const p = (c, r, a) => v3(c.x + Math.cos(a) * r, c.y, c.z + Math.sin(a) * r);
+      const band = i % 2 ? [.3, .22, .16] : [.24, .18, .13];
+      tri(p(c0, r0, a0), p(c1, r1, a0), p(c1, r1, a1), band); tri(p(c0, r0, a0), p(c1, r1, a1), p(c0, r0, a1), band);
+    }
+    const top = spine(1);
+    for (let f = 0; f < 13; f++) {
+      const az = f / 13 * Math.PI * 2 + (f % 2) * .25, up = [.5, .15, -.2, -.45][f % 4];
+      const L = 2.2 + (f % 3) * .35, dir = v3(Math.cos(az), 0, Math.sin(az)), side = v3(-dir.z, 0, dir.x);
+      const pt = t => top.clone().addScaledVector(dir, L * t).add(v3(0, L * (up * t - .6 * t * t), 0));
+      for (let i = 0; i < 24; i++) {   // a comb of long, thin, drooping leaflets either side of the rib
+        const t0 = i / 24, t1 = (i + .45) / 24, a = pt(t0), b = pt(t1), w = Math.sin(Math.PI * Math.min(1, t0 * 1.05 + .08)) * .7;
+        const g = [.05 + .03 * t0, .085 + .03 * t0, .04];
+        [1, -1].forEach(sg => { const tip = pt(Math.min(1, t0 + .06)).addScaledVector(side, w * sg).add(v3(0, -.42 * w, 0)); tri(a, b, tip, g); tri(b, a, tip, g); });
+      }
+      for (let i = 0; i < 6; i++) { const a = pt(i / 6), b = pt((i + 1) / 6), n = v3(0, .02, 0); tri(a, b, b.clone().add(n), [.06, .08, .04]); }   // the rib
+    }
+    const geo = new T.BufferGeometry();
+    geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('color', new T.Float32BufferAttribute(col, 3));
+    geo.computeVertexNormals();
+    return geo;
+  }
+  const SWAY = `
+    float hgt = max(position.y, 0.) / 5.2, ph = modelMatrix[3].x * 1.7;
+    float sw = (sin(uT * .8 + ph) * .55 + sin(uT * 1.9 + ph * 2.3) * .2) * uWind;
+    transformed.x += sw * hgt * hgt * .22;
+    transformed.z += cos(uT * .6 + ph) * .1 * uWind * hgt * hgt;
+    float fr = max(position.y - 5.0, 0.) + length(position.xz) * .15 * step(5., position.y);
+    transformed.y += sin(uT * 2.6 + ph + position.x * 2.1) * .05 * fr * uWind;`;
+  const swayPatch = sh => {
+    Object.assign(sh.uniforms, palmU);
+    sh.vertexShader = 'uniform float uT; uniform float uWind;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>' + SWAY);
+  };
+  const palmMat = new T.MeshStandardMaterial({ color: 0x3a3a3a, vertexColors: true, roughness: .9, side: T.DoubleSide, emissive: 0x1e0e04, emissiveIntensity: .5, fog: false });   // a warm rim of sunset through the leaves
+  palmMat.onBeforeCompile = swayPatch;
+  const palmDepth = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, side: T.DoubleSide });
+  palmDepth.onBeforeCompile = swayPatch;
+  const palmGeo = palmGeometry();
+  const palms = new T.Group(); palms.visible = false; scene.add(palms);
+  [[-2.75, -.1, -6.4, .25, .95], [3.2, -.4, -8.6, 2.7, 1.1]].forEach(([x, y, z, ry, sc]) => {
+    const m = new T.Mesh(palmGeo, palmMat); m.customDepthMaterial = palmDepth;
+    m.position.set(x, y, z); m.rotation.y = ry; m.scale.setScalar(sc); m.castShadow = !lite; m.frustumCulled = false;
+    palms.add(m);
+  });
 
   /* ---------- desk ---------- */
   /* walnut: long flowing grain with cathedral arcs, pores and colour drift */
