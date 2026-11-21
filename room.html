@@ -67,13 +67,13 @@
   if (!textOnly) document.documentElement.classList.remove('text-mode');   // the static page is the text version; the 3D desk replaces it
   function load(src) { return new Promise(function (ok, no) { var el = document.createElement('script'); el.src = src; el.async = false; el.onload = ok; el.onerror = no; document.head.appendChild(el); }); }
   /* The city intro plays once per visitor (?intro=1 replays it, ?intro=0 skips it). Never with reduced motion,
-     a deep link (#about, ?shot=…) or the text view. city.js (about 60 KB, no models or textures) also draws the live view
-     from the window, so the 3D desk always fetches it; Recruiter Mode and the text view never do. */
+     a deep link (#about, ?shot=…) or the text view. pano.js (8 KB) and its two sunset photographs (~0.5 MB) also make the
+     view from the window, so the 3D desk always fetches them; Recruiter Mode and the text view never do. */
   var q = new URLSearchParams(location.search), seen = false;
   try { seen = localStorage.getItem('city-intro') === 'seen'; } catch (e) {}
   window.__cityPlay = !textOnly && q.get('intro') !== '0' && !q.get('shot') && location.hash.length < 2
     && (q.get('intro') === '1' || (!seen && !matchMedia('(prefers-reduced-motion: reduce)').matches));
-  window.__cityJs = !textOnly ? load('city.js').then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
+  window.__cityJs = !textOnly ? load('pano.js').then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
   window.__libs = textOnly ? Promise.resolve(false) : Promise.all([
     load('https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js').then(function () { return load('https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js'); }),
     load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
@@ -1149,7 +1149,7 @@
 <body>
 <a class="skip" id="tvStart" href="#tv">Turn on the TV introduction</a>
 <a class="skip" href="#about" style="left:260px">Skip to About</a>
-<canvas id="gl" aria-label="An illustrated 3D desk at night in front of a window onto the Navi Mumbai skyline. Objects on the desk open sections of the portfolio."></canvas>
+<canvas id="gl" aria-label="A 3D desk in front of a window onto a city skyline at dusk. Objects on the desk open sections of the portfolio."></canvas>
 <div class="vignette" aria-hidden="true"></div>
 <div class="grade" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
@@ -2036,9 +2036,9 @@
   const T = THREE, G = gsap;
   const isPhone = () => innerWidth <= 760;
 
-  /* ---------- city intro (city.js): plays on the same renderer while the room builds underneath ---------- */
+  /* ---------- opening (pano.js): slow pans through two sunset photographs, on the same renderer while the room builds ---------- */
   $('#qCity').addEventListener('click', () => { location.href = location.pathname + '?intro=1'; });
-  if (window.__cityPlay && (await window.__cityJs) && window.CityIntro) {
+  if (window.__cityPlay && (await window.__cityJs) && window.Pano) {
     const ui = $('#cityUi'), cap = $('#cityCap'), prog = $('#cityProg');
     const CAPS = [
       '<span class="label">Senior Full Stack Engineer</span><h2>Prathamesh Patil</h2>',
@@ -2046,9 +2046,8 @@
       '<p>Welcome to my desk.</p>',
     ];
     try {
-      cityRun = window.CityIntro.create({
-        renderer, reduce, fadeEl: $('#cityFade'),
-        tier: lite ? 'low' : touchDev ? 'mid' : 'high',
+      cityRun = window.Pano.intro({
+        renderer, reduce, hold: new URLSearchParams(location.search).get('introAt'),
         onCaption: i => { cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = CAPS[i] || ''; requestAnimationFrame(() => cap.classList.add('on')); }, 260); },
         onProgress: p => { prog.style.transform = `scaleX(${p.toFixed(4)})`; },
       });
@@ -2648,46 +2647,32 @@
   cityGroup.add(contrail);
   window.__deskLife = { birds, flock, drift, twinkles, contrail };   // for testing
 
-  /* ---------- the live view: city.js renders the coastal city from a high flat, into a texture the window shows ----------
-     The painted skyline above stays as the fallback (lite scene, no city.js, or an error). The view is drawn with the
-     room camera's own rotation and lens, so looking around through the window behaves like a real window. */
-  let live = null, liveFrame = 0;
-  const liveMat = new T.ShaderMaterial({
-    uniforms: { tCity: { value: null }, uRes: { value: new T.Vector2(1, 1) }, uGain: { value: .62 } }, fog: false, depthWrite: false,
-    vertexShader: 'void main() { gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-    fragmentShader: `uniform sampler2D tCity; uniform vec2 uRes; uniform float uGain;
-      void main() { vec3 c = texture2D(tCity, gl_FragCoord.xy / uRes).rgb * uGain; c = pow(c, vec3(1.22)) * 1.08; float l = dot(c, vec3(.2126, .7152, .0722)); gl_FragColor = vec4(max(mix(vec3(l), c, 1.28), 0.0), 1.0);   // a little contrast: the room has no grade pass
-        #include <tonemapping_fragment>
-        #include <encodings_fragment>
-      }`,
-  });
-  const liveBack = new T.Mesh(new T.PlaneGeometry(80, 40), liveMat);
+  /* ---------- the view from the window: a real sunset skyline (pano.js, a CC0 photograph) far outside the glass ----------
+     Each pixel looks up the panorama in its own direction, so moving or looking around shows the view a real window
+     would. Cheap enough for every device (one texture, no extra render). The painted skyline above stays only as the
+     fallback if the photograph can't load. */
+  let live = null;
+  const liveBack = new T.Mesh(new T.PlaneGeometry(80, 40));
   liveBack.position.set(0, 3, -11.6); liveBack.visible = false; liveBack.renderOrder = -2;
   scene.add(liveBack);
-  const winBox = new T.Box3(new T.Vector3(-OX, OY0, WZ - .2), new T.Vector3(OX, OY1, WZ + .2)), frus = new T.Frustum(), frusM = new T.Matrix4();
   function startLive() {
-    if (live || lite || !window.CityIntro || !window.CityIntro.createWindow) return;
-    try {
-      live = window.CityIntro.createWindow({ renderer, tier: touchDev ? 'mid' : 'high' });
-    } catch (e) { console.warn('live window view unavailable, keeping the painted city:', e); live = null; return; }
-    liveMat.uniforms.tCity.value = live.texture;
-    liveBack.visible = true; window.__live = live;
-    // the painted city steps aside; the railway, trains, birds and weather stay in front of the live view
-    [skyMesh, dayMesh, stars, drift, overcastSky, mist, plane, planeRed, contrail, ...nightLayers, ...dayLayers, ...twinkles, ...beacons, ...cars, ...nearTowers]
-      .forEach(o => o.parent && o.parent.remove(o));
-    twinkles.length = 0;
-    envDay = bakeEnv(true);   // reflections: the window in the desk's varnish is now the sunset itself
-    shadowDirty = Math.max(shadowDirty, 2);
+    if (live || !window.Pano) return;
+    const view = window.Pano.windowView(T, { lift: .02, wide: 2.1 });
+    view.ready.then(() => {
+      if (failed3d) return;
+      live = view; window.__live = live;
+      liveBack.material = view.material; liveBack.visible = true;
+      // the painted city steps aside; the railway, trains, birds and weather stay in front of the view
+      [skyMesh, dayMesh, stars, drift, overcastSky, mist, plane, planeRed, contrail, ...nightLayers, ...dayLayers, ...twinkles, ...beacons, ...cars, ...nearTowers]
+        .forEach(o => o.parent && o.parent.remove(o));
+      twinkles.length = 0;
+      envDay = bakeEnv(true);   // reflections: the window in the desk's varnish is now the sunset itself
+      if (sky.day > .5) scene.environment = envDay;
+      shadowDirty = Math.max(shadowDirty, 2);
+    }, e => console.warn('window view unavailable, keeping the painted city:', e));
   }
   function renderLive(t, d) {
-    if (!live) return;
-    live.setTime(d, Math.min(1, W.cloud * .5 + Math.min(1, W.rain) * .35 + W.fog + W.storm * .5));
-    camera.updateMatrixWorld();
-    frus.setFromProjectionMatrix(frusM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
-    if (!frus.intersectsBox(winBox)) return;                 // window out of shot: skip the city entirely
-    if (touchDev && (liveFrame++ & 1)) return;                // phones: the city updates every other frame
-    live.render(camera, t);
-    renderer.getDrawingBufferSize(liveMat.uniforms.uRes.value);
+    if (live) live.setNight(1 - d, Math.min(1, W.cloud * .3 + Math.min(1, W.rain) * .4 + W.fog * .8 + W.storm * .5));
   }
 
   /* ---------- desk ---------- */
@@ -4429,7 +4414,7 @@
       m.material.color.multiplyScalar(k); m.position.set(x, y, z); m.rotation.y = ry; s.add(m);
     };
     panel(2.2, 1.35, day ? 0xffbf8a : 0x2b3a4c, day ? 3 : .8, 0, 1.62, -.95);         // the window: golden-hour glow by day, blue-grey night
-    if (day && live) { const m = new T.Mesh(new T.PlaneGeometry(2.2, 1.35), new T.MeshBasicMaterial({ map: live.texture, side: T.DoubleSide })); m.material.color.setScalar(2.2); m.position.set(0, 1.62, -.94); s.add(m); }
+    if (day && live && live.texture) { const m = new T.Mesh(new T.PlaneGeometry(2.2, 1.35), new T.MeshBasicMaterial({ map: live.texture, side: T.DoubleSide })); m.material.color.setScalar(2.2); m.position.set(0, 1.62, -.94); s.add(m); }
     if (!day) panel(.22, .22, 0xffb36e, 2.6, -.45, 1.22, -.55);                        // the lamp, where the model's bulb now is (soft, so varnish shows a glow not a square)
     panel(.27, .22, 0x5a78ff, day ? .4 : 1.0, TVX, DY + VCR_H + .26, TVZ + .17);       // the TV's blue screen
     const tex = pmrem.fromScene(s, .08).texture;   // a touch more blur: softer, more natural highlights
@@ -5109,7 +5094,7 @@
       else { birds.position.set(bx, flock.y + flock.rise * (bx / 5.5) + Math.sin(t * .35) * .05, -5.1); birds.scale.x = flock.dir; birdMat.uniforms.uT.value = t; birdMat.uniforms.uO.value = Math.min(1, fair * 1.4) * .9; }
     }
     contrail.position.set(plane.position.x - 1.1, plane.position.y, -9.25); contrail.material.opacity = d * .5 * (1 - overcast);
-    glassSheen.material.opacity = .5 + .3 * nightK;
+    glassSheen.material.opacity = (.5 + .3 * nightK) * (live ? .4 : 1);   // a lighter sheen over the photograph, so the view reads clearly
     // lamp: tiny filament flicker; switched off by day
     const lampOn = lampLevel * (1 - d * .92);
     const fl = reduce ? 1 : 1 + Math.sin(t * 23) * .012 + Math.sin(t * 7.1) * .01;

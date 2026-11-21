@@ -27,7 +27,7 @@ copy('festival.config.js');
 copy('festival.dates.js');
 copy('site.config.js');
 copy('lab.js');
-copy('city.js');
+copy('pano.js');
 // icons, social preview and crawler files
 ['favicon.svg', 'apple-touch-icon.png', 'og-image.jpg', 'robots.txt', 'sitemap.xml'].forEach(f => copy(f));
 

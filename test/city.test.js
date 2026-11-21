@@ -1,67 +1,60 @@
 'use strict';
-/* The city intro (city.js): self-contained, gated, skippable, and never in the way of the content. */
+/* The opening and the view from the window (pano.js): real CC0 photographs, gated, skippable, never in the way. */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const city = fs.readFileSync(path.join(ROOT, 'city.js'), 'utf8');
+const pano = fs.readFileSync(path.join(ROOT, 'pano.js'), 'utf8');
 const html = fs.readFileSync(path.join(ROOT, 'room.html'), 'utf8');
 const build = fs.readFileSync(path.join(ROOT, 'scripts/build.js'), 'utf8');
 
-test('city.js parses and exposes CityIntro.create', () => {
+test('pano.js parses and exposes the window view and the opening', () => {
   const win = {};
-  new Function('window', city)(win);
-  assert.equal(typeof win.CityIntro.create, 'function');
+  new Function('window', pano)(win);
+  assert.equal(typeof win.Pano.windowView, 'function');
+  assert.equal(typeof win.Pano.intro, 'function');
+  for (const p of Object.values(win.Pano.PANOS)) {
+    assert.ok(fs.existsSync(path.join(ROOT, p.src)), `${p.src} exists`);
+    assert.ok(fs.statSync(path.join(ROOT, p.src)).size < 600 * 1024, `${p.src} stays small`);
+  }
 });
 
-test('city.js downloads nothing: no external URLs, models or texture files', () => {
-  assert.doesNotMatch(city, /https?:\/\//);
-  assert.doesNotMatch(city, /\.(glb|gltf|jpe?g|png|hdr|ktx2|webp)\b/i);
-  assert.doesNotMatch(city, /\b(GTA|Rockstar|Vice City)\b/i);   // an original city, no borrowed names or assets
+test('the photographs are local files, credited, and nothing else is downloaded', () => {
+  assert.doesNotMatch(pano, /https?:\/\/(?!polyhaven\.com)/);
+  assert.match(pano, /CC0/);
+  assert.doesNotMatch(pano, /\b(GTA|Rockstar|Vice City)\b/i);
 });
 
-test('city.js has device tiers, a skip, and a slow-device bail-out', () => {
-  assert.match(city, /tier === 'high'/);
-  assert.match(city, /tier === 'low'/);
-  assert.match(city, /skip\(\)/);
-  assert.match(city, /finish\('slow'\)/);
-  assert.match(city, /InstancedMesh/);
-});
-
-test('the intro is gated: once per visitor, never with reduced motion, deep links, ?shot or the text view', () => {
+test('the opening is gated: once per visitor, never with reduced motion, deep links, ?shot or the text view', () => {
   const gate = html.match(/window\.__cityPlay = [^;]+;/s);
   assert.ok(gate, 'gate expression present');
   for (const needle of ['!textOnly', "q.get('intro') !== '0'", "!q.get('shot')", 'location.hash.length < 2', 'prefers-reduced-motion', '!seen'])
     assert.ok(gate[0].includes(needle), `gate checks ${needle}`);
   assert.match(html, /localStorage\.setItem\('city-intro', 'seen'\)/);
-  // city.js (intro and the live window view) is never fetched by Recruiter Mode or the text view
-  assert.ok(html.includes("window.__cityJs = !textOnly ? load('city.js')"));
+  assert.ok(html.includes("window.__cityJs = !textOnly ? load('pano.js')"));   // never fetched by Recruiter Mode or the text view
 });
 
-test('the intro has an accessible skip control and Escape', () => {
+test('the opening has an accessible skip control and Escape, and can be replayed', () => {
   assert.match(html, /<button type="button" class="city-skip" id="citySkip">Skip intro/);
   assert.match(html, /e\.key === 'Escape'/);
-  assert.match(html, /id="qCity"/);   // and it can be replayed
+  assert.match(html, /id="qCity"/);
 });
 
-test('the room does not render under the intro, and failures still fall back to text', () => {
+test('the room does not render under the opening, and failures still fall back to text', () => {
   assert.match(html, /!paused && !cityActive && !document\.hidden/);
   assert.match(html, /if \(cityRun\) cityRun\.skip\(\);/);
 });
 
-test('the window shows the live city, with the painted skyline as the fallback', () => {
-  const win = {};
-  new Function('window', city)(win);
-  assert.equal(typeof win.CityIntro.createWindow, 'function');
-  assert.ok(html.includes('CityIntro.createWindow('));
-  assert.ok(html.includes('if (live || lite || !window.CityIntro'));          // lite devices keep the painted city
-  assert.ok(html.includes('if (!frus.intersectsBox(winBox)) return;'));       // no city render when the window is out of shot
-  assert.ok(html.includes('function enterRoom('));                            // the camera move into the room
+test('the window shows the photograph, with the painted skyline as the fallback', () => {
+  assert.ok(html.includes('window.Pano.windowView('));
+  assert.ok(html.includes("keeping the painted city"));
+  assert.ok(html.includes('function enterRoom('));   // the camera move into the room
 });
 
-test('the build ships city.js', () => {
-  assert.match(build, /copy\('city\.js'\)/);
-  assert.doesNotMatch(build, /copy\('city\.html'\)/);   // the dev preview stays local
+test('the build ships pano.js and the photographs, not the old generated city', () => {
+  assert.match(build, /copy\('pano\.js'\)/);
+  assert.doesNotMatch(build, /city\.(js|html)/);
+  assert.ok(!fs.existsSync(path.join(ROOT, 'city.js')));
 });
