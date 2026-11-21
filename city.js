@@ -53,6 +53,7 @@
     if (!T) throw new Error('CityIntro needs THREE');
     const tier = opts.tier || 'high';
     const HIGH = tier === 'high', LOW = tier === 'low';
+    const WIN = opts.mode === 'window';   // a live view for the room's window instead of the intro film
     const ownRenderer = !opts.renderer;
     const renderer = opts.renderer || new T.WebGLRenderer({ canvas: opts.canvas, antialias: true, powerPreference: 'high-performance' });
     const reduce = !!opts.reduce;
@@ -63,13 +64,12 @@
     const gl = renderer.getContext(), isGL2 = renderer.capabilities.isWebGL2;
     const floatRT = isGL2 ? renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float')
       : renderer.extensions.has('EXT_color_buffer_half_float') && renderer.extensions.has('OES_texture_half_float');
-    const POST = !LOW && floatRT;
+    const POST = !WIN && !LOW && floatRT;
     const DEPTH = HIGH && POST && (isGL2 || renderer.extensions.has('WEBGL_depth_texture'));
-    const SHADOWS = HIGH;
+    const SHADOWS = HIGH && !WIN;
 
     const saved = { toneMapping: renderer.toneMapping, exposure: renderer.toneMappingExposure, autoClear: renderer.autoClear, shadowAuto: renderer.shadowMap.autoUpdate, pr: renderer.getPixelRatio() };
-    renderer.toneMapping = POST ? T.NoToneMapping : T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1;
+    if (!WIN) { renderer.toneMapping = POST ? T.NoToneMapping : T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1; }
 
     const scene = new T.Scene();
     const camera = new T.PerspectiveCamera(42, innerWidth / innerHeight, .5, 16000);
@@ -86,9 +86,10 @@
       sunLight.shadow.bias = -.0004; sunLight.shadow.normalBias = .6;
     }
 
+    let sunAz = opts.sunAz != null ? opts.sunAz : -2.32;
     function setTimeOfDay(elev, night) {
       // the sun sets over the sea to the west-south-west
-      const az = -2.32, e = elev;
+      const az = sunAz, e = elev;
       U.uSunDir.value.set(Math.cos(az) * Math.cos(e), Math.sin(e), Math.sin(az) * Math.cos(e)).normalize();
       U.uNight.value = night;
       const k = Math.max(0, Math.min(1, (elev + .05) / .2));
@@ -284,7 +285,7 @@
     const rand = (() => { let s = 1337; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
     const R = (a, b) => a + rand() * (b - a);
     const DOWNTOWN = new T.Vector2(-120, 620);
-    const xHalf = HIGH ? 2400 : LOW ? 1300 : 1700, zMax = HIGH ? 3000 : LOW ? 1700 : 2200;
+    const xHalf = HIGH ? 2400 : LOW ? 1300 : 1700, zMax = WIN ? 3000 : HIGH ? 3000 : LOW ? 1700 : 2200;
     const perBlock = HIGH ? 1 : LOW ? .55 : .75;
     const bList = [];
     for (let bx = X0; bx < -X0; bx += BLOCK) {
@@ -565,7 +566,7 @@
     }
 
     /* ================= motes drifting in the low sun, near the lens ================= */
-    const MOTES = LOW ? 0 : 260;
+    const MOTES = LOW || WIN ? 0 : 260;
     const mPos = new Float32Array(MOTES * 3); for (let i = 0; i < MOTES * 3; i++) mPos[i] = (Math.random() - .5) * 30;
     const motesGeo = new T.BufferGeometry(); motesGeo.setAttribute('position', new T.BufferAttribute(mPos, 3));
     const motes = new T.Points(motesGeo, new T.ShaderMaterial({
@@ -743,6 +744,51 @@
       return s;
     }
 
+    /* ================= window mode: the room's view, rendered live into a texture ================= */
+    if (WIN) {
+      // a beachfront flat ~16 floors up, looking west along the coast: towers on the left, the coast road and palms below, the sun setting over the sea
+      if (opts.sunAz == null) sunAz = -3.28;   // the sun sits just right of the skyline from this window
+      const VIEW = new T.Vector3(...(opts.view || [1500, 48, -70]));
+      const yawQ = new T.Quaternion().setFromAxisAngle(new T.Vector3(0, 1, 0), opts.yaw != null ? opts.yaw : 1.85);
+      // looking a little further down than the room camera lifts the skyline into the glass (the sill and desk hide the street)
+      const pitchQ = new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), opts.pitch != null ? opts.pitch : -.1);
+      const rt = new T.WebGLRenderTarget(2, 2, { type: floatRT ? T.HalfFloatType : T.UnsignedByteType, depthBuffer: true });
+      const scale = HIGH ? .75 : LOW ? .4 : .5;
+      const eye = new T.Vector3(0, 1.5, 1), off = new T.Vector3(), size = new T.Vector2();
+      camera.far = 12000; scene.remove(heroWin);
+      let lastNight = -1;
+      setTimeOfDay(.085, 0); refreshEnv();
+      return {
+        texture: rt.texture, mode: 'window',
+        setTime(day, overcast = 0) {
+          const k = Math.max(0, Math.min(1, day));
+          const night = Math.min(1, (1 - k) * 1.05);
+          setTimeOfDay(-.11 + .195 * k, night);                                   // the room's "day" is the golden hour here
+          U.uFogDen.value = (HIGH ? .00017 : .00022) * (1 + overcast * 1.2);
+          if (Math.abs(night - lastNight) > (HIGH ? .1 : .45)) { lastNight = night; refreshEnv(); }
+        },
+        render(roomCam, t) {
+          renderer.getDrawingBufferSize(size);
+          const w = Math.max(2, Math.round(size.x * scale)), h = Math.max(2, Math.round(size.y * scale));
+          if (rt.width !== w || rt.height !== h) { rt.setSize(w, h); glowMat.uniforms.uScale.value = h * .9; }
+          camera.fov = roomCam.fov; camera.aspect = roomCam.aspect; camera.zoom = roomCam.zoom;
+          const v = roomCam.view;
+          if (v && v.enabled) camera.setViewOffset(v.fullWidth, v.fullHeight, v.offsetX, v.offsetY, v.width, v.height); else camera.clearViewOffset();
+          camera.updateProjectionMatrix();
+          camera.quaternion.copy(yawQ).multiply(roomCam.quaternion).multiply(pitchQ);
+          off.copy(roomCam.position).sub(eye).applyQuaternion(yawQ).multiplyScalar(4);   // a step in the room is a few metres up here: a hint of parallax
+          camera.position.copy(VIEW).add(off);
+          U.uTime.value = t;
+          updateTraffic(t + 40);
+          sky.position.copy(camera.position);
+          const prev = renderer.getRenderTarget();
+          renderer.setRenderTarget(rt); renderer.render(scene, camera); renderer.setRenderTarget(prev);
+        },
+        tune(o) { if (o.sunAz != null) sunAz = o.sunAz; if (o.view) VIEW.set(...o.view); if (o.yaw != null) yawQ.setFromAxisAngle(new T.Vector3(0, 1, 0), o.yaw); if (o.pitch != null) pitchQ.setFromAxisAngle(new T.Vector3(1, 0, 0), o.pitch); },
+        dispose() { rt.dispose(); cleanup(); },
+      };
+    }
+
     /* ================= run ================= */
     let raf = 0, t0 = 0, clock = 0, resolveP = null, state = 'idle', fade = { v: 1, target: 0, col: new T.Color(0, 0, 0) }, endAt = Infinity, ending = null;
     let frames = 0, slowT = 0, lastNow = 0, lastCap = -1;
@@ -802,6 +848,7 @@
       if (resolveP) resolveP(why);
     }
     function cleanup() {
+      if (WIN) { if (envRT) envRT.dispose(); pmrem.dispose(); scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) [].concat(o.material).forEach(m => m.dispose()); }); return; }
       renderer.setRenderTarget(null);
       renderer.toneMapping = saved.toneMapping; renderer.toneMappingExposure = saved.exposure; renderer.autoClear = saved.autoClear;
       renderer.shadowMap.autoUpdate = saved.shadowAuto; renderer.setPixelRatio(saved.pr);
@@ -830,5 +877,5 @@
     };
   };
 
-  window.CityIntro = { create };
+  window.CityIntro = { create, createWindow: (o = {}) => create(Object.assign({}, o, { mode: 'window' })) };
 })();

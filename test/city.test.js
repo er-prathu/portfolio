@@ -36,8 +36,8 @@ test('the intro is gated: once per visitor, never with reduced motion, deep link
   for (const needle of ['!textOnly', "q.get('intro') !== '0'", "!q.get('shot')", 'location.hash.length < 2', 'prefers-reduced-motion', '!seen'])
     assert.ok(gate[0].includes(needle), `gate checks ${needle}`);
   assert.match(html, /localStorage\.setItem\('city-intro', 'seen'\)/);
-  // city.js is fetched only when the intro plays
-  assert.match(html, /window\.__cityJs = window\.__cityPlay \? load\('city\.js'\)/);
+  // city.js (intro and the live window view) is never fetched by Recruiter Mode or the text view
+  assert.ok(html.includes("window.__cityJs = !textOnly ? load('city.js')"));
 });
 
 test('the intro has an accessible skip control and Escape', () => {
@@ -49,6 +49,16 @@ test('the intro has an accessible skip control and Escape', () => {
 test('the room does not render under the intro, and failures still fall back to text', () => {
   assert.match(html, /!paused && !cityActive && !document\.hidden/);
   assert.match(html, /if \(cityRun\) cityRun\.skip\(\);/);
+});
+
+test('the window shows the live city, with the painted skyline as the fallback', () => {
+  const win = {};
+  new Function('window', city)(win);
+  assert.equal(typeof win.CityIntro.createWindow, 'function');
+  assert.ok(html.includes('CityIntro.createWindow('));
+  assert.ok(html.includes('if (live || lite || !window.CityIntro'));          // lite devices keep the painted city
+  assert.ok(html.includes('if (!frus.intersectsBox(winBox)) return;'));       // no city render when the window is out of shot
+  assert.ok(html.includes('function enterRoom('));                            // the camera move into the room
 });
 
 test('the build ships city.js', () => {

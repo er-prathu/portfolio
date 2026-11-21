@@ -67,12 +67,13 @@
   if (!textOnly) document.documentElement.classList.remove('text-mode');   // the static page is the text version; the 3D desk replaces it
   function load(src) { return new Promise(function (ok, no) { var el = document.createElement('script'); el.src = src; el.async = false; el.onload = ok; el.onerror = no; document.head.appendChild(el); }); }
   /* The city intro plays once per visitor (?intro=1 replays it, ?intro=0 skips it). Never with reduced motion,
-     a deep link (#about, ?shot=…) or the text view; city.js (about 40 KB, no models or textures) is fetched only then. */
+     a deep link (#about, ?shot=…) or the text view. city.js (about 60 KB, no models or textures) also draws the live view
+     from the window, so the 3D desk always fetches it; Recruiter Mode and the text view never do. */
   var q = new URLSearchParams(location.search), seen = false;
   try { seen = localStorage.getItem('city-intro') === 'seen'; } catch (e) {}
   window.__cityPlay = !textOnly && q.get('intro') !== '0' && !q.get('shot') && location.hash.length < 2
     && (q.get('intro') === '1' || (!seen && !matchMedia('(prefers-reduced-motion: reduce)').matches));
-  window.__cityJs = window.__cityPlay ? load('city.js').then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
+  window.__cityJs = !textOnly ? load('city.js').then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
   window.__libs = textOnly ? Promise.resolve(false) : Promise.all([
     load('https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js').then(function () { return load('https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js'); }),
     load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
@@ -2647,6 +2648,48 @@
   cityGroup.add(contrail);
   window.__deskLife = { birds, flock, drift, twinkles, contrail };   // for testing
 
+  /* ---------- the live view: city.js renders the coastal city from a high flat, into a texture the window shows ----------
+     The painted skyline above stays as the fallback (lite scene, no city.js, or an error). The view is drawn with the
+     room camera's own rotation and lens, so looking around through the window behaves like a real window. */
+  let live = null, liveFrame = 0;
+  const liveMat = new T.ShaderMaterial({
+    uniforms: { tCity: { value: null }, uRes: { value: new T.Vector2(1, 1) }, uGain: { value: .62 } }, fog: false, depthWrite: false,
+    vertexShader: 'void main() { gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform sampler2D tCity; uniform vec2 uRes; uniform float uGain;
+      void main() { vec3 c = texture2D(tCity, gl_FragCoord.xy / uRes).rgb * uGain; c = pow(c, vec3(1.22)) * 1.08; float l = dot(c, vec3(.2126, .7152, .0722)); gl_FragColor = vec4(max(mix(vec3(l), c, 1.28), 0.0), 1.0);   // a little contrast: the room has no grade pass
+        #include <tonemapping_fragment>
+        #include <encodings_fragment>
+      }`,
+  });
+  const liveBack = new T.Mesh(new T.PlaneGeometry(80, 40), liveMat);
+  liveBack.position.set(0, 3, -11.6); liveBack.visible = false; liveBack.renderOrder = -2;
+  scene.add(liveBack);
+  const winBox = new T.Box3(new T.Vector3(-OX, OY0, WZ - .2), new T.Vector3(OX, OY1, WZ + .2)), frus = new T.Frustum(), frusM = new T.Matrix4();
+  function startLive() {
+    if (live || lite || !window.CityIntro || !window.CityIntro.createWindow) return;
+    try {
+      live = window.CityIntro.createWindow({ renderer, tier: touchDev ? 'mid' : 'high' });
+    } catch (e) { console.warn('live window view unavailable, keeping the painted city:', e); live = null; return; }
+    liveMat.uniforms.tCity.value = live.texture;
+    liveBack.visible = true; window.__live = live;
+    // the painted city steps aside; the railway, trains, birds and weather stay in front of the live view
+    [skyMesh, dayMesh, stars, drift, overcastSky, mist, plane, planeRed, contrail, ...nightLayers, ...dayLayers, ...twinkles, ...beacons, ...cars, ...nearTowers]
+      .forEach(o => o.parent && o.parent.remove(o));
+    twinkles.length = 0;
+    envDay = bakeEnv(true);   // reflections: the window in the desk's varnish is now the sunset itself
+    shadowDirty = Math.max(shadowDirty, 2);
+  }
+  function renderLive(t, d) {
+    if (!live) return;
+    live.setTime(d, Math.min(1, W.cloud * .5 + Math.min(1, W.rain) * .35 + W.fog + W.storm * .5));
+    camera.updateMatrixWorld();
+    frus.setFromProjectionMatrix(frusM.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
+    if (!frus.intersectsBox(winBox)) return;                 // window out of shot: skip the city entirely
+    if (touchDev && (liveFrame++ & 1)) return;                // phones: the city updates every other frame
+    live.render(camera, t);
+    renderer.getDrawingBufferSize(liveMat.uniforms.uRes.value);
+  }
+
   /* ---------- desk ---------- */
   /* walnut: long flowing grain with cathedral arcs, pores and colour drift */
   const woodTex = canvasTex(2048, 512, g => {
@@ -2667,7 +2710,7 @@
     for (let i = 0; i < 4000; i++) { g.fillStyle = `rgba(20,10,4,${Math.random() * .25})`; g.fillRect(Math.random() * 2048, Math.random() * 512, 3 + Math.random() * 6, 1); }   // pores
   });
   woodTex.t.wrapS = woodTex.t.wrapT = T.RepeatWrapping; woodTex.t.repeat.set(.55, 1.1);
-  const woodMat = new T.MeshPhysicalMaterial({ color: 0xcdc2b6, map: woodTex.t, roughness: .62, clearcoat: .3, clearcoatRoughness: .5, envMapIntensity: .5, specularIntensity: .55 });   // a touch darker and less saturated: oiled walnut, not orange   // satin varnish: a soft sheen; the window reflects faintly, not as a white sheet
+  const woodMat = new T.MeshPhysicalMaterial({ color: 0xcdc2b6, map: woodTex.t, roughness: .62, clearcoat: .42, clearcoatRoughness: .32, envMapIntensity: .5, specularIntensity: .55 });   // a touch darker and less saturated: oiled walnut, not orange   // satin varnish: a soft sheen; the window reflects faintly, not as a white sheet
   const DY = .775; // desk surface height
   /* ---------- the desk: compact, pushed up to the window like the reference composition ---------- */
   const DZ = -.5;                                   // desk centre (back edge almost at the sill)
@@ -4374,7 +4417,7 @@
   scene.add(sun, sun.target);
   const sky = { day: 0 };
   const NIGHT = { wall: new T.Color(C.wall), floor: new T.Color(0x47423c), bg: new T.Color(0x07090b), hemi: new T.Color(0x48555c), sun: new T.Color(0x5f86b8) };
-  const DAY = { wall: new T.Color(0x857e74), floor: new T.Color(0xa89e90), bg: new T.Color(0x9fb4bb), hemi: new T.Color(0xd2e4ea), sun: new T.Color(0xfff0d8) };
+  const DAY = { wall: new T.Color(0x8a7766), floor: new T.Color(0xa08c78), bg: new T.Color(0xc89a78), hemi: new T.Color(0xc4b4b0), sun: new T.Color(0xffa860) };   // golden hour
 
   /* ---------- reflections: small light-probe rooms baked into environment maps ---------- */
   const pmrem = new T.PMREMGenerator(renderer);
@@ -4385,14 +4428,15 @@
       const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: hex, side: T.DoubleSide }));
       m.material.color.multiplyScalar(k); m.position.set(x, y, z); m.rotation.y = ry; s.add(m);
     };
-    panel(2.2, 1.35, day ? 0xe3eff3 : 0x2b3a4c, day ? 3 : .8, 0, 1.62, -.95);         // the window: blue-grey night, not teal
+    panel(2.2, 1.35, day ? 0xffbf8a : 0x2b3a4c, day ? 3 : .8, 0, 1.62, -.95);         // the window: golden-hour glow by day, blue-grey night
+    if (day && live) { const m = new T.Mesh(new T.PlaneGeometry(2.2, 1.35), new T.MeshBasicMaterial({ map: live.texture, side: T.DoubleSide })); m.material.color.setScalar(2.2); m.position.set(0, 1.62, -.94); s.add(m); }
     if (!day) panel(.22, .22, 0xffb36e, 2.6, -.45, 1.22, -.55);                        // the lamp, where the model's bulb now is (soft, so varnish shows a glow not a square)
     panel(.27, .22, 0x5a78ff, day ? .4 : 1.0, TVX, DY + VCR_H + .26, TVZ + .17);       // the TV's blue screen
     const tex = pmrem.fromScene(s, .08).texture;   // a touch more blur: softer, more natural highlights
     s.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
     return tex;
   }
-  const envNight = bakeEnv(false), envDay = bakeEnv(true);
+  const envNight = bakeEnv(false); let envDay = bakeEnv(true);
   scene.environment = envNight;
 
   /* ---------- glow (cheap bloom) around bright sources ---------- */
@@ -4651,10 +4695,10 @@
   lampBeam.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), aimDir.clone().negate());
   lampBeam.position.copy(headPos).addScaledVector(aimDir, .33);
   scene.add(lampBeam);
-  const winC = new T.Vector3(0, 1.62, -.95), sunAim = new T.Vector3(.15, .45, .85);
+  const winC = new T.Vector3(0, 1.62, -.95), sunAim = new T.Vector3(-.55, .95, 1.35);   // along the low evening sun
   const sunDir = sunAim.clone().sub(winC), sunLen = sunDir.length(); sunDir.normalize();
   const sbGeo = new T.CylinderGeometry(.95, 1.02, sunLen, 4, 1, true); sbGeo.rotateY(Math.PI / 4); sbGeo.scale(1.08, 1, .62);
-  const sunBeam = new T.Mesh(sbGeo, beamMat(0xfff0d8));
+  const sunBeam = new T.Mesh(sbGeo, beamMat(0xffb070));
   sunBeam.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), sunDir.clone().negate());
   sunBeam.position.copy(winC).addScaledVector(sunDir, sunLen / 2);
   scene.add(sunBeam);
@@ -5008,9 +5052,9 @@
     const envNow = d > .5 ? envDay : envNight; if (scene.environment !== envNow) scene.environment = envNow;
     sun.color.lerpColors(NIGHT.sun, DAY.sun, d);
     stormFlash(t);
-    sun.intensity = (.34 + 1.8 * d) * (1 - .45 * W.storm - .25 * W.fog) + W.flash * 3.2;   // moonlight → sunlight; overcast dims it, lightning floods it
+    sun.intensity = (.34 + 2.5 * d) * (1 - .45 * W.storm - .25 * W.fog) + W.flash * 3.2;   // moonlight → sunlight; overcast dims it, lightning floods it
     // a high moon (steep light, no glare off the desk toward the camera) gives way to the day sun, sweeping the window shadows
-    sun.position.set(-1.4 + d * .2, 3.9 - d * .5, -3.2 - d * 1.2);
+    sun.position.set(-1.4 + d * 2.9, 3.9 - d * 2.05, -3.2 - d * 1.4);   // by day the sun is low in the west: ~13° above the horizon, raking across the desk
     if (d !== lastSky) { shadowDirty = Math.max(shadowDirty, 1); lastSky = d; }
     dayMesh.material.opacity = d;
     // the 3D city crossfades in place: same buildings, same depths, so the railway and trains stay visible by day
@@ -5087,7 +5131,7 @@
     gDusk.material.opacity = .5 * (1 - d);
     gNoon.material.opacity = .6 * d;
     lampBeam.material.opacity = .085 * lampOn * fl;
-    sunBeam.material.opacity = .065 * d;
+    sunBeam.material.opacity = .085 * d;
     dustLamp.material.opacity = .75 * lampOn;
     dustSun.material.opacity = .85 * d;
     if (!reduce) { driftDust(dustLamp, t); driftDust(dustSun, t); }
@@ -5104,6 +5148,7 @@
     if (!reduce) figBody.rotation.y = Math.sin(t * .45) * .42;   // turntable sway
     if (tip.classList.contains('on') && pointer.in) tip.style.transform = `translate(${pointer.x + 16}px, ${pointer.y + 18}px)`;
     if (shadowDirty > 0) { renderer.shadowMap.needsUpdate = true; shadowDirty--; }
+    renderLive(t, d);
     renderer.render(scene, camera);
   }
   /* adaptive quality: watch real frame times and trade resolution for smoothness (and back) */
@@ -5176,7 +5221,7 @@
     istTime = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' }).format(new Date());
   } catch (e) {}
   const isDayNow = istHour >= 6 && istHour < 18;
-  if (istTime) $('#clock').textContent = `${istTime} in Navi Mumbai · ${FEST_NAME ? FEST_NAME + ' ' : ''}${isDayNow ? (FEST_NAME ? 'day' : 'daytime') : 'night'} at the desk`;
+  if (istTime) $('#clock').textContent = `${istTime} in Navi Mumbai · ${FEST_NAME ? FEST_NAME + ' ' : ''}${isDayNow ? (FEST_NAME ? 'evening' : 'golden hour') : 'night'} at the desk`;
   // the sky outside follows the visitor's own clock until their live weather (with is_day) arrives; the caption keeps the desk's time
   const localHour = new Date().getHours();
   setDay(localHour >= 6 && localHour < 18, true);
@@ -5451,19 +5496,31 @@
     .add(() => { lampLevel = .9; }, .2)
     .add(() => { lampLevel = .2; }, .26)
     .add(() => { lampLevel = 1; }, .36);
+  /* a crane-and-dolly from the reading corner at the back of the room, past the lounge, down to the chair at the desk */
+  function enterRoom(dur) {
+    const V = (x, y, z) => new T.Vector3(x, y, z), home = shot('home'), portrait = innerWidth / innerHeight < 1;
+    const P = new T.CatmullRomCurve3(portrait
+      ? [V(-1.6, 2.3, 4.1), V(-.9, 1.95, 3.3), V(-.25, 1.55, 2.6), home.pos.clone()]
+      : [V(-2.1, 2.2, 3.9), V(-1.25, 1.8, 2.7), V(-.35, 1.5, 1.6), home.pos.clone()], false, 'centripetal');
+    const L = new T.CatmullRomCurve3([V(.25, 1.5, -.95), V(.15, 1.4, -.95), V(.06, 1.22, -1), home.look.clone()], false, 'centripetal');
+    const o = { p: 0 };
+    P.getPointAt(0, camPos); L.getPointAt(0, camLook);
+    const v = homeInset(); view.x = v.x; view.y = v.y;
+    return G.to(o, { p: 1, duration: dur, ease: 'power2.inOut', onUpdate: () => { P.getPointAt(o.p, camPos); L.getPointAt(o.p, camLook); } });
+  }
   function intro(fromCity) {
     body.classList.add('cine');
     if (fromCity) {   // the city ended on a lit window in the dark: the lamp flickers on, then the slow pull-back
       renderer.setPixelRatio(dpr); resize();
       loader.classList.add('gone');
-      const s = shot('intro'); camPos.copy(s.pos); camLook.copy(s.look);
-      lens.k = .72;
+      lens.k = .86;
+      enterRoom(6.2);
+      G.to(lens, { k: 1, duration: 6.2, ease: 'power2.inOut' });
       G.timeline()
-        .add(flicker, .35)
-        .add(() => { focus('home', 4.2); G.to(lens, { k: 1, duration: 4.2, ease: 'power3.inOut' }); }, 1.1)
-        .to(power, { v: 1, duration: .9, ease: 'power2.out', onUpdate: applyPower }, 1.8)
-        .add(() => body.classList.add('ready'), 4.4)
-        .add(() => G.to(hot.map(g => g.scale), { x: 1.07, y: 1.07, z: 1.07, duration: .3, ease: 'power2.out', yoyo: true, repeat: 1, stagger: .12 }), 5.4);
+        .add(flicker, .8)
+        .to(power, { v: 1, duration: .9, ease: 'power2.out', onUpdate: applyPower }, 3.6)
+        .add(() => body.classList.add('ready'), 6)
+        .add(() => G.to(hot.map(g => g.scale), { x: 1.07, y: 1.07, z: 1.07, duration: .3, ease: 'power2.out', yoyo: true, repeat: 1, stagger: .12 }), 6.8);
       return;
     }
     const shotQ = new URLSearchParams(location.search).get('shot');   // ?shot=name jumps straight to a framing (used for review screenshots)
@@ -5479,19 +5536,15 @@
       const s = shot('home'); camPos.copy(s.pos); camLook.copy(s.look);
       lampLevel = 1; power.v = 1; applyPower(); body.classList.add('ready'); fromHash(); return;
     }
-    /* opening: title card → tight on the lamp as it flickers on → slow pull-back with the lens widening */
-    const s = shot('intro'); camPos.copy(s.pos); camLook.copy(s.look);
-    lens.k = .72;
+    /* opening: title card → the camera comes in from the back of the room as the lamp flickers on */
+    lens.k = .86;
+    enterRoom(6.2).pause();
     loader.classList.add('titled');
     G.timeline()
-      .add(() => loader.classList.add('gone'), 2.2)
-      .add(flicker, 2.9)
-      .add(() => {
-        focus('home', 4.6);
-        G.to(lens, { k: 1, duration: 4.6, ease: 'power3.inOut' });
-      }, 3.7)
-      .to(power, { v: 1, duration: .9, ease: 'power2.out', onUpdate: applyPower }, 4.4)
-      .add(() => body.classList.add('ready'), 7.2)
+      .add(() => { loader.classList.add('gone'); enterRoom(6.2); G.to(lens, { k: 1, duration: 6.2, ease: 'power2.inOut' }); }, 2.2)
+      .add(flicker, 3.0)
+      .to(power, { v: 1, duration: .9, ease: 'power2.out', onUpdate: applyPower }, 5.6)
+      .add(() => body.classList.add('ready'), 8.2)
       .add(() => G.to(hot.map(g => g.scale), { x: 1.07, y: 1.07, z: 1.07, duration: .3, ease: 'power2.out', yoyo: true, repeat: 1, stagger: .12 }), 8.2);
   }
 
@@ -5554,7 +5607,7 @@
     fontTex.forEach(s => s.draw(0)); // redraw text now that fonts are in
     requestAnimationFrame(loop);
     if (!mode3d) { loader.classList.add('gone'); lampLevel = 1; power.v = 1; applyPower(); setTextMode(true); body.classList.add('ready'); return; }
-    if (cityDone) cityDone.then(() => { if (!failed3d) intro(true); }); else intro();
+    if (cityDone) cityDone.then(() => { if (!failed3d) { startLive(); intro(true); } }); else { startLive(); intro(); }
   });
 })();
 </script>
