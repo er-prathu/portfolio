@@ -66,6 +66,13 @@
   window.__textOnly = textOnly;
   if (!textOnly) document.documentElement.classList.remove('text-mode');   // the static page is the text version; the 3D desk replaces it
   function load(src) { return new Promise(function (ok, no) { var el = document.createElement('script'); el.src = src; el.async = false; el.onload = ok; el.onerror = no; document.head.appendChild(el); }); }
+  /* The city intro plays once per visitor (?intro=1 replays it, ?intro=0 skips it). Never with reduced motion,
+     a deep link (#about, ?shot=…) or the text view; city.js (about 40 KB, no models or textures) is fetched only then. */
+  var q = new URLSearchParams(location.search), seen = false;
+  try { seen = localStorage.getItem('city-intro') === 'seen'; } catch (e) {}
+  window.__cityPlay = !textOnly && q.get('intro') !== '0' && !q.get('shot') && location.hash.length < 2
+    && (q.get('intro') === '1' || (!seen && !matchMedia('(prefers-reduced-motion: reduce)').matches));
+  window.__cityJs = window.__cityPlay ? load('city.js').then(function () { return true; }, function () { return false; }) : Promise.resolve(false);
   window.__libs = textOnly ? Promise.resolve(false) : Promise.all([
     load('https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js').then(function () { return load('https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js'); }),
     load('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js')
@@ -540,6 +547,27 @@
     .dock a[aria-current="true"] { color: var(--amber); }
     body.sheet-open .dock { transform: translateY(110%); opacity: 0; }
   }
+
+  /* ---------- City intro: captions, skip, progress over the shared WebGL canvas ---------- */
+  .city-ui { position: fixed; inset: 0; z-index: 40; pointer-events: none; display: none; }
+  body.city-on .city-ui { display: block; }
+  body.city-on > :not(#gl):not(.city-ui):not(.bars):not(script):not(.loader) { visibility: hidden !important; }
+  .loader.under-city { opacity: 0; pointer-events: none; transition: none; }
+  .city-fade { position: fixed; inset: 0; background: #000; opacity: 1; }
+  .city-cap { position: absolute; left: max(24px, 6vw); bottom: calc(var(--bar-h) + 7vh); max-width: min(620px, 86vw); text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+  .city-cap > * { display: block; opacity: 0; transform: translateY(10px); transition: opacity 1.1s ease, transform 1.4s cubic-bezier(.2,.7,.2,1); }
+  .city-cap.on > * { opacity: 1; transform: none; }
+  .city-cap.on > *:nth-child(2) { transition-delay: .25s; }
+  .city-cap .label { color: #f3c58e; letter-spacing: .32em; margin-bottom: 10px; }
+  .city-cap h2 { font: 800 clamp(30px, 6.2vw, 88px)/.95 var(--display); letter-spacing: .01em; text-transform: uppercase; color: #fff6ea; }
+  .city-cap p { font: 500 clamp(15px, 1.7vw, 22px)/1.35 var(--sans); color: #fff1df; }
+  .city-skip { position: absolute; right: max(16px, calc(env(safe-area-inset-right, 0px) + 16px)); bottom: calc(var(--bar-h) + 18px); pointer-events: auto;
+    display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255,240,220,.35);
+    background: rgba(10,8,6,.55); color: #fff1df; font: 500 13px/1 var(--sans); }
+  .city-skip:hover, .city-skip:focus-visible { border-color: var(--amber); color: var(--amber); }
+  .city-skip kbd { font: 600 10px/1 var(--mono); opacity: .7; border: 1px solid currentColor; border-radius: 4px; padding: 3px 4px; }
+  .city-prog { position: absolute; left: 0; bottom: var(--bar-h); height: 2px; width: 100%; background: var(--amber); transform-origin: left; transform: scaleX(0); opacity: .75; }
+  @media (max-width: 760px) { .city-cap { bottom: calc(var(--bar-h) + 76px); } .city-skip kbd { display: none; } }
 
   /* ---------- Intro caption ---------- */
   .intro {
@@ -1201,6 +1229,7 @@
     <button type="button" id="qGame"><span aria-hidden="true">◉</span> Play a game</button>
     <button type="button" id="qDeck"><span aria-hidden="true">◉</span> Now building</button>
     <button type="button" id="qCv" hidden><span aria-hidden="true">▤</span> Résumé</button>
+    <button type="button" id="qCity"><span aria-hidden="true">↺</span> City intro</button>
   </div>
   <p class="hint room-only" id="hintText">This is my desk. <b>Click anything on it</b>, drag to look around, scroll to zoom, double-click to move.</p>
 </div>
@@ -1577,6 +1606,13 @@
   </div>
 </section>
 </main>
+
+<div class="city-ui" id="cityUi">
+  <div class="city-fade" id="cityFade"></div>
+  <div class="city-cap" id="cityCap" aria-live="polite"></div>
+  <button type="button" class="city-skip" id="citySkip">Skip intro <kbd>Esc</kbd></button>
+  <div class="city-prog" id="cityProg"></div>
+</div>
 
 <div class="loader" id="loader">
   <p class="msg">Switching on the lamp</p>
@@ -1971,13 +2007,16 @@
   let lite = new URLSearchParams(location.search).get('lite') === '1' || glLostBefore
     || (touchDev && ((navigator.deviceMemory || 8) <= 4 || (navigator.hardwareConcurrency || 8) <= 4));
   let failed3d = false;
+  let cityActive = false, cityDone = null, cityRun = null;   // the city intro (see below)
   const fail3d = why => {
     if (failed3d) return; failed3d = true;
     console.warn('3D desk unavailable, showing the text version:', why);
     fallback(); if (room) room.setPaused(true);
+    if (cityRun) cityRun.skip();
   };
   addEventListener('error', e => { if (!loader.classList.contains('gone')) fail3d(e.message || 'script error'); });
-  setTimeout(() => { if (!loader.classList.contains('gone') && !root.classList.contains('text-mode')) fail3d('start timed out'); }, 20000);
+  const startGuard = () => { if (cityActive) { setTimeout(startGuard, 4000); return; } if (!loader.classList.contains('gone') && !root.classList.contains('text-mode')) fail3d('start timed out'); };
+  setTimeout(startGuard, 20000);
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: !touchDev, powerPreference: touchDev ? 'default' : 'high-performance' });
@@ -1995,6 +2034,40 @@
 
   const T = THREE, G = gsap;
   const isPhone = () => innerWidth <= 760;
+
+  /* ---------- city intro (city.js): plays on the same renderer while the room builds underneath ---------- */
+  $('#qCity').addEventListener('click', () => { location.href = location.pathname + '?intro=1'; });
+  if (window.__cityPlay && (await window.__cityJs) && window.CityIntro) {
+    const ui = $('#cityUi'), cap = $('#cityCap'), prog = $('#cityProg');
+    const CAPS = [
+      '<span class="label">Senior Full Stack Engineer</span><h2>Prathamesh Patil</h2>',
+      '<p>Backend engineering · AI integration<br>8+ years building for the web</p>',
+      '<p>Welcome to my desk.</p>',
+    ];
+    try {
+      cityRun = window.CityIntro.create({
+        renderer, reduce, fadeEl: $('#cityFade'),
+        tier: lite ? 'low' : touchDev ? 'mid' : 'high',
+        onCaption: i => { cap.classList.remove('on'); setTimeout(() => { cap.innerHTML = CAPS[i] || ''; requestAnimationFrame(() => cap.classList.add('on')); }, 260); },
+        onProgress: p => { prog.style.transform = `scaleX(${p.toFixed(4)})`; },
+      });
+      $('#cityFade').style.opacity = cityRun.post ? '0' : '1';
+      cityActive = true;
+      body.classList.add('city-on', 'cine'); loader.classList.add('under-city');
+      const skip = () => { if (cityRun) cityRun.skip(); };
+      $('#citySkip').addEventListener('click', skip);
+      const onKey = e => { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); skip(); } };
+      addEventListener('keydown', onKey);
+      setTimeout(() => $('#citySkip').focus({ preventScroll: true }), 50);
+      cityDone = cityRun.play().then(why => {
+        try { localStorage.setItem('city-intro', 'seen'); } catch (e) {}
+        removeEventListener('keydown', onKey);
+        cityActive = false; cityRun = null;
+        body.classList.remove('city-on'); loader.classList.remove('under-city'); ui.remove();
+        return why;
+      });
+    } catch (e) { console.warn('city intro unavailable:', e); cityActive = false; cityRun = null; body.classList.remove('city-on'); }
+  }
   renderer.outputEncoding = T.sRGBEncoding;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -5072,7 +5145,7 @@
     }
   }
   function loop(now) {
-    if (!paused && !document.hidden && !failed3d) {
+    if (!paused && !cityActive && !document.hidden && !failed3d) {
       render(); adapt(now || performance.now());
       if (glChecks < 900 && (++glChecks % 30 === 0)) checkShaders();   // models and festival props compile late: check every 30 frames for the first ~15 s
     }
@@ -5378,8 +5451,21 @@
     .add(() => { lampLevel = .9; }, .2)
     .add(() => { lampLevel = .2; }, .26)
     .add(() => { lampLevel = 1; }, .36);
-  function intro() {
+  function intro(fromCity) {
     body.classList.add('cine');
+    if (fromCity) {   // the city ended on a lit window in the dark: the lamp flickers on, then the slow pull-back
+      renderer.setPixelRatio(dpr); resize();
+      loader.classList.add('gone');
+      const s = shot('intro'); camPos.copy(s.pos); camLook.copy(s.look);
+      lens.k = .72;
+      G.timeline()
+        .add(flicker, .35)
+        .add(() => { focus('home', 4.2); G.to(lens, { k: 1, duration: 4.2, ease: 'power3.inOut' }); }, 1.1)
+        .to(power, { v: 1, duration: .9, ease: 'power2.out', onUpdate: applyPower }, 1.8)
+        .add(() => body.classList.add('ready'), 4.4)
+        .add(() => G.to(hot.map(g => g.scale), { x: 1.07, y: 1.07, z: 1.07, duration: .3, ease: 'power2.out', yoyo: true, repeat: 1, stagger: .12 }), 5.4);
+      return;
+    }
     const shotQ = new URLSearchParams(location.search).get('shot');   // ?shot=name jumps straight to a framing (used for review screenshots)
     if (shotQ && SHOTS[shotQ]) {
       loader.classList.add('gone'); lampLevel = 1; power.v = 1; applyPower(); body.classList.add('ready');
@@ -5468,7 +5554,7 @@
     fontTex.forEach(s => s.draw(0)); // redraw text now that fonts are in
     requestAnimationFrame(loop);
     if (!mode3d) { loader.classList.add('gone'); lampLevel = 1; power.v = 1; applyPower(); setTextMode(true); body.classList.add('ready'); return; }
-    intro();
+    if (cityDone) cityDone.then(() => { if (!failed3d) intro(true); }); else intro();
   });
 })();
 </script>
