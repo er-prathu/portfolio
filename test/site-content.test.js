@@ -2,7 +2,7 @@
 /*
  * Content, SEO and structure checks for the portfolio page (room.html). They read the file as text, so they need no
  * browser. They exist to keep the page honest as it changes: the positioning, the five roles and their dates, the
- * nine-part case studies, no invented numbers, working internal links, and the tags that recruiters' tools read.
+ * seven-part case studies, no invented numbers, working internal links, and the tags that recruiters' tools read.
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -80,10 +80,10 @@ test('the six roles and their dates match LinkedIn', () => {
   assert.equal((tl.match(/<ul class="tl-pts">/g) || []).length, 1);
 });
 
-test('three featured case studies plus this site, each with the nine required parts', () => {
+test('three featured case studies plus this site, each with the seven required parts', () => {
   const titles = [...cases.matchAll(/<h3 class="cs-h"[^>]*>([^<]+)<\/h3>/g)].map(m => m[1]);
   assert.deepEqual(titles, ['Nolo CMS', 'AI lead qualification engine', 'Figma-to-HTML engineering skill', "Prathamesh's Desk"]);
-  const parts = ['Overview', 'Problem', 'Architecture', 'Technologies', 'Engineering decisions', 'Implementation', 'My contribution', 'Challenges', 'Results'];
+  const parts = ['Problem', 'My responsibility', 'Technical approach', 'Architecture', 'Engineering decisions', 'Implementation', 'Outcome'];
   for (const body of cases.split('<li class="case" data-case=').slice(1)) {
     const heads = [...body.matchAll(/<section class="doc[^"]*"><h4><span>[^<]*<\/span>([^<]+)<\/h4>/g)].map(m => m[1]).filter(h => parts.includes(h));
     assert.deepEqual(heads, parts);

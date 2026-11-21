@@ -315,5 +315,46 @@
     };
   }
 
-  window.Pano = { windowView, intro, palms, PANOS };
+
+  /* ---------- sound for the opening: synthesized surf, a soft pad and the odd gull. Off until the visitor turns it on ---------- */
+  function ambience() {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    let ctx = null, master = null, timers = [];
+    function start() {
+      if (ctx) { ctx.resume(); master.gain.setTargetAtTime(.9, ctx.currentTime, .6); return; }
+      ctx = new AC(); master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+      // brown noise → the sea
+      const len = ctx.sampleRate * 4, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+      let last = 0; for (let i = 0; i < len; i++) { last = (last + .02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.2; }
+      const surf = ctx.createBufferSource(); surf.buffer = buf; surf.loop = true;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520;
+      const swell = ctx.createGain(); swell.gain.value = .35;
+      const lfo = ctx.createOscillator(), lfoAmt = ctx.createGain(); lfo.frequency.value = .085; lfoAmt.gain.value = .28; lfo.connect(lfoAmt); lfoAmt.connect(swell.gain);
+      const hiss = ctx.createBiquadFilter(); hiss.type = 'highpass'; hiss.frequency.value = 1800; const hissG = ctx.createGain(); hissG.gain.value = .05;
+      surf.connect(lp); lp.connect(swell); swell.connect(master); surf.connect(hiss); hiss.connect(hissG); hissG.connect(master);
+      // a low, warm pad
+      const pad = ctx.createGain(); pad.gain.value = .022; pad.connect(master);
+      [110, 164.8, 220.6].forEach((f, k) => { const o = ctx.createOscillator(); o.type = k ? 'sine' : 'triangle'; o.frequency.value = f; o.detune.value = (k - 1) * 6; o.connect(pad); o.start(); });
+      surf.start(); lfo.start();
+      // a distant gull every so often
+      const gull = () => {
+        const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(1500, t); o.frequency.exponentialRampToValueAtTime(900, t + .28);
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.025, t + .03); g.gain.exponentialRampToValueAtTime(.0001, t + .3);
+        o.connect(g); g.connect(master); o.start(t); o.stop(t + .32);
+        timers.push(setTimeout(gull, 3500 + Math.random() * 5000));
+      };
+      timers.push(setTimeout(gull, 2500));
+      master.gain.setTargetAtTime(.9, ctx.currentTime, .6);
+    }
+    function stop(fade = .5) {
+      if (!ctx) return;
+      master.gain.setTargetAtTime(0, ctx.currentTime, fade);
+      timers.forEach(clearTimeout); timers = [];
+      const c = ctx; ctx = null; setTimeout(() => c.close().catch(() => {}), fade * 5000);
+    }
+    return { start, stop, get on() { return !!ctx; } };
+  }
+
+  window.Pano = { windowView, intro, palms, ambience, PANOS };
 })();

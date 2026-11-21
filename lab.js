@@ -476,6 +476,196 @@ class StoreLeadRequest extends FormRequest
     search();
   }
 
+  /* ---------- tabs inside one workstation (each tab builds its demo the first time it opens) ---------- */
+  function tabs(box, list) {
+    const panes = list.map(() => h('div', { class: 'dm-pane' }));
+    const built = new Set();
+    const open = i => { panes.forEach((p, k) => { p.hidden = k !== i; }); if (!built.has(i)) { built.add(i); list[i][1](panes[i]); } };
+    put(box, h('div', { class: 'dm-field' }, h('span', { class: 'dm-lbl' }, 'Tool'), choice(list.map(x => x[0]), open, 'Tool')), panes);
+    open(0);
+  }
+
+  /* ---------- JavaScript playground: your code, run in an isolated Web Worker with a time limit ---------- */
+  const JS_SAMPLES = [
+    ['Validate an enquiry', "const enquiry = { name: 'Sample Visitor', email: 'visitor@example.test', message: '' };\n\nconst errors = [];\nif (!enquiry.name.trim()) errors.push('name is required');\nif (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(enquiry.email)) errors.push('email looks wrong');\nif (enquiry.message.trim().length < 10) errors.push('message is too short');\n\nconsole.log(errors.length ? errors : 'valid');"],
+    ['Group by status', "const leads = [\n  { id: 1, status: 'new' }, { id: 2, status: 'qualified' },\n  { id: 3, status: 'new' }, { id: 4, status: 'closed' },\n];\n\nconst byStatus = leads.reduce((acc, lead) => {\n  (acc[lead.status] ||= []).push(lead.id);\n  return acc;\n}, {});\n\nconsole.log(byStatus);"],
+    ['async / await', "const wait = ms => new Promise(resolve => setTimeout(resolve, ms));\n\nasync function sendEnquiry() {\n  console.log('sending…');\n  await wait(400);            // stands in for a network request\n  return { status: 201 };\n}\n\nsendEnquiry().then(res => console.log('done', res));"],
+    ['Debounce', "function debounce(fn, ms) {\n  let timer;\n  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };\n}\n\nconst search = debounce(q => console.log('search for', q), 200);\n['l', 'la', 'lap', 'lapt', 'laptop'].forEach((q, i) => setTimeout(() => search(q), i * 50));"],
+  ];
+  function runInWorker(code, onLine, onEnd) {
+    const src = "const out = (kind, args) => postMessage({ kind, text: args.map(a => { try { return typeof a === 'string' ? a : JSON.stringify(a, null, 2); } catch (e) { return String(a); } }).join(' ') });\n"
+      + "console.log = (...a) => out('log', a); console.info = console.log; console.warn = (...a) => out('warn', a); console.error = (...a) => out('error', a);\n"
+      + "self.onerror = e => { out('error', [String(e.message || e)]); };\n"
+      + "self.onunhandledrejection = e => out('error', ['Unhandled rejection: ' + (e.reason && e.reason.message || e.reason)]);\n"
+      + "onmessage = e => { try { (0, eval)(e.data); } catch (err) { out('error', [err.name + ': ' + err.message]); } postMessage({ kind: 'sync' }); };";
+    const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
+    let w;
+    try { w = new Worker(url); } catch (e) { URL.revokeObjectURL(url); onEnd('Web Workers are not available in this browser.'); return () => {}; }
+    let quietTimer = 0, done = false;
+    const end = why => { if (done) return; done = true; clearTimeout(hard); clearTimeout(quietTimer); w.terminate(); URL.revokeObjectURL(url); onEnd(why); };
+    const hard = setTimeout(() => end('Stopped after 3 seconds (a loop that never ends?).'), 3000);
+    w.onmessage = e => {
+      if (e.data.kind === 'sync') { quietTimer = setTimeout(() => end(''), 1500); return; }   // give timers and promises a moment to finish
+      onLine(e.data.kind, e.data.text);
+      if (quietTimer) { clearTimeout(quietTimer); quietTimer = setTimeout(() => end(''), 1500); }
+    };
+    w.onerror = e => { e.preventDefault(); onLine('error', e.message); };
+    w.postMessage(code);
+    return () => end('Stopped.');
+  }
+  function jsPlayground(box) {
+    const code = h('textarea', { class: 'dm-in dm-code', id: 'labJs', rows: 12, spellcheck: 'false', autocapitalize: 'off', autocomplete: 'off', 'aria-label': 'JavaScript to run' });
+    const out = h('pre', { class: 'dm-out dm-console', 'aria-live': 'polite', 'aria-label': 'Console output' });
+    const run = h('button', { type: 'button', class: 'dm-btn go' }, '▶ Run');
+    let stop = null;
+    const line = (kind, text) => { out.append(h('span', { class: 'c-' + kind }, text + '\n')); out.scrollTop = out.scrollHeight; };
+    run.addEventListener('click', () => {
+      if (stop) { stop(); return; }
+      out.replaceChildren(); blip(700);
+      const t0 = performance.now();
+      run.textContent = '■ Stop';
+      stop = runInWorker(code.value, line, why => { stop = null; run.textContent = '▶ Run'; line('meta', why || ('Finished in ' + Math.round(performance.now() - t0) + ' ms.')); });
+    });
+    code.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run.click(); }
+      if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); const a = code.selectionStart; code.setRangeText('  ', a, code.selectionEnd, 'end'); }
+    });
+    code.value = JS_SAMPLES[0][1];
+    put(box,
+      h('p', { class: 'sim' }, 'Your code runs in an isolated Web Worker in your browser: no access to this page, a 3-second limit, nothing is sent anywhere. Ctrl+Enter runs it.'),
+      h('div', { class: 'dm-field' }, h('span', { class: 'dm-lbl' }, 'Start from an example'), choice(JS_SAMPLES.map(x => x[0]), i => { code.value = JS_SAMPLES[i][1]; out.replaceChildren(); }, 'Example')),
+      h('div', { class: 'dm-field' }, h('label', { for: 'labJs' }, 'JavaScript'), code),
+      h('div', { class: 'dm-row' }, run, h('button', { type: 'button', class: 'dm-btn ghost', onclick: () => out.replaceChildren() }, 'Clear')),
+      out, codeView(runInWorker));
+  }
+
+  /* ---------- SQL console: a small SELECT interpreter over the sample leads table ---------- */
+  // Supports SELECT [DISTINCT] cols | * | COUNT/SUM/AVG/MIN/MAX(…) [AS x] FROM leads [WHERE …] [GROUP BY col]
+  // [ORDER BY col|alias [ASC|DESC]] [LIMIT n], with = != <> < > <= >= LIKE IN IS NULL AND OR NOT and brackets.
+  // Read-only: anything other than SELECT is refused. It is MySQL-style syntax, not a MySQL server.
+  function runSql(sql, tables) {
+    const toks = [], re = /\s*(?:(\d+(?:\.\d+)?)|'((?:[^']|'')*)'|([A-Za-z_][\w]*)|(<=|>=|<>|!=|[(),*=<>;.]))/y;
+    let m; const text = sql.trim();
+    re.lastIndex = 0;
+    while (re.lastIndex < text.length) {
+      const at = re.lastIndex; m = re.exec(text);
+      if (!m || m.index !== at) { if (/^\s+$/.test(text.slice(at))) break; throw new Error('Unexpected character near “' + text.slice(at, at + 12) + '”'); }
+      if (m[1] != null) toks.push({ t: 'num', v: +m[1] }); else if (m[2] != null) toks.push({ t: 'str', v: m[2].replace(/''/g, "'") });
+      else if (m[3] != null) toks.push({ t: 'id', v: m[3], u: m[3].toUpperCase() }); else toks.push({ t: 'op', v: m[4] });
+    }
+    let i = 0;
+    const peek = () => toks[i], kw = w => toks[i] && toks[i].u === w, take = w => { if (kw(w)) { i++; return true; } return false; };
+    const op = v => toks[i] && toks[i].t === 'op' && toks[i].v === v, takeOp = v => { if (op(v)) { i++; return true; } return false; };
+    const need = (cond, msg) => { if (!cond) throw new Error(msg); };
+    if (!take('SELECT')) { const w = peek() && peek().u; throw new Error(/^(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|TRUNCATE|REPLACE)$/.test(w) ? 'Read-only console: only SELECT runs here, on sample data.' : 'Queries start with SELECT.'); }
+    const distinct = take('DISTINCT');
+    const cols = [];
+    const AGG = ['COUNT', 'SUM', 'AVG', 'MIN', 'MAX'];
+    do {
+      if (takeOp('*')) { cols.push({ star: true }); continue; }
+      const tk = peek(); need(tk && tk.t === 'id', 'Expected a column name after SELECT.');
+      let col;
+      if (AGG.includes(tk.u) && toks[i + 1] && toks[i + 1].v === '(') {
+        i += 2; const star = takeOp('*'); let arg = null;
+        if (!star) { need(peek() && peek().t === 'id', 'Expected a column inside ' + tk.u + '( ).'); arg = peek().v; i++; }
+        need(takeOp(')'), 'Missing “)” after ' + tk.u + '(.');
+        col = { agg: tk.u, arg, label: tk.u + '(' + (arg || '*') + ')' };
+      } else { i++; col = { name: tk.v, label: tk.v }; }
+      if (take('AS')) { need(peek() && peek().t === 'id', 'Expected a name after AS.'); col.label = peek().v; i++; }
+      cols.push(col);
+    } while (takeOp(','));
+    need(take('FROM'), 'Expected FROM after the column list.');
+    const tname = peek() && peek().v; need(tname && tables[tname.toLowerCase()], 'Unknown table “' + (tname || '') + '”. Try: leads.'); i++;
+    const rows = tables[tname.toLowerCase()];
+    const known = new Set(Object.keys(rows[0] || {}));
+    const colOk = c => { need(known.has(c), 'Unknown column “' + c + '”. Columns: ' + [...known].join(', ') + '.'); return c; };
+    // WHERE expression → a function of a row
+    function value() {
+      const tk = peek(); need(tk, 'The query ended too early.');
+      if (tk.t === 'num' || tk.t === 'str') { i++; return () => tk.v; }
+      if (tk.u === 'NULL') { i++; return () => null; }
+      need(tk.t === 'id', 'Expected a column or a value.'); i++; colOk(tk.v); return r => r[tk.v];
+    }
+    function primary() {
+      if (takeOp('(')) { const e = orExpr(); need(takeOp(')'), 'Missing “)”.'); return e; }
+      if (take('NOT')) { const e = primary(); return r => !e(r); }
+      const left = value();
+      if (take('IS')) { const not = take('NOT'); need(take('NULL'), 'Expected NULL after IS.'); return r => (left(r) == null) !== not; }
+      const not = take('NOT');
+      if (take('LIKE')) { const pat = value(); return r => { const rx = new RegExp('^' + String(pat(r)).replace(/[.*+?^$\{}()|[\]\\]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.') + '$', 'i'); return rx.test(String(left(r) ?? '')) !== not; }; }
+      if (take('IN')) { need(takeOp('('), 'Expected “(” after IN.'); const vals = []; do vals.push(value()); while (takeOp(',')); need(takeOp(')'), 'Missing “)” after the IN list.'); return r => vals.some(v => v(r) == left(r)) !== not; }
+      const tk = peek(); need(tk && tk.t === 'op' && ['=', '!=', '<>', '<', '>', '<=', '>='].includes(tk.v), 'Expected a comparison (=, <, LIKE, IN …).'); i++;
+      const right = value();
+      const cmp = { '=': (a, b) => a == b, '!=': (a, b) => a != b, '<>': (a, b) => a != b, '<': (a, b) => a < b, '>': (a, b) => a > b, '<=': (a, b) => a <= b, '>=': (a, b) => a >= b }[tk.v];
+      return r => cmp(typeof left(r) === 'string' ? left(r).toLowerCase() : left(r), typeof right(r) === 'string' ? right(r).toLowerCase() : right(r));
+    }
+    function andExpr() { let e = primary(); while (take('AND')) { const a = e, b = primary(); e = r => a(r) && b(r); } return e; }
+    function orExpr() { let e = andExpr(); while (take('OR')) { const a = e, b = andExpr(); e = r => a(r) || b(r); } return e; }
+    const where = take('WHERE') ? orExpr() : null;
+    let group = null;
+    if (take('GROUP')) { need(take('BY'), 'Expected BY after GROUP.'); need(peek() && peek().t === 'id', 'Expected a column after GROUP BY.'); group = colOk(peek().v); i++; }
+    let order = null;
+    if (take('ORDER')) { need(take('BY'), 'Expected BY after ORDER.'); need(peek() && peek().t === 'id', 'Expected a column after ORDER BY.'); order = { by: peek().v, desc: false }; i++; if (take('DESC')) order.desc = true; else take('ASC'); }
+    let limit = null;
+    if (take('LIMIT')) { need(peek() && peek().t === 'num', 'Expected a number after LIMIT.'); limit = peek().v; i++; }
+    takeOp(';');
+    need(i === toks.length, 'Unexpected “' + (toks[i] && toks[i].v) + '”. Supported: SELECT … FROM … WHERE … GROUP BY … ORDER BY … LIMIT.');
+    cols.forEach(c => { if (c.name) colOk(c.name); if (c.arg) colOk(c.arg); });
+    const hasAgg = cols.some(c => c.agg);
+    if (group || hasAgg) need(cols.every(c => c.agg || (c.name && c.name === group)), 'With GROUP BY or COUNT(), every other column must be the grouped column.');
+    const picked = rows.filter(r => !where || where(r));
+    const aggVal = (c, list) => {
+      if (c.agg === 'COUNT') return c.arg ? list.filter(r => r[c.arg] != null).length : list.length;
+      const nums = list.map(r => +r[c.arg]).filter(n => !isNaN(n));
+      if (!nums.length) return null;
+      return { SUM: nums.reduce((a, b) => a + b, 0), AVG: +(nums.reduce((a, b) => a + b, 0) / nums.length).toFixed(2), MIN: Math.min(...nums), MAX: Math.max(...nums) }[c.agg];
+    };
+    let header, out;
+    if (cols.some(c => c.star)) { need(!group && !hasAgg, 'SELECT * cannot be combined with GROUP BY or COUNT().'); header = [...known]; out = picked.map(r => header.map(k => r[k])); }
+    else if (group || hasAgg) {
+      const groups = new Map(); picked.forEach(r => { const k = group ? r[group] : '*'; (groups.get(k) || groups.set(k, []).get(k)).push(r); });
+      if (!group && !groups.size) groups.set('*', []);
+      header = cols.map(c => c.label); out = [...groups.entries()].map(([k, list]) => cols.map(c => c.agg ? aggVal(c, list) : k));
+    } else { header = cols.map(c => c.label); out = picked.map(r => cols.map(c => r[c.name])); }
+    if (distinct) { const seen = new Set(); out = out.filter(r => { const k = JSON.stringify(r); if (seen.has(k)) return false; seen.add(k); return true; }); }
+    if (order) {
+      let k = header.indexOf(order.by); if (k < 0) k = cols.findIndex(c => c.name === order.by);
+      need(k >= 0, 'ORDER BY “' + order.by + '” must be one of the selected columns.');
+      out.sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * (order.desc ? -1 : 1));
+    }
+    if (limit != null) out = out.slice(0, limit);
+    return { header, rows: out };
+  }
+  function sqlConsole(box) {
+    const SAMPLES = [
+      "SELECT id, name, status FROM leads WHERE status = 'new' ORDER BY id;",
+      'SELECT status, COUNT(*) AS total FROM leads GROUP BY status ORDER BY total DESC;',
+      "SELECT id, subject FROM leads WHERE subject LIKE '%refund%' OR message LIKE '%deposit%';",
+      "SELECT DISTINCT status FROM leads;",
+    ];
+    const q = h('textarea', { class: 'dm-in dm-code', id: 'labSql', rows: 4, spellcheck: 'false', autocapitalize: 'off', autocomplete: 'off', 'aria-label': 'SQL query' });
+    const msg = h('p', { class: 'dm-count', 'aria-live': 'polite' });
+    const res = h('div', { class: 'dm-scroll' });
+    const go = () => {
+      blip(700);
+      try {
+        const t0 = performance.now(), r = runSql(q.value, { leads: S.store }), ms = performance.now() - t0;
+        msg.textContent = r.rows.length + (r.rows.length === 1 ? ' row' : ' rows') + ' in ' + ms.toFixed(1) + ' ms (in your browser)'; msg.className = 'dm-count';
+        res.replaceChildren(h('table', { class: 'dm-table' }, h('thead', {}, h('tr', {}, r.header.map(c => h('th', { scope: 'col' }, c)))),
+          h('tbody', {}, r.rows.map(row => h('tr', {}, row.map(v => h('td', {}, v == null ? 'NULL' : String(v))))))));
+      } catch (e) { msg.textContent = 'Error: ' + e.message; msg.className = 'dm-count err'; res.replaceChildren(); }
+    };
+    q.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); go(); } });
+    q.value = SAMPLES[0];
+    put(box,
+      h('p', { class: 'sim' }, 'Simulated: a small read-only SQL interpreter in your browser, over the sample leads table (' + S.store.length + ' rows' + (S.lead && S.lead.id ? ', including the enquiry you posted' : '') + '). MySQL-style SELECT syntax; no database server is connected.'),
+      h('div', { class: 'dm-field' }, h('span', { class: 'dm-lbl' }, 'Try a query'), h('div', { class: 'dm-row' }, SAMPLES.map((x, k) => h('button', { type: 'button', class: 'dm-btn ghost', onclick: () => { q.value = x; go(); } }, ['Filter', 'Group and count', 'LIKE', 'Distinct'][k])))),
+      h('div', { class: 'dm-field' }, h('label', { for: 'labSql' }, 'Query (columns: id, name, email, subject, message, status)'), q),
+      h('div', { class: 'dm-row' }, h('button', { type: 'button', class: 'dm-btn go', onclick: go }, '▶ Run query')),
+      msg, res, codeView(runSql));
+    go();
+  }
+
   /* ---------- 04 AI: a lead qualification workflow, and an MCP tool call ---------- */
   function demoAI(box) {
     const pane = h('div', { class: 'dm' });
@@ -692,11 +882,11 @@ class StoreLeadRequest extends FormRequest
     { name: 'Frontend Studio', keys: 'frontend front ui javascript js css html', line: 'Interfaces in the browser', tech: ['JavaScript', 'jQuery', 'HTML', 'CSS'],
       know: ['Interfaces in plain JavaScript and jQuery, without depending on a framework.', 'Semantic HTML, keyboard access and responsive CSS.', 'Turning designs into working HTML.'],
       proj: [[2, 'Figma-to-HTML skill', 'Turns Figma designs into HTML. Used across the IB team.'], [3, 'Prathamesh’s Desk', 'This site: one HTML page, no framework or bundler.']],
-      demoName: 'UI playground', demo: demoFrontend },
+      demoName: 'UI and JavaScript playground', demo: box => tabs(box, [['Form events', demoFrontend], ['JavaScript playground', jsPlayground]]) },
     { name: 'Database Console', keys: 'database db data mysql elasticsearch search sql', line: 'Data modelling and search', tech: ['MySQL', 'Elasticsearch', 'Data modelling', 'Search'],
       know: ['Relational data modelling and queries in MySQL.', 'Full-text search with Elasticsearch: analysed text and relevance ranking.', 'Choosing between an exact database lookup and a ranked search.'],
       proj: [], projNote: 'Used in product and client work. Those projects and their data are not public.',
-      demoName: 'Search console', demo: demoDatabase },
+      demoName: 'SQL and search console', demo: box => tabs(box, [['SQL console', sqlConsole], ['Search: LIKE vs full-text', demoDatabase]]) },
     { name: 'AI Research Lab', keys: 'ai llm mcp claude research', line: 'LLM features and agent tooling', tech: ['LLM integrations', 'MCP', 'Claude Code', 'Claude API', 'Figma MCP', 'Cline'],
       know: ['Working on LLM features that run in a production product.', 'Connecting tools to coding agents through the Model Context Protocol.', 'Writing agent skills a whole team can reuse, to speed up development.'],
       proj: [[1, 'AI lead qualification engine', 'An LLM asks follow-up questions and scores leads. WebMD, confidential.'], [2, 'Figma-to-HTML skill', 'Figma MCP with Claude Code and Cline.']],
@@ -796,5 +986,5 @@ class StoreLeadRequest extends FormRequest
 
   // for the terminal ("lab", "lab 2", "lab backend") and for tests
   const find = q => { q = String(q || '').trim().toLowerCase(); if (!q) return -1; if (/^[1-5]$/.test(q)) return +q - 1; return MODS.findIndex(m => m.keys.split(' ').includes(q.split(/\s+/)[0]) || m.name.toLowerCase() === q); };
-  window.__lab = { open: show, close, find, names: MODS.map(m => m.name), state: S, api: leadsApi, search: searchFullText, mcp: mcpServer, parse: parseModelOutput, decide };
+  window.__lab = { open: show, close, find, names: MODS.map(m => m.name), state: S, api: leadsApi, search: searchFullText, mcp: mcpServer, parse: parseModelOutput, decide, sql: runSql };
 })();
