@@ -96,7 +96,7 @@
 
     // 1. route
     const [route, queryString] = path.split('?');
-    const match = route.match(/^\/leads(?:\/(\d+))?$/);
+    const match = route.match(/^\/leads(?:\/(\d{1,9}))?$/);   // ids are whole numbers of up to nine digits; anything else is no route
     if (!stage('route', !!match, match ? `${route} matches /leads${match[1] ? '/{id}' : ''}` : `No route matches ${route}`)) return reply(404, { error: 'not_found', message: 'No such route.' });
     const id = match[1] ? Number(match[1]) : null;
     const allowed = id === null ? ['GET', 'POST'] : ['GET', 'DELETE'];
@@ -126,7 +126,8 @@
     if (method === 'POST') {
       let input;
       try { input = JSON.parse(bodyText); } catch (e) { input = undefined; }
-      if (!stage('validate', !!input && typeof input === 'object', input && typeof input === 'object' ? 'Body parsed as a JSON object' : 'Body is not a JSON object')) return reply(400, { error: 'bad_request', message: 'Send a JSON object.' });
+      if (Array.isArray(input)) input = undefined;   // an array is valid JSON but not a lead
+      if (!stage('validate', !!input && typeof input === 'object', input && typeof input === 'object' ?'Body parsed as a JSON object' : 'Body is not a JSON object')) return reply(400, { error: 'bad_request', message: 'Send a JSON object.' });
       const errors = validateEnquiry(input);          // never trust the client: validate again
       const bad = Object.keys(errors);
       if (!stage('validate', !bad.length, bad.length ? `Rejected: ${bad.join(', ')}` : 'All four fields pass the same rules as the form')) return reply(422, { error: 'validation_failed', errors });
@@ -549,7 +550,12 @@ class StoreLeadRequest extends FormRequest
     re.lastIndex = 0;
     while (re.lastIndex < text.length) {
       const at = re.lastIndex; m = re.exec(text);
-      if (!m || m.index !== at) { if (/^\s+$/.test(text.slice(at))) break; throw new Error('Unexpected character near “' + text.slice(at, at + 12) + '”'); }
+      if (!m || m.index !== at) {
+        const rest = text.slice(at);
+        if (/^\s+$/.test(rest)) break;
+        if (/^\s*'/.test(rest)) throw new Error('A text value is missing its closing quote.');
+        if (/^\s*-\s*\d/.test(rest)) throw new Error('Negative numbers are not supported in this console.');
+        throw new Error('Unexpected character near “' + text.slice(at, at + 12) + '”'); }
       if (m[1] != null) toks.push({ t: 'num', v: +m[1] }); else if (m[2] != null) toks.push({ t: 'str', v: m[2].replace(/''/g, "'") });
       else if (m[3] != null) toks.push({ t: 'id', v: m[3], u: m[3].toUpperCase() }); else toks.push({ t: 'op', v: m[4] });
     }
@@ -877,7 +883,7 @@ class StoreLeadRequest extends FormRequest
   const MODS = [
     { name: 'Backend Engine', keys: 'backend back api php laravel', line: 'APIs and server-side code', tech: ['PHP', 'Laravel', 'CodeIgniter', 'Node.js', 'REST APIs'],
       know: ['Server-side application code in PHP, with Laravel and CodeIgniter.', 'REST API design: resources, validation, status codes and consistent error shapes.', 'Keeping keys and third-party calls on the server, out of page code.'],
-      proj: [[0, 'Nolo CMS', 'Sole developer. WebMD, confidential.'], [3, 'This site’s API', 'A Cloudflare Worker with two endpoints. Public code.']],
+      proj: [[0, 'Nolo CMS', 'Sole developer, PHP and Laravel. WebMD, confidential.'], [3, 'This site’s API', 'A Cloudflare Worker with two endpoints. Public code.']],
       demoName: 'API playground', demo: demoBackend },
     { name: 'Frontend Studio', keys: 'frontend front ui javascript js css html', line: 'Interfaces in the browser', tech: ['JavaScript', 'jQuery', 'HTML', 'CSS'],
       know: ['Interfaces in plain JavaScript and jQuery, without depending on a framework.', 'Semantic HTML, keyboard access and responsive CSS.', 'Turning designs into working HTML.'],
@@ -893,7 +899,7 @@ class StoreLeadRequest extends FormRequest
       demoName: 'LLM workflow and MCP', demo: demoAI },
     { name: 'System Architecture', keys: 'architecture system arch design flow', line: 'How the parts fit together', tech: ['API architecture', 'Application design', 'Data flow', 'Engineering decisions'],
       know: ['Deciding what runs in the browser, on the server and in outside services.', 'Designing so that failures are reported, never hidden.', 'Keeping a system small enough for one person to own end to end.'],
-      proj: [[3, 'Prathamesh’s Desk', 'Its real architecture is the second diagram above. Public code.'], [0, 'Nolo CMS', 'Sole developer. Architecture not public.']],
+      proj: [[3, 'Prathamesh’s Desk', 'Its real architecture is the second diagram above. Public code.'], [0, 'Nolo CMS', 'Sole developer. WebMD, confidential.']],
       demoName: 'Architecture explorer', demo: demoArch },
   ];
   const no = i => String(i + 1).padStart(2, '0');

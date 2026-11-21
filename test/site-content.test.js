@@ -90,13 +90,19 @@ test('three featured case studies plus this site, each with the seven required p
   }
 });
 
-test('case studies state no performance metrics, and WebMD detail stays marked Not public', () => {
+test('case studies state no performance metrics, and confidentiality is stated once per WebMD case', () => {
   const t = text(cases);
   assert.ok(!/\d\s?%/.test(t), 'no percentages');
   assert.ok(!/\b\d+\s?(x|×)\s/.test(t), 'no multipliers');
   assert.ok(!/\b\d[\d,.]*\s?(ms|seconds?|hours?|users|leads|customers|requests)\b/i.test(t), 'no counts of users, leads or time saved');
-  const nolo = cases.slice(cases.indexOf('data-case="0"'), cases.indexOf('data-case="1"'));
-  assert.ok((nolo.match(/Not public/g) || []).length >= 4, 'unshared Nolo CMS details are marked Not public');
+  // confidentiality is stated once per WebMD case, not repeated in every section
+  assert.ok(!/Not public/.test(cases), 'no scattered Not public tags');
+  const bodies = cases.split('<li class="case" data-case=').slice(1);
+  bodies.slice(0, 3).forEach((b, i) => assert.equal((b.match(/class="cs-conf"/g) || []).length, 1, `case ${i} states confidentiality once`));
+  assert.ok(!/cs-conf/.test(bodies[3]), 'the public project needs no confidentiality line');
+  // the AI engine and Figma workflow have interactive system maps; every step carries its detail text
+  for (const i of [1, 2]) assert.match(bodies[i], /data-sysmap/);
+  for (const m of cases.matchAll(/<button type="button" class="sm-node[^"]*" data-d="([^"]*)"/g)) assert.ok(m[1].length > 20, 'system map step has a description');
   // the sample workflow is labelled a simulation, not production
   assert.match(cases, /simulation on sample data<\/b>, not the production system/);
 });

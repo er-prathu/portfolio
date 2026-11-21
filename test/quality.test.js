@@ -50,6 +50,9 @@ test('SQL console: read-only and helpful errors', () => {
   assert.throws(() => q('SELECT id FROM users'), /Unknown table/);
   assert.throws(() => q('SELECT id, status FROM leads GROUP BY status'), /grouped column/);
   assert.throws(() => q("SELECT id FROM leads WHERE"), /ended too early|Expected/);
+  assert.throws(() => q("SELECT id FROM leads WHERE name = 'A"), /closing quote/);
+  assert.throws(() => q('SELECT id FROM leads LIMIT -1'), /Negative numbers/);
+  assert.throws(() => q(''), /SELECT/);
 });
 
 test('the lab labels every simulation and never claims production access', () => {

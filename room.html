@@ -814,6 +814,57 @@
   .arch b { font: 600 13px/1.3 var(--sans); color: var(--ink); }
   .arch span { font-size: 12px; color: var(--ink-2); line-height: 1.45; }
   .arch figcaption { margin-top: 8px; font: 500 11px/1.4 var(--mono); color: var(--muted); }
+  /* case study, read as a story: a one-paragraph summary, numbered sections, one confidentiality line at the end */
+  .cs-story { margin: 14px 0 4px; padding: 2px 0 2px 14px; border-left: 2px solid var(--amber); font: 500 15.5px/1.6 var(--sans); color: var(--ink); max-width: 60ch; text-wrap: pretty; }
+  .cs-conf { margin: 16px 0 0; padding: 9px 12px; border-radius: 10px; border: 1px dashed rgba(237,231,220,.18); font: 500 11.5px/1.5 var(--mono); color: var(--muted); }
+  .case.open .case-body > * { animation: cs-in .55s cubic-bezier(.2,.8,.2,1) both; }
+  .case.open .case-body > :nth-child(3) { animation-delay: .04s; } .case.open .case-body > :nth-child(4) { animation-delay: .08s; }
+  .case.open .case-body > :nth-child(5) { animation-delay: .12s; } .case.open .case-body > :nth-child(6) { animation-delay: .16s; }
+  .case.open .case-body > :nth-child(n+7) { animation-delay: .2s; }
+  .doc h4 { transition: color .2s; }
+  .doc:hover h4 { color: var(--ink); }
+  /* system map: a vertical spine of steps you can select or trace; the selected step's detail sits beside it (below it when narrow) */
+  .sysmap { container-type: inline-size; margin: 4px 0 0; }
+  .sysmap > .sm-track, .sysmap > .sm-side { min-width: 0; }
+  .sm-wrap { display: grid; gap: 14px; }
+  .sm-track { list-style: none; display: grid; gap: 22px; position: relative; padding: 0; margin: 0; }
+  .sm-track > li { position: relative; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+  .sm-track > li:not(:last-child)::after { content: ""; position: absolute; left: 24px; bottom: -22px; width: 2px; height: 22px; border-radius: 2px;
+    background: linear-gradient(rgba(232,145,60,.25), rgba(232,145,60,.25)) no-repeat, linear-gradient(var(--amber), var(--amber)) no-repeat; background-size: 100% 100%, 100% 0; transition: background-size .45s ease; }
+  .sm-track > li.lit:not(:last-child)::after { background-size: 100% 100%, 100% 100%; }
+  .sm-node { flex: 1 1 200px; min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 1px; align-items: baseline; text-align: left;
+    padding: 10px 13px; border-radius: 11px; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(237,231,220,.05), rgba(237,231,220,.015)); color: var(--ink);
+    transition: border-color .25s, background-color .25s, box-shadow .3s, transform .25s; cursor: pointer; }
+  .sm-node i { grid-row: span 2; font: 600 10px/1 var(--mono); font-style: normal; color: var(--amber); padding-top: 2px; }
+  .sm-node b { font: 600 13.5px/1.3 var(--sans); }
+  .sm-node span { font-size: 12px; line-height: 1.45; color: var(--ink-2); }
+  .sm-node:hover { border-color: rgba(232,145,60,.45); }
+  .sm-node.aux { flex: 0 1 190px; border-style: dashed; background: rgba(95,163,171,.05); }
+  .sm-node.aux i { color: var(--teal-type); }
+  .has-aux > .aux { position: relative; margin-left: 30px; overflow: visible; }
+  .has-aux > .aux::before { content: ""; position: absolute; left: -24px; top: 50%; width: 22px; border-top: 1px dashed var(--teal-type); opacity: .7; }
+  .has-aux > .aux::after { content: ""; position: absolute; left: -25px; top: -9px; height: calc(50% + 9px); border-left: 1px dashed var(--teal-type); opacity: .7; }
+  .sm-node[aria-pressed="true"] { border-color: var(--amber); background: rgba(232,145,60,.09); box-shadow: 0 0 0 3px rgba(232,145,60,.12), 0 8px 24px -12px rgba(232,145,60,.6); }
+  .sm-node.aux[aria-pressed="true"] { border-color: var(--teal-type); background: rgba(95,163,171,.1); box-shadow: 0 0 0 3px rgba(95,163,171,.14); }
+  .sm-track > li.end > .sm-node { border-color: rgba(232,145,60,.4); }
+  .sm-edge { position: absolute; left: 34px; bottom: -19px; font: 500 10.5px/1 var(--mono); font-style: normal; color: var(--teal-type); white-space: nowrap; z-index: 1; }
+  .sm-side { position: relative; }
+  .sm-detail { margin: 0 !important; min-height: 4.8em; padding: 12px 14px; border-radius: 11px; background: rgba(237,231,220,.04); border: 1px solid var(--line); font-size: 13.5px !important; line-height: 1.6 !important; color: var(--ink) !important; }
+  .sm-detail b { display: block; margin-bottom: 3px; font: 600 10px/1.3 var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--amber); }
+  .sm-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 10px 0 0 !important; }
+  .sm-play { padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(232,145,60,.5); font: 600 10.5px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--amber); transition: background-color .2s; }
+  .sm-play:hover { background: rgba(232,145,60,.1); }
+  .sm-hint { font: 500 10.5px/1.3 var(--mono); color: var(--muted); }
+  .sysmap figcaption { margin-top: 12px; font: 500 11px/1.45 var(--mono); color: var(--muted); }
+  @container (min-width: 600px) {
+    .sm-wrap { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; gap: 22px; }
+    .sm-side { position: sticky; top: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case.open .case-body > * { animation: none; }
+    .sm-node, .sm-track > li::after { transition: none !important; }
+  }
+  html.text-mode .sm-ctl { display: none; }
   /* GitHub repositories, read live from the public API */
   .gh { margin-top: 26px; }
   #work.reading .gh { display: none; }
@@ -835,7 +886,7 @@
   /* reading one case study: the others step out, the chosen card becomes the page */
   #work.reading .case:not(.open), #work.reading .cases-intro, #work.reading > h2 { display: none; }
   #work.reading .case.open { border-color: rgba(232,145,60,.35); background: linear-gradient(180deg, rgba(232,145,60,.05), rgba(237,231,220,.01)); }
-  .case.open .case-body { display: block; animation: cs-in .5s cubic-bezier(.2,.8,.2,1) both; }
+  .case.open .case-body { display: block; }
   .case.open .more { display: none; }
   .case.open .case-open { cursor: default; padding-bottom: 6px; }
   @keyframes cs-in { from { opacity: 0; transform: translateY(10px); } }
@@ -1220,6 +1271,7 @@
 </nav>
 
 <main id="main">
+<span id="home" aria-hidden="true"></span><!-- the brand link's target in the text view -->
 <div class="intro" id="intro">
   <p class="rm-name text-only" aria-hidden="true">Prathamesh Patil</p>
   <p class="label amber">Senior Full Stack Engineer · Backend · AI Integration</p>
@@ -1386,7 +1438,7 @@
     <section class="sec" id="work" data-section="work" hidden>
       <p class="label amber text-only">03 — Projects</p>
       <h2>Featured projects.</h2>
-      <p class="cases-intro">Three projects from WebMD and one you can inspect line by line. WebMD work is confidential: those case studies show only what can be shared publicly, and anything withheld is marked <span class="np">Not public</span>.</p>
+      <p class="cases-intro">Three projects from my work at WebMD and one you can inspect line by line. WebMD work is confidential, so those case studies cover only what can be shared publicly.</p>
       <button type="button" class="case-back" id="caseBack" hidden>← All projects</button>
       <ul class="cases" id="cases">
         <li class="case" data-case="0">
@@ -1399,21 +1451,21 @@
           </button>
           <div class="case-body" id="case0" role="region" aria-label="Nolo CMS, case study">
             <h3 class="cs-h" tabindex="-1">Nolo CMS</h3>
-            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Sole full-stack developer</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
-            <section class="doc"><h4><span>1</span>Problem</h4><p>The Nolo legal product needed its own content management system.</p></section>
-            <section class="doc"><h4><span>2</span>My responsibility</h4><p>Sole developer, responsible for the whole stack: frontend and backend implementation.</p></section>
-            <section class="doc"><h4><span>3</span>Technical approach</h4><p>A content management system for the Nolo legal product, built end to end by one engineer: the frontend and the backend, developed with Claude Code assisting.</p>
-              <ul class="chips sm"><li>Full-stack development</li><li>Claude Code</li></ul><p class="np">The rest of the stack is Not public</p></section>
-            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><p>The internal architecture is confidential and <span class="np">Not public</span>. What can be shared is how the work was organised:</p>
-              <figure class="arch"><ol>
-                <li><b>One engineer</b><span>responsible for the whole stack</span></li>
-                <li><b>Frontend and backend</b><span>both implemented by me</span></li>
-                <li><b>Claude Code</b><span>assisted the development</span></li>
-                <li class="end"><b>Nolo CMS</b><span>the finished system</span></li>
-              </ol><figcaption>Development approach, not the system's internal design.</figcaption></figure></section>
-            <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts"><li>Ownership: one engineer is responsible for the whole stack, frontend and backend.</li><li>Tooling: development was assisted by Claude Code.</li><li>Other design decisions: <span class="np">Not public</span></li></ul></section>
-            <section class="doc"><h4><span>6</span>Implementation</h4><p>I implemented both the frontend and the backend, using Claude Code to assist development. Details are <span class="np">Not public</span>.</p></section>
-            <section class="doc result"><h4><span>7</span>Outcome</h4><p class="np">Not public</p></section>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Sole full-stack developer</dd></div><div><dt>Ownership</dt><dd>Frontend and backend</dd></div></dl>
+            <p class="cs-story">Nolo needed its own content management system. I build it alone, end to end.</p>
+            <section class="doc"><h4><span>1</span>Problem</h4><p>Nolo, WebMD’s legal product, needed a content management system of its own.</p></section>
+            <section class="doc"><h4><span>2</span>My responsibility</h4><p>I am the sole developer. The frontend and the backend are both mine to design, build and ship.</p></section>
+            <section class="doc"><h4><span>3</span>Technical approach</h4><p>A PHP and Laravel application built by one engineer across the whole stack, with Claude Code as part of the development workflow.</p>
+              <ul class="chips sm"><li>PHP</li><li>Laravel</li><li>Full-stack development</li><li>Claude Code</li></ul></section>
+            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="arch"><ol>
+                <li><b>One engineer</b><span>owns the whole stack</span></li>
+                <li><b>Frontend and backend</b><span>both built by me, with Claude Code assisting</span></li>
+                <li class="end"><b>Nolo CMS</b><span>the content management system for Nolo</span></li>
+              </ol><figcaption>How the work is owned. The system’s internal design is confidential.</figcaption></figure></section>
+            <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts"><li>One owner for frontend and backend, so decisions on both sides are made together.</li><li>AI-assisted development with Claude Code; I remain the engineer responsible for the code.</li></ul></section>
+            <section class="doc"><h4><span>6</span>Implementation</h4><p>I implemented the frontend and the backend myself, using Claude Code to assist.</p></section>
+            <section class="doc result"><h4><span>7</span>Outcome</h4><p>Nolo’s CMS is built and owned by one engineer.</p></section>
+            <p class="cs-conf">WebMD work: the internal design and figures are confidential, so they are left out.</p>
           </div>
         </li>
         <li class="case" data-case="1">
@@ -1426,22 +1478,27 @@
           </button>
           <div class="case-body" id="case1" role="region" aria-label="AI lead qualification engine, case study">
             <h3 class="cs-h" tabindex="-1">AI lead qualification engine</h3>
-            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Status</dt><dd>In production</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
-            <section class="doc"><h4><span>1</span>Problem</h4><p>Nolo needs to tell strong leads from weak ones, so the leads it passes on are better qualified.</p></section>
-            <section class="doc"><h4><span>2</span>My responsibility</h4><p>I designed and built the engine and its integration with Nolo LMS, as part of my work on the Nolo team at WebMD.</p></section>
-            <section class="doc"><h4><span>3</span>Technical approach</h4><p>An LLM-driven step that qualifies leads for Nolo, WebMD's legal product. It talks to the user and asks dynamic follow-up questions instead of relying on a fixed form, then scores the lead in real time and passes it on through the Nolo LMS integration.</p>
-              <ul class="chips sm"><li>LLM integration</li><li>Nolo LMS integration</li><li>Production web stack at WebMD</li></ul></section>
-            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="arch"><ol>
-                <li><b>User</b><span>starts a request</span></li>
-                <li><b>LLM conversation</b><span>asks dynamic follow-up questions</span></li>
-                <li><b>Classification</b><span>strong or weak lead</span></li>
-                <li><b>Lead score</b><span>calculated in real time</span></li>
-                <li class="end"><b>Nolo LMS</b><span>integration receives the qualified lead</span></li>
-              </ol><figcaption>Flow at the level described publicly; internal services are not shown.</figcaption></figure></section>
-            <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts"><li>The model drives the questioning, so the next question depends on the previous answers, rather than every user seeing the same form.</li><li>The answers become a classification (strong or weak lead) and a score.</li><li>Scoring happens in real time, and the engine plugs into Nolo LMS.</li><li>Prompts, models and thresholds: <span class="np">Not public</span></li></ul></section>
-            <section class="doc"><h4><span>6</span>Implementation</h4><p>Runs in production at WebMD. The model drives the follow-up questions, the answers become a classification and a score, and the result goes to Nolo LMS. Prompting, models and integration details are <span class="np">Not public</span>.</p></section>
-            <section class="doc result"><h4><span>7</span>Outcome</h4><p>Better-qualified leads reach Nolo. No figures are published.</p></section>
-            <section class="doc demo"><h4><span>▶</span>Try a sample workflow</h4><p>The Engineering Lab has a sample qualification workflow you can run yourself. It is a <b>simulation on sample data</b>, not the production system and not WebMD's prompts or models.</p><p><button type="button" class="btn solid js-lab" data-lab="ai">Open the sample workflow</button></p></section>
+            <dl class="cs-meta"><div><dt>Product</dt><dd>Nolo (WebMD)</dd></div><div><dt>Role</dt><dd>Designed and built it</dd></div><div><dt>Status</dt><dd>In production</dd></div></dl>
+            <p class="cs-story">An LLM asks dynamic follow-up questions, tells strong leads from weak ones and scores them in real time, then hands the result to Nolo LMS. I designed and built it.</p>
+            <section class="doc"><h4><span>1</span>Problem</h4><p>Nolo needs to tell strong leads from weak ones before passing them on.</p></section>
+            <section class="doc"><h4><span>2</span>My responsibility</h4><p>I designed and built the engine and its integration with Nolo LMS. It runs in production at WebMD.</p></section>
+            <section class="doc"><h4><span>3</span>Technical approach</h4><p>An LLM leads a short conversation, choosing each follow-up question from the answers so far. The answers become a classification and a score, calculated in real time, and the result goes to Nolo LMS.</p>
+              <ul class="chips sm"><li>LLM integration</li><li>Real-time lead scoring</li><li>Nolo LMS integration</li></ul></section>
+            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="sysmap" data-sysmap aria-label="Data flow of the AI lead qualification engine">
+              <div class="sm-wrap"><ol class="sm-track">
+                <li><button type="button" class="sm-node" data-d="A person starts a request on Nolo."><i>01</i><b>User</b><span>starts a request</span></button><em class="sm-edge">⇄ follow-up questions</em></li>
+                <li><button type="button" class="sm-node" data-d="The model picks the next question from the answers so far, instead of showing everyone the same form."><i>02</i><b>LLM conversation</b><span>asks dynamic follow-ups</span></button></li>
+                <li><button type="button" class="sm-node" data-d="The answers are classified: a strong lead or a weak one."><i>03</i><b>Classification</b><span>strong or weak lead</span></button></li>
+                <li><button type="button" class="sm-node" data-d="A score is calculated in real time, in the same flow."><i>04</i><b>Lead score</b><span>calculated in real time</span></button></li>
+                <li class="end"><button type="button" class="sm-node" data-d="The result reaches Nolo LMS through the integration I built."><i>05</i><b>Nolo LMS</b><span>receives the qualified lead</span></button></li>
+              </ol>
+              <div class="sm-side"><p class="sm-detail" aria-live="polite"></p><p class="sm-ctl"><button type="button" class="sm-play">▶ Trace the flow</button><span class="sm-hint">Select a step, or use ↑ ↓</span></p></div></div>
+              <figcaption>The flow as it can be described publicly. Prompts, models, thresholds and internal services are not shown.</figcaption></figure></section>
+            <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts"><li>Let the model drive the questioning, so the next question depends on the previous answers.</li><li>Turn the conversation into a decision: a classification and a score.</li><li>Score in real time and deliver the result straight into Nolo LMS.</li></ul></section>
+            <section class="doc"><h4><span>6</span>Implementation</h4><p>Built inside the Nolo product: the conversation step, the classification and scoring, and the Nolo LMS integration.</p></section>
+            <section class="doc result"><h4><span>7</span>Outcome</h4><p>In production: better-qualified leads reach Nolo.</p></section>
+            <p class="cs-conf">WebMD work: prompts, models, thresholds and figures are confidential, so they are left out.</p>
+            <section class="doc demo"><h4><span>▶</span>Try a sample workflow</h4><p>The Engineering Lab has a sample qualification workflow you can run yourself. It is a <b>simulation on sample data</b>, not the production system and not WebMD’s prompts or models.</p><p><button type="button" class="btn solid js-lab" data-lab="ai">Open the sample workflow</button></p></section>
           </div>
         </li>
         <li class="case" data-case="2">
@@ -1454,21 +1511,25 @@
           </button>
           <div class="case-body" id="case2" role="region" aria-label="Figma-to-HTML engineering skill, case study">
             <h3 class="cs-h" tabindex="-1">Figma-to-HTML engineering skill</h3>
-            <dl class="cs-meta"><div><dt>Team</dt><dd>IB engineering, WebMD</dd></div><div><dt>Status</dt><dd>In use</dd></div><div><dt>Visibility</dt><dd>Confidential</dd></div></dl>
+            <dl class="cs-meta"><div><dt>Team</dt><dd>IB engineering, WebMD</dd></div><div><dt>Role</dt><dd>Integrated and built it</dd></div><div><dt>Status</dt><dd>Adopted team-wide</dd></div></dl>
+            <p class="cs-story">Hand-coding Figma designs is slow, repetitive work. I connected the Figma MCP to our coding agents and wrote a skill that turns a design into HTML.</p>
             <section class="doc"><h4><span>1</span>Problem</h4><p>Turning Figma designs into HTML by hand is slow, repetitive work.</p></section>
-            <section class="doc"><h4><span>2</span>My responsibility</h4><p>Integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></section>
-            <section class="doc"><h4><span>3</span>Technical approach</h4><p>A coding-agent skill that converts a Figma design into HTML. It is built on the Model Context Protocol, so the agent reads the design directly, and it works in both Claude Code and Cline as a reusable design-to-code workflow.</p>
+            <section class="doc"><h4><span>2</span>My responsibility</h4><p>I integrated the Figma MCP with Claude Code and Cline, and built the skill.</p></section>
+            <section class="doc"><h4><span>3</span>Technical approach</h4><p>The agent reads the design directly through the Model Context Protocol, and a skill tells it how to convert that design into HTML. The same workflow runs in Claude Code and in Cline.</p>
               <ul class="chips sm"><li>Figma MCP</li><li>Model Context Protocol</li><li>Claude Code</li><li>Cline</li><li>HTML</li></ul></section>
-            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="arch"><ol>
-                <li><b>Figma design</b><span>the source of truth</span></li>
-                <li><b>Figma MCP server</b><span>exposes the design to the agent</span></li>
-                <li><b>Claude Code / Cline</b><span>the coding agent</span></li>
-                <li><b>Figma-to-HTML skill</b><span>tells the agent how to convert it</span></li>
-                <li class="end"><b>HTML</b><span>ready for the team</span></li>
-              </ol><figcaption>How the pieces connect.</figcaption></figure></section>
+            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="sysmap" data-sysmap aria-label="How the Figma-to-HTML workflow connects">
+              <div class="sm-wrap"><ol class="sm-track">
+                <li><button type="button" class="sm-node" data-d="The Figma design is the source of truth the agent works from."><i>01</i><b>Figma design</b><span>the source of truth</span></button></li>
+                <li><button type="button" class="sm-node" data-d="The Figma MCP server gives the agent the design itself, so nothing is copied over by hand."><i>02</i><b>Figma MCP server</b><span>exposes the design</span></button></li>
+                <li class="has-aux"><button type="button" class="sm-node" data-d="Claude Code or Cline does the conversion. The workflow supports both agents."><i>03</i><b>Coding agent</b><span>Claude Code or Cline</span></button><button type="button" class="sm-node aux" data-d="The skill I wrote: the instructions the agent follows to turn the design into HTML."><i>+</i><b>Figma-to-HTML skill</b><span>how to convert it</span></button></li>
+                <li class="end"><button type="button" class="sm-node" data-d="The agent produces HTML from the design, through a workflow the whole team can reuse."><i>04</i><b>HTML</b><span>ready for the team</span></button></li>
+              </ol>
+              <div class="sm-side"><p class="sm-detail" aria-live="polite"></p><p class="sm-ctl"><button type="button" class="sm-play">▶ Trace the flow</button><span class="sm-hint">Select a step, or use ↑ ↓</span></p></div></div>
+              <figcaption>How the pieces connect. WebMD designs and code are not shown.</figcaption></figure></section>
             <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts"><li>Build on MCP, so the agent reads the Figma design directly.</li><li>Package the conversion as a skill, so it is a reusable design-to-code workflow.</li><li>Support both Claude Code and Cline.</li></ul></section>
-            <section class="doc"><h4><span>6</span>Implementation</h4><p>Connected the Figma MCP server to both Claude Code and Cline, then wrote a skill the agent uses to turn a design into HTML.</p></section>
-            <section class="doc result"><h4><span>7</span>Outcome</h4><p>Adopted team-wide across IB engineering. No time-saving figures are published.</p></section>
+            <section class="doc"><h4><span>6</span>Implementation</h4><p>I connected the Figma MCP server to Claude Code and Cline, then wrote the skill the agent follows to turn a design into HTML.</p></section>
+            <section class="doc result"><h4><span>7</span>Outcome</h4><p>Adopted team-wide across IB engineering.</p></section>
+            <p class="cs-conf">WebMD work: designs, code and any time-saving figures are confidential, so they are left out.</p>
           </div>
         </li>
         <li class="case" data-case="3">
@@ -1486,11 +1547,14 @@
             <section class="doc"><h4><span>2</span>My responsibility</h4><p>Designed and built it, with AI-assisted development (Claude Code).</p></section>
             <section class="doc"><h4><span>3</span>Technical approach</h4><p>The portfolio is a room: every object on the desk opens part of it, and a plain-text Recruiter Mode is always one click away.</p>
               <ul class="chips sm"><li>three.js</li><li>GSAP</li><li>WebGL / GLSL</li><li>Web Audio</li><li>Cloudflare Workers</li><li>Resend</li><li>Open-Meteo</li><li>Node test runner</li></ul></section>
-            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="arch"><ol>
-                <li><b>Browser</b><span>three.js scene · one GLSL pass for the CRT · Web Audio · weather fetched straight from Open-Meteo (no key)</span></li>
-                <li><b>Cloudflare Worker</b><span>static files · <code>/api/geo</code>: approximate city from Cloudflare's request data · <code>/api/contact</code>: validation, rate limit, honeypot</span></li>
-                <li class="end"><b>Resend</b><span>delivers contact messages; the key lives only in the Worker</span></li>
-              </ol><figcaption>Deployed from GitHub to Cloudflare on every push.</figcaption></figure></section>
+            <section class="doc arch-doc"><h4><span>4</span>Architecture</h4><figure class="sysmap" data-sysmap aria-label="Architecture of this site">
+              <div class="sm-wrap"><ol class="sm-track">
+                <li class="has-aux"><button type="button" class="sm-node" data-d="three.js draws the room; the CRT is one GLSL shader on the screen mesh; sound is synthesized with Web Audio. Recruiter Mode skips all of it."><i>01</i><b>Browser</b><span>the 3D room, or Recruiter Mode</span></button><button type="button" class="sm-node aux" data-d="Weather is fetched straight from Open-Meteo, a keyless API, so there is no secret in the browser."><i>+</i><b>Open-Meteo</b><span>weather, no key</span></button></li>
+                <li><button type="button" class="sm-node" data-d="Serves the files. /api/geo gives an approximate city from Cloudflare’s request data; /api/contact validates, rate-limits and checks a honeypot."><i>02</i><b>Cloudflare Worker</b><span>static files and two endpoints</span></button></li>
+                <li class="end"><button type="button" class="sm-node" data-d="Sends contact messages. Its key lives only in the Worker, and the form reports success only when Resend accepts the message."><i>03</i><b>Resend</b><span>delivers contact messages</span></button></li>
+              </ol>
+              <div class="sm-side"><p class="sm-detail" aria-live="polite"></p><p class="sm-ctl"><button type="button" class="sm-play">▶ Trace the flow</button><span class="sm-hint">Select a step, or use ↑ ↓</span></p></div></div>
+              <figcaption>Deployed from GitHub to Cloudflare on every push.</figcaption></figure></section>
             <section class="doc"><h4><span>5</span>Engineering decisions</h4><ul class="pts">
               <li>No framework and no bundler: plain HTML and JavaScript, so there is nothing to build before it runs.</li>
               <li>The CRT is one shader on the screen mesh, not a full-screen post-processing pass, so phones keep up.</li>
@@ -5784,6 +5848,42 @@
   if (vv) { vv.addEventListener('resize', fitKeyboard); vv.addEventListener('scroll', fitKeyboard); }
   form.addEventListener('focusin', e => { fitKeyboard(); setTimeout(() => { fitKeyboard(); e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 320); });
   form.addEventListener('focusout', () => setTimeout(fitKeyboard, 120));
+})();
+</script>
+<script>
+/* System maps in the case studies: select a step (click, Tab, or ↑ ↓) to read about it; "Trace the flow" walks the steps in order.
+   With reduced motion the trace still steps, just without the travelling glow. */
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-sysmap]').forEach(fig => {
+    const nodes = [...fig.querySelectorAll('.sm-node')], detail = fig.querySelector('.sm-detail'), play = fig.querySelector('.sm-play');
+    const main = nodes.filter(n => !n.classList.contains('aux'));
+    let timer = 0;
+    const select = (n, quiet) => {
+      nodes.forEach(x => x.setAttribute('aria-pressed', x === n ? 'true' : 'false'));
+      const k = main.indexOf(n.classList.contains('aux') ? n.previousElementSibling : n);
+      fig.querySelectorAll('.sm-track > li').forEach((li, i) => li.classList.toggle('lit', i < k));
+      detail.replaceChildren(Object.assign(document.createElement('b'), { textContent: n.querySelector('b').textContent }), document.createTextNode(n.dataset.d));
+      if (quiet) detail.removeAttribute('aria-live'); else detail.setAttribute('aria-live', 'polite');
+    };
+    const stop = () => { clearTimeout(timer); timer = 0; play.textContent = '▶ Trace the flow'; play.setAttribute('aria-pressed', 'false'); };
+    nodes.forEach(n => {
+      n.addEventListener('click', () => { stop(); select(n); });
+      n.addEventListener('keydown', e => {
+        const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return; e.preventDefault(); stop();
+        const next = nodes[(nodes.indexOf(n) + d + nodes.length) % nodes.length]; next.focus(); select(next);
+      });
+    });
+    play.addEventListener('click', () => {
+      if (timer) return stop();
+      play.textContent = '■ Stop'; play.setAttribute('aria-pressed', 'true');
+      let i = 0;
+      const step = () => { select(nodes[i]); i++; timer = i < nodes.length ? setTimeout(step, reduce ? 2200 : 1500) : setTimeout(stop, 1500); };
+      step();
+    });
+    select(nodes[0], true);
+  });
 })();
 </script>
 <script src="lab.js"></script>
